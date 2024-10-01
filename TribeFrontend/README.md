@@ -2,7 +2,7 @@
 
 ## Requisitos previos
 
-1. **Node.js**: Asegúrate de tener [Node.js](https://nodejs.org/) instalado. PReferentemente una versión LTS.
+1. **Node.js**: Asegúrate de tener [Node.js](https://nodejs.org/) instalado. Preferentemente una versión LTS.
 2. **Java Development Kit (JDK)**: Instala [JDK](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html). Preferentementemente de versión 17 en adelante.
 3. **Android Studio**: Descarga e instala [Android Studio](https://developer.android.com/studio).
 4. **React Native CLI**: Instala React Native CLI globalmente si aún no lo tienes:
@@ -11,14 +11,14 @@
    ```
 
 ## Creación de la aplicación
-(No replicar, la aplicacioón ya está creada)
+(No replicar, la aplicación ya está creada)
 
 1. **Crear la aplicación**:
       ```bash
       npx react-native init TribeFrontend
       ```
 
-## Iniciar la aplicación
+## Ejecución de la aplicación
 (Luego de hacer un pull del repositorio)
 
 1. **Instalar dependencias**: Ejecuta el siguiente comando en la terminal en la raíz de tu proyecto:
@@ -44,7 +44,14 @@
 
 ### Configuración del entorno
 
-Sigue las instrucciones para configurar el entorno de desarrollo en la [documentación oficial de React Native](https://reactnative.dev/docs/set-up-your-environment).
+1. Sigue las instrucciones para configurar el entorno de desarrollo en la [documentación oficial de React Native](https://reactnative.dev/docs/set-up-your-environment).
+
+2. Asegurate de tener (o crear) el archivo TribeFrontend > android > local.propierties. El mismo contrendra el path al SDK de Java. Un ejemplo de como podría verse esto es el siguiente:
+    ```bash
+    sdk.dir=<ingresar_path_local_hasta_AppData>/AppData/Local/Android/Sdk
+    ```
+
+3. Asegurate de tener (o crear) una variable de sistema llamada JAVA_HOME, con un valor que apunte al JDK de Java. ESto puede ser configurado desde System Properties > Environment Variables > System variables > New...: Es aqui donde hay que crear la variable JAVA_HOME, con el valor <path_al_jdk_de_java>. (El JDK de java suele estar en Disco:/Program Files/Java/jdk-<versión_del_jdk>).
 
 ### Creación de un emulador Android
 
@@ -55,11 +62,7 @@ Sigue las instrucciones para configurar el entorno de desarrollo en la [document
    - Crea un nuevo dispositivo virtual (emulador) seleccionando el dispositivo que prefieras.
 
 3. **Configurar el emulador**: Configura el emulador con las características deseadas (como API Level y RAM), y haz clic en **Finish**. Luego, selecciona el emulador en la lista y haz clic en **Run**.
-
-4. **Iniciar el emulador manualmente**: También puedes iniciar el emulador manualmente en cualquier momento:
-    ```bash
-    emulator -avd <nombre_del_emulador>
-    ```
+   
 
 ### Posibles inconvenientes
 
@@ -146,6 +149,30 @@ app/
    - **styles/**: Estilos reutilizables que pueden ser aplicados a diferentes componentes o pantallas.
 
 - **App.js**: El archivo principal que inicializa la aplicación. Aquí se suele configurar el `NavigationContainer`, los `Providers` de Redux, o cualquier otra configuración inicial necesaria para la app.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Default README
