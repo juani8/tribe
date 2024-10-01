@@ -2,7 +2,7 @@
 
 ## Requisitos previos
 
-1. **Node.js**: Asegúrate de tener [Node.js](https://nodejs.org/) instalado. PReferentemente una versión LTS.
+1. **Node.js**: Asegúrate de tener [Node.js](https://nodejs.org/) instalado. Preferentemente una versión LTS.
 2. **Java Development Kit (JDK)**: Instala [JDK](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html). Preferentementemente de versión 17 en adelante.
 3. **Android Studio**: Descarga e instala [Android Studio](https://developer.android.com/studio).
 4. **React Native CLI**: Instala React Native CLI globalmente si aún no lo tienes:
@@ -18,7 +18,7 @@
       npx react-native init TribeFrontend
       ```
 
-## Iniciar la aplicación
+## Ejecución de la aplicación
 (Luego de hacer un pull del repositorio)
 
 1. **Instalar dependencias**: Ejecuta el siguiente comando en la terminal en la raíz de tu proyecto:
@@ -51,6 +51,8 @@
     sdk.dir=<ingresar_path_local_hasta_AppData>/AppData/Local/Android/Sdk
     ```
 
+3. Asegurate de tener (o crear) una variable de sistema llamada JAVA_HOME, con un valor que apunte al JDK de Java. ESto puede ser configurado desde System Properties > Environment Variables > System variables > New...: Es aqui donde hay que crear la variable JAVA_HOME, con el valor <path_al_jdk_de_java>. (El JDK de java suele estar en Disco:/Program Files/Java/jdk-<versión_del_jdk>).
+
 ### Creación de un emulador Android
 
 1. **Descargar Android SDK**: Descárgalo como parte de Android Studio desde [aquí](https://developer.android.com/studio?hl=es-419).
@@ -60,11 +62,7 @@
    - Crea un nuevo dispositivo virtual (emulador) seleccionando el dispositivo que prefieras.
 
 3. **Configurar el emulador**: Configura el emulador con las características deseadas (como API Level y RAM), y haz clic en **Finish**. Luego, selecciona el emulador en la lista y haz clic en **Run**.
-
-4. **Iniciar el emulador manualmente**: También puedes iniciar el emulador manualmente en cualquier momento:
-    ```bash
-    emulator -avd <nombre_del_emulador>
-    ```
+   
 
 ### Posibles inconvenientes
 
