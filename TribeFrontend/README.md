@@ -92,10 +92,9 @@ app/
 ├── models/               # Definición de clases o interfaces para los modelos de datos utilizados.
 │
 ├── navigation/           # Configuración del sistema de navegación de la aplicación.
-│   └── api/              # Endpoints y lógica para la interacción con servicios web.
 │
 ├── networking/           # Configuración para la comunicación con servicios externos o API.
-│   ├── api/              # Definición de las conexiones y requests HTTP.
+│   ├── api/              # Definición de las conexiones y requests HTTP. Endpoints y lógica para la interacción con servicios web.
 │   └── sockets/          # Configuración y manejo de WebSockets o conexiones en tiempo real.
 │
 ├── redux/                # Almacenamiento centralizado y gestión del estado global de la aplicación usando Redux.
@@ -203,7 +202,7 @@ This is one way to run your app — you can also run it directly from within And
 
 Now that you have successfully run the app, let's modify it.
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
+1. Open `App.js` in your text editor of choice and edit some lines.
 2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
 
    For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
