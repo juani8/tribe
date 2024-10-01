@@ -109,7 +109,7 @@ app/
 │
 └── App.js                # Punto de entrada principal de la aplicación React Native.
 ```
-
+ 
 ### Descripción de cada directorio
 
 - **assets/**: Contiene todos los recursos estáticos que no cambian durante el ciclo de vida de la aplicación. Incluye fuentes personalizadas, imágenes, sonidos y certificados necesarios para la app.
