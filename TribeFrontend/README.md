@@ -11,7 +11,7 @@
    ```
 
 ## Creación de la aplicación
-(No replicar, la aplicacioón ya está creada)
+(No replicar, la aplicación ya está creada)
 
 1. **Crear la aplicación**:
       ```bash
@@ -44,7 +44,12 @@
 
 ### Configuración del entorno
 
-Sigue las instrucciones para configurar el entorno de desarrollo en la [documentación oficial de React Native](https://reactnative.dev/docs/set-up-your-environment).
+1. Sigue las instrucciones para configurar el entorno de desarrollo en la [documentación oficial de React Native](https://reactnative.dev/docs/set-up-your-environment).
+
+2. Asegurate de tener (o crear) el archivo TribeFrontend > android > local.propierties. El mismo contrendra el path al SDK de Java. Un ejemplo de como podría verse esto es el siguiente:
+    ```bash
+    sdk.dir=<ingresar_path_local_hasta_AppData>/AppData/Local/Android/Sdk
+    ```
 
 ### Creación de un emulador Android
 
@@ -149,6 +154,7 @@ app/
 - **App.js**: El archivo principal que inicializa la aplicación. Aquí se suele configurar el `NavigationContainer`, los `Providers` de Redux, o cualquier otra configuración inicial necesaria para la app.
 
 
+<div style="color:blue">
 # Default README
 
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
@@ -230,3 +236,4 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+</div>
