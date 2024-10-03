@@ -40,6 +40,13 @@
 
    **Nota**: Para iOS necesitas tener un Mac con Xcode instalado.
 
+### Posibles inconvenientes
+
+1. **Error [...]A problem occurred configuring project ':react-native-screens'. > [CXX1101] NDK[...]**:
+    - Ve a Android Studio > SDK Manager >  Languages & Frameworks > Android SDK > SDK Tools > NDK (Side to Side), seleccionar el ultimo NDK e instalarlo.
+    - Copiar el número de versión del NDK recientemente instalado
+    - Ir a TribeFrontend > android > build.gradle y cambiar el valor de la variable buildscript.ext.ndkVersion por la versión recientemente copiada
+
 ## Configurar el entorno de ejecución: Crear emulador de Android
 
 ### Configuración del entorno
