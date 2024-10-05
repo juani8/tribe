@@ -9,27 +9,31 @@ import TimelineScreen from 'ui/screens/TimelineScreen';
 import UploadScreen from 'ui/screens/UploadScreen';
 import SearchScreen from 'ui/screens/SearchScreen';
 
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabBar() {
     return (
         <Tab.Navigator>
-            <Tab.Screen name="Inicio" component={TimelineScreen} />
-            <Tab.Screen name="Subir" component={UploadScreen} />
-            <Tab.Screen name="Buscar" component={SearchScreen} />
+            <Tab.Screen name={I18n.t(TextKey.homeNavegation)} component={TimelineScreen} options={{ headerShown: false }} />
+            <Tab.Screen name={I18n.t(TextKey.uploadNavegation)} component={UploadScreen} options={{ headerShown: false }} />
+            <Tab.Screen name={I18n.t(TextKey.searchNavegation)} component={SearchScreen} options={{ headerShown: false }} />
         </Tab.Navigator>
     );
 }
 
 function MainStack() {
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Bienvenido" component={WelcomeScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Autenticacion" component={AuthScreen} options={{ headerShown: false }} />
-            {/* The TabBar will appear only after login (i.e. after Welcome and Auth screens) */}
-            <Stack.Screen name="Principal" component={TabBar} options={{ headerShown: false }} />
-        </Stack.Navigator>
+        <>
+            <Stack.Navigator>
+                <Stack.Screen name={I18n.t(TextKey.welcomeNavegation)} component={WelcomeScreen} options={{ headerShown: false }} />
+                <Stack.Screen name={I18n.t(TextKey.authNavegation)} component={AuthScreen} options={{ headerShown: false }} />
+                <Stack.Screen name={I18n.t(TextKey.mainNavegation)} component={TabBar} options={{ headerShown: false }} />
+            </Stack.Navigator>
+        </>
     );
 }
 

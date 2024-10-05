@@ -47,6 +47,18 @@
     - Copiar el número de versión del NDK recientemente instalado
     - Ir a TribeFrontend > android > build.gradle y cambiar el valor de la variable buildscript.ext.ndkVersion por la versión recientemente copiada
 
+2. **Metro bundler no se despliega al ejecutar la app**
+    - Abrir una terminal paralela y ejecutar el comando:
+    ```bash
+    npx react-native start
+    ```
+   
+3. **Errores varios realcioandos a dependencias y node_modules**
+    - En muchos casos se solucionan borrando node_modules, package-lock.json y/o limpiando el cache.
+    ```bash
+    npx react-native start --reset-cache
+    ```
+
 ## Configurar el entorno de ejecución: Crear emulador de Android
 
 ### Configuración del entorno
@@ -69,7 +81,8 @@
    - Crea un nuevo dispositivo virtual (emulador) seleccionando el dispositivo que prefieras.
 
 3. **Configurar el emulador**: Configura el emulador con las características deseadas (como API Level y RAM), y haz clic en **Finish**. Luego, selecciona el emulador en la lista y haz clic en **Run**.
-   
+   - (!) Dispositivo: Elige un dispositivo común como "Pixel 4" o "Pixel 5".
+   - (!) API Level: Usa una API Level que sea estable, como 33 o 34 (Android 13 o 14).
 
 ### Posibles inconvenientes
 
