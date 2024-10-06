@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 
-const CustomHighlightedTextNunito = ({ style, children, ...props }) => {
+const CustomHighlightedTextNunito = ({ style, children, onPress, ...props }) => {
   const { theme } = useTheme();
 
   const fontStyle = {
@@ -12,7 +12,7 @@ const CustomHighlightedTextNunito = ({ style, children, ...props }) => {
   const color = theme.colors.primary;
 
   return (
-    <Text style={[fontStyle, color, style]} {...props}>
+    <Text onPress={onPress} style={[fontStyle, color, style]} {...props}>
       {children}
     </Text>
   );

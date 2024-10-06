@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import Header from 'ui/components/generalPurposeComponents/Header';
+import CoreHeader from 'ui/components/generalPurposeComponents/CoreHeader';
 
 import WelcomeScreen from 'ui/screens/WelcomeScreen';
 import TimelineScreen from 'ui/screens/core/TimelineScreen';
@@ -49,50 +49,34 @@ function TabBar() {
 function MainStack() {
     return (
         <Stack.Navigator>
-            {/* No header for the WelcomeScreen */}
             <Stack.Screen
                 name="Welcome"
                 component={WelcomeScreen}
                 options={{ headerShown: false, title: I18n.t(TextKey.welcomeNavegation) }}
             />
 
-            {/* Custom header for LoginScreen */}
             <Stack.Screen
                 name="Login"
                 component={LoginScreen}
-                options={{
-                    header: () => <Header title={I18n.t(TextKey.loginNavegation)} />,
-                    title: I18n.t(TextKey.loginNavegation)
-                }}
+                options={{ headerShown: false, title: I18n.t(TextKey.loginNavegation) }}
             />
 
-            {/* Custom header for SignupScreen */}
             <Stack.Screen
                 name="Signup"
                 component={SignupScreen}
-                options={{
-                    header: () => <Header title={I18n.t(TextKey.signupNavegation)} />,
-                    title: I18n.t(TextKey.signupNavegation)
-                }}
+                options={{ headerShown: false, title: I18n.t(TextKey.signupNavegation) }}
             />
 
-            {/* Other screens with custom or no header */}
             <Stack.Screen
                 name="RecoverPassword"
                 component={RecoverPasswordScreen}
-                options={{
-                    header: () => <Header title={I18n.t(TextKey.recoverPasswordNavigation)} />,
-                    title: I18n.t(TextKey.recoverPasswordNavigation)
-                }}
+                options={{ headerShown: false, title: I18n.t(TextKey.recoverPasswordNavigation) }}
             />
 
             <Stack.Screen
                 name="VerifyIdentity"
                 component={VerifyIdentityScreen}
-                options={{
-                    header: () => <Header title={I18n.t(TextKey.verifyIdentityNavigation)} />,
-                    title: I18n.t(TextKey.verifyIdentityNavigation)
-                }}
+                options={{ headerShown: false, title: I18n.t(TextKey.verifyIdentityNavigation) }}
             />
 
             <Stack.Screen
@@ -104,7 +88,10 @@ function MainStack() {
             <Stack.Screen
                 name="Main"
                 component={TabBar}
-                options={{ headerShown: false, title: I18n.t(TextKey.mainNavegation) }}
+                options={{
+                    header: () => <CoreHeader title={I18n.t(TextKey.mainNavegation)} />,
+                    title: I18n.t(TextKey.mainNavegation)
+                }}
             />
         </Stack.Navigator>
     );

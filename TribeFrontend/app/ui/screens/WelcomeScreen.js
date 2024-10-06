@@ -11,6 +11,8 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 
+import { NavigateToLogin, NavigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
+
 const WelcomeScreen = ({ navigation }) => {
   const [sliderState, setSliderState] = useState({ currentPage: 0 });
   const { width } = Dimensions.get('window');
@@ -55,7 +57,7 @@ const WelcomeScreen = ({ navigation }) => {
           </View>
           <View style={{ width }}>
             <Logo theme={theme} />
-            <FourthPart styles={styles} theme={theme} />
+            <FourthPart styles={styles} theme={theme} navigation={navigation} />
           </View>
         </ScrollView>
         <View style={{marginBottom:20}}>
@@ -148,7 +150,7 @@ const ThirdPart = ({ styles, theme }) => {
   );
 };
 
-const FourthPart = ({ styles, theme }) => {
+const FourthPart = ({ styles, theme, navigation }) => {
   return (
     <View style={styles.wrapper}>
       <View style={{height: 100}}>
@@ -158,8 +160,8 @@ const FourthPart = ({ styles, theme }) => {
         </CustomTextNunito>
       </View>
       <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
-        <CustomButton title={'Únete ahora'} />
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }}>Inicia sesión </CustomHighlightedTextNunito>
+        <CustomButton title={'Únete ahora'} onPress={() => NavigateToSignup(navigation)}/>
+        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToLogin(navigation)}>Inicia sesión</CustomHighlightedTextNunito>
       </View>
     </View>
   );

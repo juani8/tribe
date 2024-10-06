@@ -23,10 +23,21 @@ export default {
     welcomeDescriptionThirdPage: { part1: 'En ', part2: 'Tribe', part3: ', cada interacción es una oportunidad para aprender y crecer.' },
     welcomeTitleFourthPage: { part1: 'Tribe', part2: ' te está esperando' },
 
-    // Auth Screen
+    // Login Screen
     loginTitle: 'Pantalla de Inicio de Sesión',
     loginMessage: 'Por favor, ingrese sus credenciales',
     loginButton: 'Iniciar sesión',
+    goToSignup: 'Ir a Registrarse',
+    goToRecoverPassword: 'Ir a Recuperar Contraseña',
+
+    // Signup Screen
+    signupTitle: 'Pantalla de Registro',
+    signupButton: 'Registrarse',
+    goToLoginButton: 'Ir a Iniciar sesión',
+
+    // Password recovery Screen
+    passwordRecoveryTitle: 'Pantalla de Recuperación de Contraseña',
+    passwordRecoveryButton: 'Verificar',
 
     // Timeline Screen
     timelineTitle: 'Pantalla de Línea de Tiempo',

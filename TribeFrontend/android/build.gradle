@@ -1,5 +1,6 @@
 buildscript {
     ext {
+        applicationId = "com.tribefrontend"
         buildToolsVersion = "34.0.0"
         minSdkVersion = 23
         compileSdkVersion = 34
@@ -15,8 +16,16 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-        implementation project(':react-native-splash-screen')
+        // Remove the following line
+        // implementation project(':react-native-splash-screen')
     }
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}

@@ -23,10 +23,21 @@ export default {
     welcomeDescriptionThirdPage: { part1: 'At ' , part2: 'Tribe' , part3: ', every interaction is an opportunity to learn and grow.' },
     welcomeTitleFourthPage: { part1: 'Tribe', part2: ' is waiting for you' },
 
-    // Auth Screen
+    // Login Screen
     loginTitle: 'Login Screen',
     loginMessage: 'Please enter your credentials',
     loginButton: 'Login',
+    goToSignup: 'Go to Signup',
+    goToRecoverPassword: 'Go to Recover Password',
+
+    // Signup Screen
+    signupTitle: 'Signup Screen',
+    signupButton: 'Signup',
+    goToLoginButton: 'Go to Login',
+
+    // Password recovery Screen
+    passwordRecoveryTitle: 'Password recovery Screen',
+    passwordRecoveryButton: 'Verify',
 
     // Timeline Screen
     timelineTitle: 'Timeline Screen',

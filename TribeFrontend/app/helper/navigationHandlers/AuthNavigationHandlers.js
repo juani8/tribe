@@ -1,22 +1,19 @@
-import I18n from 'assets/localization/i18n';
-import TextKey from 'assets/localization/TextKey';
-
-export const NavigateToLogin = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.loginNavigation));
+export const NavigateToLogin = (navigation) => {
+  navigation.navigate('Login');
 }
 
-export const NavigateToSignup = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.signupNavigation));
+export const NavigateToSignup = (navigation) => {
+  navigation.navigate('Signup');
 }
 
-export const NavigateToPasswordRecovery = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.recoverPasswordNavigation));
+export const NavigateToPasswordRecovery = (navigation) => {
+  navigation.navigate('RecoverPassword');
 }
 
-export const NavigateToVerifyIdentity = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.verifyIdentityNavigation));
+export const NavigateToVerifyIdentity = (navigation) => {
+  navigation.navigate('VerifyIdentity');
 }
 
-export const NavigateToInitialConfiguration = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.initialConfigurationNavigation));
+export const NavigateToInitialConfiguration = (navigation) => {
+  navigation.navigate('InitialConfiguration');
 }

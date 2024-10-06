@@ -1,14 +1,14 @@
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
-export const NavigateToHome = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.homeNavegation));
+export const NavigateToHome = (navigation) => {
+  navigation.navigate('Main');
 }
 
-export const NavigateToSearch = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.searchNavegation));
+export const NavigateToSearch = (navigation) => {
+  navigation.navigate('Search');
 }
 
-export const NavigateToUpload = ({navigation}) => {
-  navigation.navigate(I18n.t(TextKey.uploadNavegation));
-}
+export const NavigateToUpload = (navigation) => {
+  navigation.navigate('Upload');
+} 

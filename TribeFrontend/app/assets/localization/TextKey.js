@@ -45,12 +45,22 @@ const TextKey = {
         part1: 'welcomeTitleFourthPage.part1',
         part2: 'welcomeTitleFourthPage.part2'
     },
-    
 
-    // Auth Screen
+    // Login Screen
     loginTitle: 'loginTitle',
     loginMessage: 'loginMessage',
     loginButton: 'loginButton',
+    goToSignup: 'goToSignup',
+    goToRecoverPassword: 'goToRecoverPassword',
+
+    // Signup Screen
+    signupTitle: 'signupTitle',
+    signupButton: 'signupButton',
+    goToLoginButton: 'goToLoginButton',
+
+    // Password recovery Screen
+    passwordRecoveryTitle: 'passwordRecoveryTitle',
+    passwordRecoveryButton: 'passwordRecoveryButton',
 
     // Timeline Screen
     timelineTitle: 'timelineTitle',
