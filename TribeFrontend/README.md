@@ -108,7 +108,10 @@ app/
 │
 ├── config/               # Configuración global de la aplicación, como claves API, URL base, etc.
 │
+├── context/              # Contextos que proveeran información requerida globalmente en la aplicación.
+│
 ├── helper/               # Funciones auxiliares o de utilidades que facilitan tareas comunes.
+│   └── navigationHandlers/ # Funciones que gestionan la lógica de redirección o flujo de navegación.
 │
 ├── hooks/                # Hooks personalizados para gestionar estado o lógica específica.
 │
@@ -143,6 +146,8 @@ app/
    - **sound/**: Archivos de audio que podrían utilizarse en alertas o notificaciones dentro de la app.
 
 - **config/**: Aquí se almacenan las configuraciones globales de la app, como variables de entorno, configuración de claves API, y cualquier ajuste que sea utilizado en diferentes partes de la app.
+
+- **context/**: Aquí se almacenan los contextos proveedores de variables y funciones de información requerida globalmente en la aplicación.
 
 - **helper/**: Funciones auxiliares para resolver problemas recurrentes, como formateo de fechas, validación de datos, etc.
 

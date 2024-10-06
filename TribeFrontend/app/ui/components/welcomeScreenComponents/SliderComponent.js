@@ -158,7 +158,7 @@ const FourthPart = ({ styles, theme }) => {
           {I18n.t(TextKey.welcomeTitleFourthPage.part2)}
         </CustomTextNunito>
       </View>
-      <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 6}}>
+      <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
         <CustomButton title={'Únete ahora'} />
         <CustomHighlightedTextNunito style={{ textAlign: 'center' }}>Inicia sesión </CustomHighlightedTextNunito>
       </View>

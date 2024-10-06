@@ -3,11 +3,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import Header from 'ui/components/generalPurposeComponents/Header';
+
 import WelcomeScreen from 'ui/screens/WelcomeScreen';
-import AuthScreen from 'ui/screens/AuthScreen';
-import TimelineScreen from 'ui/screens/TimelineScreen';
-import UploadScreen from 'ui/screens/UploadScreen';
-import SearchScreen from 'ui/screens/SearchScreen';
+import TimelineScreen from 'ui/screens/core/TimelineScreen';
+import UploadScreen from 'ui/screens/core/UploadScreen';
+import SearchScreen from 'ui/screens/core/SearchScreen';
+
+import LoginScreen from 'ui/screens/auth/LoginScreen';
+import SignupScreen from 'ui/screens/auth/SignupScreen';
+import RecoverPasswordScreen from 'ui/screens/auth/RecoverPasswordScreen';
+import VerifyIdentityScreen from 'ui/screens/auth/VerifyIdentityScreen';
+import InitialConfigurationScreen from './ui/screens/auth/InitialConfigurationScreen';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -20,22 +27,86 @@ const Tab = createBottomTabNavigator();
 function TabBar() {
     return (
         <Tab.Navigator>
-            <Tab.Screen name={I18n.t(TextKey.homeNavegation)} component={TimelineScreen} options={{ headerShown: false }} />
-            <Tab.Screen name={I18n.t(TextKey.uploadNavegation)} component={UploadScreen} options={{ headerShown: false }} />
-            <Tab.Screen name={I18n.t(TextKey.searchNavegation)} component={SearchScreen} options={{ headerShown: false }} />
+            <Tab.Screen
+                name="Home"
+                component={TimelineScreen}
+                options={{ headerShown: false, title: I18n.t(TextKey.homeNavegation) }}
+            />
+            <Tab.Screen
+                name="Upload"
+                component={UploadScreen}
+                options={{ headerShown: false, title: I18n.t(TextKey.uploadNavegation) }}
+            />
+            <Tab.Screen
+                name="Search"
+                component={SearchScreen}
+                options={{ headerShown: false, title: I18n.t(TextKey.searchNavegation) }}
+            />
         </Tab.Navigator>
     );
 }
 
 function MainStack() {
     return (
-        <>
-            <Stack.Navigator>
-                <Stack.Screen name={I18n.t(TextKey.welcomeNavegation)} component={WelcomeScreen} options={{ headerShown: false }} />
-                <Stack.Screen name={I18n.t(TextKey.authNavegation)} component={AuthScreen} options={{ headerShown: false }} />
-                <Stack.Screen name={I18n.t(TextKey.mainNavegation)} component={TabBar} options={{ headerShown: false }} />
-            </Stack.Navigator>
-        </>
+        <Stack.Navigator>
+            {/* No header for the WelcomeScreen */}
+            <Stack.Screen
+                name="Welcome"
+                component={WelcomeScreen}
+                options={{ headerShown: false, title: I18n.t(TextKey.welcomeNavegation) }}
+            />
+
+            {/* Custom header for LoginScreen */}
+            <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{
+                    header: () => <Header title={I18n.t(TextKey.loginNavegation)} />,
+                    title: I18n.t(TextKey.loginNavegation)
+                }}
+            />
+
+            {/* Custom header for SignupScreen */}
+            <Stack.Screen
+                name="Signup"
+                component={SignupScreen}
+                options={{
+                    header: () => <Header title={I18n.t(TextKey.signupNavegation)} />,
+                    title: I18n.t(TextKey.signupNavegation)
+                }}
+            />
+
+            {/* Other screens with custom or no header */}
+            <Stack.Screen
+                name="RecoverPassword"
+                component={RecoverPasswordScreen}
+                options={{
+                    header: () => <Header title={I18n.t(TextKey.recoverPasswordNavigation)} />,
+                    title: I18n.t(TextKey.recoverPasswordNavigation)
+                }}
+            />
+
+            <Stack.Screen
+                name="VerifyIdentity"
+                component={VerifyIdentityScreen}
+                options={{
+                    header: () => <Header title={I18n.t(TextKey.verifyIdentityNavigation)} />,
+                    title: I18n.t(TextKey.verifyIdentityNavigation)
+                }}
+            />
+
+            <Stack.Screen
+                name="InitialConfiguration"
+                component={InitialConfigurationScreen}
+                options={{ headerShown: false, title: I18n.t(TextKey.initialConfigurationNavigation) }}
+            />
+
+            <Stack.Screen
+                name="Main"
+                component={TabBar}
+                options={{ headerShown: false, title: I18n.t(TextKey.mainNavegation) }}
+            />
+        </Stack.Navigator>
     );
 }
 

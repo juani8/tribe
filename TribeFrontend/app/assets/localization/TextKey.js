@@ -1,7 +1,11 @@
 const TextKey = {
     // Pages
     welcomeNavegation: 'welcomeNavegation',
-    authNavegation: 'authNavegation',
+    loginNavigation: 'loginNavigation',
+    signupNavigation: 'signupNavigation',
+    recoverPasswordNavigation: 'recoverPasswordNavigation',
+    verifyIdentityNavigation: 'verifyIdentityNavigation',
+    initialConfigurationNavigation: 'initialConfigurationNavigation',
     homeNavegation: 'homeNavegation',
     mainNavegation: 'mainNavegation',
     uploadNavegation: 'uploadNavegation',

@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const OptionMenu = () => {
+const UserProfileScreen = () => {
   return (
     <View>
-      <Text>OptionMenu</Text>
+      <Text>UserProfileScreen</Text>
     </View>
   )
 }
 
-export default OptionMenu
+export default UserProfileScreen

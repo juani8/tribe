@@ -1,7 +1,11 @@
 export default {
     // Pages
     welcomeNavegation: 'Bienvenido',
-    authNavegation: 'Autenticación',
+    loginNavigation: 'Iniciar sesión',
+    signupNavigation: 'Registrarse',
+    recoverPasswordNavigation: 'Recuperar Contraseña',
+    verifyIdentityNavigation: 'Verificar Identidad',
+    initialConfigurationNavigation: 'Configuración Inicial',
     homeNavegation: 'Inicio',
     mainNavegation: 'Principal',
     uploadNavegation: 'Subir',

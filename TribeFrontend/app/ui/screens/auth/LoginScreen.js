@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const OptionMenu = () => {
+const LoginScreen = () => {
   return (
     <View>
-      <Text>OptionMenu</Text>
+      <Text>LoginScreen</Text>
     </View>
   )
 }
 
-export default OptionMenu
+export default LoginScreen

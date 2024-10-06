@@ -13,7 +13,7 @@ module.exports = {
           "@helper": "./app/helper",
           "@hooks": "./app/hooks",
           "@models": "./app/models",
-          "@navigation": "./app/navigation",
+          "@networking": "./app/networking",
           "@redux": "./app/redux",
           "@ui": "./app/ui",
         },

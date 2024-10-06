@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const OptionMenu = () => {
+const CustomInput = () => {
   return (
     <View>
-      <Text>OptionMenu</Text>
+      <Text>CustomInput</Text>
     </View>
   )
 }
 
-export default OptionMenu
+export default CustomInput
