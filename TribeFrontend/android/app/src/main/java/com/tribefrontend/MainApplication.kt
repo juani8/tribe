@@ -11,10 +11,7 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 
-// react-native-splash-screen >= 0.3.1
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
-// react-native-splash-screen < 0.3.1
-import com.cboy.rn.splashscreen.SplashScreenReactPackage;
 import android.os.Bundle
 
 class MainApplication : Application(), ReactApplication {
@@ -39,8 +36,9 @@ class MainApplication : Application(), ReactApplication {
   override val reactHost: ReactHost
     get() = getDefaultReactHost(applicationContext, reactNativeHost)
 
-  override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onCreate() {
+    super.onCreate()
     SplashScreen.show(this) // Show the splash screen
-    super.onCreate(savedInstanceState)
   }
+
 }

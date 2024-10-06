@@ -21,6 +21,11 @@ buildscript {
     }
 }
 
+android {
+    useAndroidX true
+    enableJetifier true
+}
+
 apply plugin: "com.facebook.react.rootproject"
 
 allprojects {

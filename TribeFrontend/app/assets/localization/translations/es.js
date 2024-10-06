@@ -39,6 +39,10 @@ export default {
     passwordRecoveryTitle: 'Pantalla de Recuperación de Contraseña',
     passwordRecoveryButton: 'Verificar',
 
+    // Initial configuration Screen
+    initialConfigurationTitle: 'Pantalla de Configuración Inicial',
+    initialConfigurationButton: 'Continuar',
+
     // Timeline Screen
     timelineTitle: 'Pantalla de Línea de Tiempo',
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
