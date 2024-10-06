@@ -9,6 +9,7 @@ module.exports = {
         alias: {
           "@assets": "./app/assets",
           "@config": "./app/config",
+          "@context": "./app/context",
           "@helper": "./app/helper",
           "@hooks": "./app/hooks",
           "@models": "./app/models",

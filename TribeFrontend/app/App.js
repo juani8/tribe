@@ -12,6 +12,8 @@ import SearchScreen from 'ui/screens/SearchScreen';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
+import { ThemeProvider } from 'context/ThemeContext';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -39,8 +41,10 @@ function MainStack() {
 
 export default function App() {
     return (
-        <NavigationContainer>
-            <MainStack />
-        </NavigationContainer>
+        <ThemeProvider>
+            <NavigationContainer>
+                <MainStack />
+            </NavigationContainer>
+        </ThemeProvider>
     );
 }

@@ -11,8 +11,13 @@ export default {
     changeLanguage: 'Cambiar Idioma',
 
     // Welcome Screen
-    welcomeMessage: '¡Bienvenido a Tribe!',
-    welcomeGoToLoginButton: 'Iniciar sesión ahora',
+    welcomeTitleFirstPage: { part1: '¡Bienvenido a ', part2: 'Tribe', part3: '!' },
+    welcomeDescriptionFirstPage: 'Conoce a personas de todo el mundo, comparte tus intereses y mantente al día con lo que te importa.',
+    welcomeTitleSecondPage: { part1: 'Comparte tus ', part2: 'Momentos Únicos' },
+    welcomeDescriptionSecondPage: 'Publica fotos y videos para que tus seguidores los vean.',
+    welcomeTitleThirdPage: { part1: 'Más allá de la ', part2: 'Conexión' },
+    welcomeDescriptionThirdPage: { part1: 'En ', part2: 'Tribe', part3: ', cada interacción es una oportunidad para aprender y crecer.' },
+    welcomeTitleFourthPage: { part1: 'Tribe', part2: ' te está esperando' },
 
     // Auth Screen
     loginTitle: 'Pantalla de Inicio de Sesión',
@@ -30,4 +35,7 @@ export default {
     // Search Screen
     searchTitle: 'Pantalla de Búsqueda',
     searchMessage: 'Por favor, ingrese su consulta de búsqueda',
+
+    // Button Messages
+    loginButton: 'Iniciar sesión',
 };

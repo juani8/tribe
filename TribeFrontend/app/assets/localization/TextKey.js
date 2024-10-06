@@ -10,9 +10,38 @@ const TextKey = {
     // Options
     changeLanguage: 'changeLanguage',
 
-    // Welcome Screen
-    welcomeMessage: 'welcomeMessage',
-    welcomeGoToLoginButton: 'welcomeGoToLoginButton',
+// Welcome Screen
+    welcomeTitleFirstPage: {
+        part1: 'welcomeTitleFirstPage.part1',
+        part2: 'welcomeTitleFirstPage.part2',
+        part3: 'welcomeTitleFirstPage.part3'
+    },
+  
+    welcomeDescriptionFirstPage: 'welcomeDescriptionFirstPage',
+    
+    welcomeTitleSecondPage: {
+        part1: 'welcomeTitleSecondPage.part1',
+        part2: 'welcomeTitleSecondPage.part2'
+    },
+  
+    welcomeDescriptionSecondPage: 'welcomeDescriptionSecondPage',
+    
+    welcomeTitleThirdPage: {
+        part1: 'welcomeTitleThirdPage.part1',
+        part2: 'welcomeTitleThirdPage.part2'
+    },
+    
+    welcomeDescriptionThirdPage: {
+        part1: 'welcomeDescriptionThirdPage.part1',
+        part2: 'welcomeDescriptionThirdPage.part2',
+        part3: 'welcomeDescriptionThirdPage.part3'
+    },
+    
+    welcomeTitleFourthPage: {
+        part1: 'welcomeTitleFourthPage.part1',
+        part2: 'welcomeTitleFourthPage.part2'
+    },
+    
 
     // Auth Screen
     loginTitle: 'loginTitle',
