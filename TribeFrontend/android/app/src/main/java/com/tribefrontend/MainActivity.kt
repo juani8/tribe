@@ -1,30 +1,34 @@
 package com.tribefrontend
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-import org.devio.rn.splashscreen.SplashScreen  // Add this import
+import org.devio.rn.splashscreen.SplashScreen
+import android.content.res.Configuration
+import java.util.Locale
 
 class MainActivity : ReactActivity() {
 
-  /**
-   * Returns the name of the main component registered from JavaScript. This is used to schedule
-   * rendering of the component.
-   */
-  override fun getMainComponentName(): String = "TribeFrontend"
+    override fun getMainComponentName(): String = "TribeFrontend"
 
-  /**
-   * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
-   * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
-   */
-  override fun createReactActivityDelegate(): ReactActivityDelegate =
-      DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+    override fun createReactActivityDelegate(): ReactActivityDelegate =
+        DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
 
-  // Add the onCreate method to display the splash screen
-  override fun onCreate(savedInstanceState: Bundle?) {
-    SplashScreen.show(this)  // This ensures the splash screen is shown at the start
-    super.onCreate(savedInstanceState)
-  }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Detect the system language
+        val currentLocale: Locale = resources.configuration.locales.get(0)
+        val language = currentLocale.language
+
+        // Manually inflate the correct layout based on language
+        val inflater = LayoutInflater.from(this)
+        when (language) {
+            "en" -> setContentView(inflater.inflate(R.layout.launch_screen_en, null)) // Inflate English launch screen
+            else -> setContentView(inflater.inflate(R.layout.launch_screen, null))    // Inflate default launch screen
+        }
+
+        super.onCreate(savedInstanceState)
+    }
 }

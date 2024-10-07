@@ -9,7 +9,7 @@ const CustomHighlightedTextNunito = ({ style, children, onPress, ...props }) => 
     fontFamily: `Nunito-Bold`,
   };
 
-  const color = theme.colors.primary;
+  const color = { color: theme.colors.primary };
 
   return (
     <Text onPress={onPress} style={[fontStyle, color, style]} {...props}>
