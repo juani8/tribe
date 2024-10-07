@@ -1,8 +1,10 @@
-import React, { createContext, useState, useContext, useMemo } from 'react';
+import React, { createContext, useState, useContext, useMemo, useEffect } from 'react';
 import { useColorScheme } from 'react-native'; // For detecting system theme
 import colorsLightMode from 'assets/constants/colorsLightMode';
 import colorsDarkMode from 'assets/constants/colorsDarkMode';
 import { LogoDarkMode, LogoLightMode } from '../assets/images';
+
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 const ThemeContext = createContext();
 
@@ -42,6 +44,11 @@ export const ThemeProvider = ({ children }) => {
   const toggleSystemThemeUsage = () => {
     setUseSystemTheme((prev) => !prev);
   };
+
+  // Update navigation bar color whenever the theme changes
+  useEffect(() => {
+    changeNavigationBarColor(theme.colors.background, true);
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{

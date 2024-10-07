@@ -87,7 +87,7 @@ const Logo = ({ theme }) => {
   return (
     <Image
       source={theme.logo}
-      style={{ width: 200, height: 200, alignSelf: 'center', marginTop: 50 }}
+      style={{ width: 265, height: 200, alignSelf: 'center', marginTop: 50 }}
       resizeMode="contain"
     />
   );
@@ -171,7 +171,7 @@ const createStyles = (theme) => StyleSheet.create({
   wrapper: {
     flex: 1,
     alignItems: 'center',
-    marginVertical: 30,
+    marginBottom: 30,
     marginHorizontal: 60,
   },
   title: {
