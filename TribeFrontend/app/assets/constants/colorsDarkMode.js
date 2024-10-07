@@ -1,9 +1,9 @@
 export default {
-  primary: '#674188',
-  secondary: '#C8A1E0',
-  tertiary: '#E2BFD9',
-  text: '#1A1A1A',
-  buttonText: '#FFFFFF',
+  primary: '#CDC1FF',
+  secondary: '#E5D9F2',
+  tertiary: '#F5EFFF',
+  text: '#F5EFFF',
+  buttonText: '#000000',
   detailText: '#5D5D5D',
-  background: '#F9F5EF',
+  background: '#161622',
 }
