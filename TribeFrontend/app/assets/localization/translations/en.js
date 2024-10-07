@@ -39,6 +39,10 @@ export default {
     passwordRecoveryTitle: 'Password recovery Screen',
     passwordRecoveryButton: 'Verify',
 
+    // Initial configuration Screen
+    initialConfigurationTitle: 'Initial configuration Screen',
+    initialConfigurationButton: 'Continue',
+
     // Timeline Screen
     timelineTitle: 'Timeline Screen',
     timelineMessage: 'This is the Timeline Screen',

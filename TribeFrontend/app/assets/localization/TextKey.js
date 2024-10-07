@@ -62,6 +62,10 @@ const TextKey = {
     passwordRecoveryTitle: 'passwordRecoveryTitle',
     passwordRecoveryButton: 'passwordRecoveryButton',
 
+    // Initial configuration Screen
+    initialConfigurationTitle: 'initialConfigurationTitle',
+    initialConfigurationButton: 'initialConfigurationButton',
+
     // Timeline Screen
     timelineTitle: 'timelineTitle',
     timelineMessage: 'timelineMessage',
