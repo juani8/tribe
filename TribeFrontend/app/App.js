@@ -15,6 +15,7 @@ import SignupScreen from 'ui/screens/auth/SignupScreen';
 import RecoverPasswordScreen from 'ui/screens/auth/RecoverPasswordScreen';
 import VerifyIdentityScreen from 'ui/screens/auth/VerifyIdentityScreen';
 import InitialConfigurationScreen from 'ui/screens/auth/InitialConfigurationScreen';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -47,7 +48,7 @@ function TabBar() {
 }
 
 function MainStack() {
-    const { theme } = useTheme();  // Access theme context
+    const { theme } = useTheme();
 
     return (
         <Stack.Navigator
