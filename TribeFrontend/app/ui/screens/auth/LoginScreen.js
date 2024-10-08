@@ -7,35 +7,37 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {}
       <Image 
         source={theme.logo} 
         style={styles.logo}
         resizeMode="contain"
       />
-
-      
+    
       <Text style={styles.welcomeText}>
-        Bienvenido a <Text style={styles.brandText}>Tribe</Text>
+        Bienvenido a <Text style={[styles.brandText, {color: theme.colors.primary}]}>Tribe</Text>
       </Text>
 
-      
-      <Text style={styles.labelText}>Correo</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingresa tu correo"
-        placeholderTextColor="#a9a9a9"
-        keyboardType="email-address"
-      />
+    
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Correo</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingresa tu correo"
+          placeholderTextColor="#a9a9a9"
+          keyboardType="email-address"
+        />
+      </View>
 
       
-      <Text style={styles.labelText}>Contraseña</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingresa tu contraseña"
-        placeholderTextColor="#a9a9a9"
-        secureTextEntry
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.labelText}>Contraseña</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingresa tu contraseña"
+          placeholderTextColor="#a9a9a9"
+          secureTextEntry
+        />
+      </View>
 
      
       <TouchableOpacity 
@@ -46,11 +48,13 @@ const LoginScreen = ({ navigation }) => {
 
       
       <View style={styles.linksContainer}>
-        <TouchableOpacity onPress={() => {/* recuperar contraseña */}}>
-          <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
+        <TouchableOpacity onPress={() => {/* lógica para recuperar contraseña */}}>
+          <Text style={[styles.linkText, { color: theme.colors.primary }]}>¿Olvidaste tu contraseña?</Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.signupContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')}>
-          <Text style={styles.linkText}>Regístrate</Text>
+          <Text style={[styles.linkText, { color: theme.colors.primary }]}>Regístrate</Text>
         </TouchableOpacity>
       </View>
 
@@ -60,10 +64,10 @@ const LoginScreen = ({ navigation }) => {
       
       <TouchableOpacity style={styles.googleButton}>
         <Image 
-          source={require('C:\Projects\Tribe-1\TribeFrontend\app\assets\images\icons\GoogleSignIN.png')} 
-          style={styles.googleIcon}
+          source={theme.googleButton} 
+          style={styles.googleImage}
+          resizeMode="contain"
         />
-        <Text style={styles.googleButtonText}>Google</Text>
       </TouchableOpacity>
     </View>
   );
@@ -81,18 +85,23 @@ const styles = StyleSheet.create({
     width: 100, 
     height: 100,
     marginBottom: 20,
+    alignSelf: 'flex-start',
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 30,
+    alignSelf: 'flex-start',
   },
   brandText: {
-    color: theme.colors.primary, 
+    fontWeight: 'bold',
+  },
+  inputContainer: {
+    width: '90%',
+    marginBottom: 20,
   },
   labelText: {
-    alignSelf: 'flex-start',
     fontSize: 16,
     color: '#333',
     marginBottom: 5,
@@ -103,12 +112,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#EFEFEF',
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 20,
     fontSize: 16,
     color: '#333',
   },
   loginButton: {
-    width: '100%',
+    width: '90%',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -121,13 +129,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   linksContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    width: '90%',
+    marginBottom: 5,
+  },
+  signupContainer: {
+    width: '90%',
+    alignItems: 'flex-start',
     marginBottom: 30,
   },
   linkText: {
-    color: theme.colors.primary,
     fontSize: 14,
   },
   orText: {
@@ -135,25 +145,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: '70%',
+    height: 40,
     justifyContent: 'center',
-    width: '100%',
-    height: 50,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#EFEFEF',
+    alignItems: 'center',
     marginTop: 10,
   },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  googleButtonText: {
-    color: '#333',
-    fontSize: 16,
+  googleImage: {
+    width: '100%',
+    height: '100%',
   },
 });
 
