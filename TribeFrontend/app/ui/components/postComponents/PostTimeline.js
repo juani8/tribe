@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import ContentCarousel from './ContentCarousel';
 import { formatDistanceToNow } from 'date-fns'; // Optional: Helps to format the timestamp.
+
+import CustomTextNunito from '../generalPurposeComponents/CustomTextNunito';
 
 // PostTimeline component
 const PostTimeline = ({post}) => {
@@ -9,29 +11,34 @@ const PostTimeline = ({post}) => {
   return (
     <View style={styles.container}>
       {/* User info */}
+      <Image
+        source={post.userProfilePicture}
+        style={{ width: 100, height: 100, marginTop: 50 }}
+        resizeMode="contain"
+      />
       <View style={styles.header}>
-        <Text style={styles.username}>User: {post.userId}</Text>
-        <Text style={styles.timeAgo}>
+        <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
+        <CustomTextNunito style={styles.timeAgo}>
           {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-        </Text>
+        </CustomTextNunito>
       </View>
 
       {/* Post description */}
-      <Text style={styles.description}>{post.description}</Text>
+      <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
 
       {console.log(post.multimedia)}
       <ContentCarousel multimedia={post.multimedia} />
 
       {/* Post metadata */}
       <View style={styles.metadata}>
-        <Text style={styles.likes}>Likes: {post.likes}</Text>
-        <Text style={styles.comments}>Comments: {post.numberOfComments}</Text>
+        <CustomTextNunito style={styles.likes}>Likes: {post.likes}</CustomTextNunito>
+        <CustomTextNunito style={styles.comments}>Comments: {post.numberOfComments}</CustomTextNunito>
       </View>
 
       {/* Last comment */}
       <View style={styles.commentSection}>
-        <Text style={styles.commentUser}>Comment by {post.lastComment.userId}:</Text>
-        <Text style={styles.commentText}>"{post.lastComment.comment}"</Text>
+        <CustomTextNunito style={styles.commentUser}>Comment by {post.lastComment.userId}:</CustomTextNunito>
+        <CustomTextNunito style={styles.commentText}>"{post.lastComment.comment}"</CustomTextNunito>
       </View>
     </View>
   );
@@ -49,7 +56,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   username: {
-    fontWeight: 'bold',
     fontSize: 16,
   },
   timeAgo: {
@@ -65,21 +71,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 8,
   },
-  likes: {
-    fontWeight: 'bold',
-  },
-  comments: {
-    fontWeight: 'bold',
-  },
   commentSection: {
     marginTop: 8,
-  },
-  commentUser: {
-    fontWeight: 'bold',
-  },
-  commentText: {
-    fontStyle: 'italic',
-    color: 'gray',
   },
 });
 

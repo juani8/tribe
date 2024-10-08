@@ -12,6 +12,7 @@ import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 
 import { NavigateToLogin, NavigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
+import { NavigateToHome }  from 'helper/navigationHandlers/CoreNavigationHandlers';
 
 const WelcomeScreen = ({ navigation }) => {
   const [sliderState, setSliderState] = useState({ currentPage: 0 });
@@ -162,6 +163,7 @@ const FourthPart = ({ styles, theme, navigation }) => {
       <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
         <CustomButton title={'Únete ahora'} onPress={() => NavigateToSignup(navigation)}/>
         <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToLogin(navigation)}>Inicia sesión</CustomHighlightedTextNunito>
+        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToHome(navigation)}>Home (atajo)</CustomHighlightedTextNunito>
       </View>
     </View>
   );

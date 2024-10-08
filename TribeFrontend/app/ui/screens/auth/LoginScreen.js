@@ -59,10 +59,7 @@ const LoginScreen = ({ navigation }) => {
 
       
       <TouchableOpacity style={styles.googleButton}>
-        <Image 
-          source={require('C:\Projects\Tribe-1\TribeFrontend\app\assets\images\icons\GoogleSignIN.png')} 
-          style={styles.googleIcon}
-        />
+
         <Text style={styles.googleButtonText}>Google</Text>
       </TouchableOpacity>
     </View>
@@ -89,7 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   brandText: {
-    color: theme.colors.primary, 
+    color: '#F8F4F0', 
   },
   labelText: {
     alignSelf: 'flex-start',
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   linkText: {
-    color: theme.colors.primary,
+    color: '#F8F4F0',
     fontSize: 14,
   },
   orText: {

@@ -1,8 +1,10 @@
+const getRandomPicsumUrl = () => `https://picsum.photos/seed/${Math.random().toString(36).substr(2, 9)}/200/300`;
+
 const MockUpPostData = [
   {
     userId: "user_123",
     description: "A beautiful sunset over the mountains.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl(), getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: -34.6037,
       longitude: -58.3816
@@ -17,12 +19,13 @@ const MockUpPostData = [
       updatedAt: 1633036800
     },
     numberOfComments: 10,
-    createdAt: 1633036800
+    createdAt: 1633036800,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_456",
     description: "Delicious homemade pizza.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 40.7128,
       longitude: -74.0060
@@ -37,12 +40,13 @@ const MockUpPostData = [
       updatedAt: 1633123200
     },
     numberOfComments: 15,
-    createdAt: 1633123200
+    createdAt: 1633123200,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_001",
     description: "A day at the beach.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 36.7783,
       longitude: -119.4179
@@ -57,12 +61,13 @@ const MockUpPostData = [
       updatedAt: 1633036800
     },
     numberOfComments: 8,
-    createdAt: 1633036800
+    createdAt: 1633036800,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_002",
     description: "Hiking adventure.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 34.0522,
       longitude: -118.2437
@@ -77,12 +82,13 @@ const MockUpPostData = [
       updatedAt: 1633123200
     },
     numberOfComments: 5,
-    createdAt: 1633123200
+    createdAt: 1633123200,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_003",
     description: "City skyline at night.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 51.5074,
       longitude: -0.1278
@@ -97,12 +103,13 @@ const MockUpPostData = [
       updatedAt: 1633209600
     },
     numberOfComments: 12,
-    createdAt: 1633209600
+    createdAt: 1633209600,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_004",
     description: "Snowy mountains.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 46.6034,
       longitude: 1.8883
@@ -117,12 +124,13 @@ const MockUpPostData = [
       updatedAt: 1633296000
     },
     numberOfComments: 20,
-    createdAt: 1633296000
+    createdAt: 1633296000,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_005",
     description: "Delicious breakfast.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 48.8566,
       longitude: 2.3522
@@ -137,12 +145,13 @@ const MockUpPostData = [
       updatedAt: 1633382400
     },
     numberOfComments: 7,
-    createdAt: 1633382400
+    createdAt: 1633382400,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_006",
     description: "Concert night.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 40.7306,
       longitude: -73.9352
@@ -157,12 +166,13 @@ const MockUpPostData = [
       updatedAt: 1633468800
     },
     numberOfComments: 14,
-    createdAt: 1633468800
+    createdAt: 1633468800,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_007",
     description: "Art gallery visit.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 35.6895,
       longitude: 139.6917
@@ -177,12 +187,13 @@ const MockUpPostData = [
       updatedAt: 1633555200
     },
     numberOfComments: 4,
-    createdAt: 1633555200
+    createdAt: 1633555200,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_008",
     description: "Camping under the stars.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 37.7749,
       longitude: -122.4194
@@ -197,12 +208,13 @@ const MockUpPostData = [
       updatedAt: 1633641600
     },
     numberOfComments: 9,
-    createdAt: 1633641600
+    createdAt: 1633641600,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_009",
     description: "Street food festival.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 52.5200,
       longitude: 13.4050
@@ -217,12 +229,13 @@ const MockUpPostData = [
       updatedAt: 1633728000
     },
     numberOfComments: 11,
-    createdAt: 1633728000
+    createdAt: 1633728000,
+    userProfilePicture: getRandomPicsumUrl()
   },
   {
     userId: "user_010",
     description: "Sunrise yoga session.",
-    multimedia: ["https://picsum.photos/seed/picsum/200/300", "https://picsum.photos/seed/picsum/200/300"],
+    multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 34.0522,
       longitude: -118.2437
@@ -237,7 +250,8 @@ const MockUpPostData = [
       updatedAt: 1633814400
     },
     numberOfComments: 6,
-    createdAt: 1633814400
+    createdAt: 1633814400,
+    userProfilePicture: getRandomPicsumUrl()
   }
 ];
 
