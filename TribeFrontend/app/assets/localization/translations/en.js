@@ -22,6 +22,8 @@ export default {
     welcomeTitleThirdPage: { part1: 'Beyond ', part2: 'Connection' },
     welcomeDescriptionThirdPage: { part1: 'At ' , part2: 'Tribe' , part3: ', every interaction is an opportunity to learn and grow.' },
     welcomeTitleFourthPage: { part1: 'Tribe', part2: ' is waiting for you' },
+    welcomeGotoSignup: 'Join Now',
+    welcomeGotoLogin: 'Go to Signin',
 
     // Login Screen
     loginTitle: 'Login Screen',

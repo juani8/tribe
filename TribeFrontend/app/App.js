@@ -22,6 +22,7 @@ import TextKey from 'assets/localization/TextKey';
 
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
 
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 

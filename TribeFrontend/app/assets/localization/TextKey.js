@@ -45,6 +45,8 @@ const TextKey = {
         part1: 'welcomeTitleFourthPage.part1',
         part2: 'welcomeTitleFourthPage.part2'
     },
+    welcomeGotoSignup: 'welcomeGotoSignup',
+    welcomeGotoLogin: 'welcomeGotoSignin',
 
     // Login Screen
     loginTitle: 'loginTitle',
