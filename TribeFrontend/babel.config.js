@@ -19,5 +19,6 @@ module.exports = {
         },
       },
     ],
+    'react-native-reanimated/plugin',  // Move this out into its own array
   ],
 };

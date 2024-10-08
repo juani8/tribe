@@ -22,6 +22,8 @@ export default {
     welcomeTitleThirdPage: { part1: 'Más allá de la ', part2: 'Conexión' },
     welcomeDescriptionThirdPage: { part1: 'En ', part2: 'Tribe', part3: ', cada interacción es una oportunidad para aprender y crecer.' },
     welcomeTitleFourthPage: { part1: 'Tribe', part2: ' te está esperando' },
+    welcomeGotoSignup: 'Únete ahora',
+    welcomeGotoLogin: 'Iniciar sesión',
 
     // Login Screen
     loginTitle: 'Pantalla de Inicio de Sesión',

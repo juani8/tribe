@@ -159,8 +159,8 @@ const FourthPart = ({ styles, theme }) => {
         </CustomTextNunito>
       </View>
       <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
-        <CustomButton title={'Únete ahora'} />
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }}>Inicia sesión </CustomHighlightedTextNunito>
+        <CustomButton title={I18n.t(TextKey.welcomeGoToSignup)} />
+        <CustomHighlightedTextNunito style={{ textAlign: 'center' }}>{I18n.t(TextKey.welcomeGoToLogin)}</CustomHighlightedTextNunito>
       </View>
     </View>
   );
