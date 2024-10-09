@@ -23,6 +23,12 @@ export { default as SignInSquare } from './icons/Sign_in_square.png';
 export { default as SunFill } from './icons/Sun_fill.png';
 export { default as Trash } from './icons/Trash.png';
 export { default as UserFill } from './icons/User_fill.png';
+export { default as Chat } from './icons/Chat.png';
+export { default as UserCircleLight } from './icons/User_circle_light.png';
+export { default as Search } from './icons/Search.png';
+export { default as Menu } from './icons/Menu.png';
+export { default as Back } from './icons/Back.png';
+export { default as GoogleSignIn } from './icons/Google-Sign-In.png';
 
 // logo
 export { default as LogoDarkMode } from './logo/logoDarkMode.png';

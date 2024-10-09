@@ -62,11 +62,6 @@ export default function TimelineScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header title and message */}
-      <View style={styles.header}>
-        <Text style={styles.title}>{I18n.t(TextKey.timelineTitle)}</Text>
-        <Text style={styles.message}>{I18n.t(TextKey.timelineMessage)}</Text>
-      </View>
 
       {/* FlatList with pull to refresh and infinite scroll */}
       <FlatList
@@ -87,7 +82,7 @@ export default function TimelineScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
     backgroundColor: 'white',
   },
   header: {

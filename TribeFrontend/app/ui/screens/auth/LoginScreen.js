@@ -5,6 +5,8 @@ import { useTheme } from 'context/ThemeContext';
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme(); 
 
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.container}>
       <Image 
@@ -63,17 +65,17 @@ const LoginScreen = ({ navigation }) => {
 
       
       <TouchableOpacity style={styles.googleButton}>
-        <Image 
+{/*         <Image 
           source={theme.googleButton} 
           style={styles.googleImage}
           resizeMode="contain"
-        />
+        /> */}
       </TouchableOpacity>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -138,6 +140,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   linkText: {
+    color: theme.colors.primary,
     fontSize: 14,
   },
   orText: {
