@@ -50,9 +50,10 @@ const LoginScreen = ({ navigation }) => {
 
       
       <View style={styles.linksContainer}>
-        <TouchableOpacity onPress={() => {/* lógica para recuperar contraseña */}}>
-          <Text style={[styles.linkText, { color: theme.colors.primary }]}>¿Olvidaste tu contraseña?</Text>
-        </TouchableOpacity>
+      < TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
+        <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
+      </TouchableOpacity>
+
       </View>
       <View style={styles.signupContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')}>
