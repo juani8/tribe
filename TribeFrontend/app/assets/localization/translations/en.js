@@ -10,6 +10,8 @@ export default {
     mainNavegation: 'Main',
     uploadNavegation: 'Upload',
     searchNavegation: 'Search',
+    notificationsNavegation: 'Notifications',
+    userProfileNavegation: 'User Profile',
 
     // Options
     changeLanguage: 'Change Language',
@@ -56,4 +58,15 @@ export default {
     // Search Screen
     searchTitle: 'Search Screen',
     searchMessage: 'Please enter your search query',
+
+    // Header
+    headerTitle: "Discover what's new, ",
+
+    // Settings
+    settingsTitle: 'Settings',
+    settingsOptionTheme: 'Theme',
+    settingsOptionLanguage: 'Language',
+    settingsOptionAccountOptions: 'Account Options',
+    settingsOptionMetrics: 'Metrics',
+    settingsOptionLogout: 'Logout',
 };

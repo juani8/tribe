@@ -10,6 +10,8 @@ export default {
     mainNavegation: 'Principal',
     uploadNavegation: 'Subir',
     searchNavegation: 'Buscar',
+    notificationsNavegation: 'Notificaciones',
+    userProfileNavegation: 'Perfil de Usuario',
 
     // Options
     changeLanguage: 'Cambiar Idioma',
@@ -59,4 +61,15 @@ export default {
 
     // Button Messages
     loginButton: 'Iniciar sesión',
+
+    // Header
+    headerTitle: 'Descubre lo nuevo, ',
+
+    // Settings
+    settingsTitle: 'Configuración',
+    settingsOptionTheme: 'Tema',
+    settingsOptionLanguage: 'Idioma',
+    settingsOptionAccountOptions: 'Opciones de cuenta',
+    settingsOptionMetrics: 'Métricas',
+    settingsOptionLogout: 'Cerrar sesión',
 };

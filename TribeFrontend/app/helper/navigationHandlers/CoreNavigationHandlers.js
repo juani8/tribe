@@ -12,3 +12,11 @@ export const NavigateToSearch = (navigation) => {
 export const NavigateToUpload = (navigation) => {
   navigation.navigate('Upload');
 } 
+
+export const NavigateToNotifications = (navigation) => {
+  navigation.navigate('Notifications');
+} 
+
+export const NavigateToUserProfile = (navigation) => {
+  navigation.navigate('UserProfile');
+} 

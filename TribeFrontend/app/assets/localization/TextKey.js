@@ -10,6 +10,8 @@ const TextKey = {
     mainNavegation: 'mainNavegation',
     uploadNavegation: 'uploadNavegation',
     searchNavegation: 'searchNavegation',
+    notificationsNavegation: 'notificationsNavegation',
+    userProfileNavegation: 'userProfileNavegation',
 
     // Options
     changeLanguage: 'changeLanguage',
@@ -79,6 +81,17 @@ const TextKey = {
     // Search Screen
     searchTitle: 'searchTitle',
     searchMessage: 'searchMessage',
+
+    // Header
+    headerTitle: 'headerTitle',
+
+    // Settings
+    settingsTitle: 'settingsTitle',
+    settingsOptionTheme: 'settingsOptionTheme',
+    settingsOptionLanguage: 'settingsOptionLanguage',
+    settingsOptionAccountOptions: 'settingsOptionAccountOptions',
+    settingsOptionMetrics: 'settingsOptionMetrics',
+    settingsOptionLogout: 'settingsOptionLogout',
 };
 
 export default TextKey;
