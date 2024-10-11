@@ -12,6 +12,7 @@ const TextKey = {
     searchNavegation: 'searchNavegation',
     notificationsNavegation: 'notificationsNavegation',
     userProfileNavegation: 'userProfileNavegation',
+    postDetailNavegation: 'postDetailNavegation',
 
     // Options
     changeLanguage: 'changeLanguage',
@@ -81,6 +82,10 @@ const TextKey = {
     // Search Screen
     searchTitle: 'searchTitle',
     searchMessage: 'searchMessage',
+
+    // Post Detail Screen
+    commentsTitle: 'commentsTitle',
+    commentsViewMore: 'commentsViewMore',
 
     // Header
     headerTitle: 'headerTitle',

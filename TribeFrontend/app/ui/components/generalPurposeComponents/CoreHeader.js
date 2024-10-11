@@ -7,6 +7,7 @@ import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
+import Separator from 'ui/components/generalPurposeComponents/Separator';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -48,14 +49,17 @@ const CoreHeader = () => {
                     </TouchableOpacity> 
                 </View>
             </View>
-            <View style={[styles.separator]}></View>
+
+            <Separator theme={theme} />
+
             {isMenuVisible && (
                     <PopupMenu
                     visible={isMenuVisible}
                     onClose={hideMenu}
                     options={menuOptions}
                     />
-                )}
+                )
+            }
         </View>
     );
 };
@@ -68,6 +72,7 @@ const createStyles = (theme) => StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 10,
         height: 90,
+        backgroundColor: theme.colors.background,
     },
     backButton: {
         fontSize: 18,

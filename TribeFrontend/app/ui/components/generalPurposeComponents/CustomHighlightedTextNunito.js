@@ -2,11 +2,11 @@ import React from 'react';
 import { Text } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 
-const CustomHighlightedTextNunito = ({ style, children, onPress, ...props }) => {
+const CustomHighlightedTextNunito = ({ style, children,  weight = 'Bold', onPress, ...props }) => {
   const { theme } = useTheme();
 
   const fontStyle = {
-    fontFamily: `Nunito-Bold`,
+    fontFamily: `Nunito-${weight}`,
   };
 
   const color = { color: theme.colors.primary };

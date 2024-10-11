@@ -24,3 +24,7 @@ export const NavigateToUserProfile = (navigation) => {
 export const NavigateToWelcome = (navigation) => {
   navigation.navigate('Welcome');
 } 
+
+export const NavigateToSpecificPost = (navigation, postId) => {
+  navigation.navigate('PostDetail', { postId });
+};

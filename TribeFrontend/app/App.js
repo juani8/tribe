@@ -17,8 +17,9 @@ import SignupScreen from 'ui/screens/auth/SignupScreen';
 import RecoverPasswordScreen from 'ui/screens/auth/RecoverPasswordScreen';
 import VerifyIdentityScreen from 'ui/screens/auth/VerifyIdentityScreen';
 import InitialConfigurationScreen from 'ui/screens/auth/InitialConfigurationScreen';
-import NotificationsScreen from './ui/screens/core/NotificationsScreen';
-import UserProfileScreen from './ui/screens/user/UserProfileScreen';
+import NotificationsScreen from 'ui/screens/core/NotificationsScreen';
+import UserProfileScreen from 'ui/screens/user/UserProfileScreen';
+import PostDetail from 'ui/screens/core/PostDetail';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -141,6 +142,14 @@ function MainStack() {
             <Stack.Screen
                 name="Main"
                 component={TabBar}
+            />
+            <Stack.Screen 
+                name="PostDetail" 
+                component={PostDetail} 
+                options={{
+                    headerShown: true,
+                    header: () => <ComplementaryHeader title={I18n.t(TextKey.postDetailNavegation)} />,
+                }}
             />
             <Stack.Screen
                 name="Notifications"

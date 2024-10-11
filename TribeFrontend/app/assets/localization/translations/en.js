@@ -12,6 +12,7 @@ export default {
     searchNavegation: 'Search',
     notificationsNavegation: 'Notifications',
     userProfileNavegation: 'User Profile',
+    postDetailNavegation: 'Post Detail',
 
     // Options
     changeLanguage: 'Change Language',
@@ -58,6 +59,10 @@ export default {
     // Search Screen
     searchTitle: 'Search Screen',
     searchMessage: 'Please enter your search query',
+    
+    // Post Detail Screen
+    commentsTitle: 'Comments',
+    commentsViewMore: 'See all comments',
 
     // Header
     headerTitle: "Discover what's new, ",

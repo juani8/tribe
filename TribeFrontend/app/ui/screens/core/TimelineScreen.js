@@ -90,7 +90,6 @@ export default function TimelineScreen() {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
     paddingTop: 10,
     backgroundColor: theme.colors.background,
   },

@@ -38,7 +38,7 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     changeNavigationBarColor(theme.colors.primary, true);
-  }, []);
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{
