@@ -27,7 +27,7 @@ const MockUpPostData = [
   {
     postId: "post_002",
     userId: "user_456",
-    description: "Delicious homemade pizza.",
+    description: "Delicious homemade pizza!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
     multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
     location: {
       latitude: 40.7128,

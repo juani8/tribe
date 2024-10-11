@@ -51,6 +51,7 @@ export default {
     // Timeline Screen
     timelineTitle: 'Timeline Screen',
     timelineMessage: 'This is the Timeline Screen',
+    timelineSeePostDetail: 'See more',
 
     // Upload Screen
     uploadTitle: 'Upload Screen',
