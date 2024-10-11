@@ -20,3 +20,7 @@ export const NavigateToNotifications = (navigation) => {
 export const NavigateToUserProfile = (navigation) => {
   navigation.navigate('UserProfile');
 } 
+
+export const NavigateToWelcome = (navigation) => {
+  navigation.navigate('Welcome');
+} 
