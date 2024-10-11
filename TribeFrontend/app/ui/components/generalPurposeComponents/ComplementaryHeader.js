@@ -5,7 +5,7 @@ import { NavigateBack } from 'helper/navigationHandlers/ExtraNavigationHandlers'
 import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
-import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
+import Separator from 'ui/components/generalPurposeComponents/Separator';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -27,7 +27,7 @@ const ComplementaryHeader = ({title}) => {
                     <CustomTextNunito weight='Bold' style={{fontSize: 18, color: theme.colors.primary, marginLeft: 12}}>{title}</CustomTextNunito>
                 </View>
             </View>
-            <View style={[styles.separator]}></View>
+            <Separator theme={theme} />
         </View>
     );
 };
@@ -40,6 +40,7 @@ const createStyles = (theme) => StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         height: 90,
+        backgroundColor: theme.colors.background,
     },
     backButton: {
         fontSize: 18,

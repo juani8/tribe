@@ -1,25 +1,31 @@
 import React from 'react';
-import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import ContentCarousel from './ContentCarousel';
+import { View, Image, StyleSheet } from 'react-native';
+import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns'; // Optional: Helps to format the timestamp.
 import { useTheme } from 'context/ThemeContext';
-import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from '../../../assets/images';
-import {NavigateToSpecificPost} from 'helper/navigationHandlers/CoreNavigationHandlers';
-import { useNavigation } from '@react-navigation/native';
+import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from 'assets/images';
+import Separator from 'ui/components/generalPurposeComponents/Separator';
+import GetPostById from 'helper/PostHelper';
+
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
 
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import CustomHighlightedTextNunito from '../../components/generalPurposeComponents/CustomHighlightedTextNunito';
 
-// PostTimeline component
-const PostTimeline = ({post}) => {
+
+const PostDetail = ({ route }) => {
+  const { postId } = route.params; // Extract postId from the route
   const { theme } = useTheme();
   const styles = createStyles(theme);
-  const navigation = useNavigation();
+
+  const post = GetPostById(postId); // Get the post by its id
 
   return (
     <View style={styles.container}>
       {/* User info */}
       <View style={styles.postHeader}>
-        <Image
+        <Image 
           source={{ uri: post.userProfilePicture }}
           style={{ width: 65, height: 65, borderRadius: 100 }}
           resizeMode="stretch"
@@ -32,13 +38,11 @@ const PostTimeline = ({post}) => {
         </View>
       </View>
 
-      <TouchableOpacity onPress={() => NavigateToSpecificPost(navigation, post.postId)}>
-        {/* Post description */}
-        <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
+      {/* Post description */}
+      <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
 
-        {/* Post multimedia */}
-        <ContentCarousel multimedia={post.multimedia} />
-      </TouchableOpacity>
+      {console.log(post.multimedia)}
+      <ContentCarousel multimedia={post.multimedia} />
 
       {/* Post metadata */}
       <View style={styles.metadata}>
@@ -60,6 +64,35 @@ const PostTimeline = ({post}) => {
           <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
         </View>
       </View>
+
+      <Separator color={theme.colors.detailText} style={{marginVertical: 20}} />
+      
+      {/* Comment section */} 
+      <View>
+        {/* Last comment */}
+        {post.lastComment && (
+          <>
+            <View style={styles.commentSection}>
+              <View style={{marginBottom:10}}>
+                <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>{I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})</CustomTextNunito>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between' }} >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
+                    <Image source={{uri: post.lastComment.userProfilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
+                    <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId}</CustomTextNunito>
+                  </View>
+                  <CustomTextNunito style={styles.timeAgo}>
+                    {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
+                  </CustomTextNunito>
+                </View>
+                <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
+              </View>
+              <View>
+                <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
+              </View>
+            </View>
+          </>
+        )}
+      </View>
     </View>
   );
 };
@@ -67,6 +100,7 @@ const PostTimeline = ({post}) => {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     paddingHorizontal: 20,
+    paddingTop: 20,
     paddingVertical: 4,
     borderRadius: 8,
     marginBottom: 16,
@@ -104,6 +138,10 @@ const createStyles = (theme) => StyleSheet.create({
     color: theme.colors.detailText,
     marginLeft: 4,
   },
+  commentSection: {
+    marginHorizontal: 10,
+    marginBottom: 10
+  },
 });
 
-export default PostTimeline;
+export default PostDetail;

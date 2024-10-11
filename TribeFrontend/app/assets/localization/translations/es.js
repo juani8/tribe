@@ -12,6 +12,7 @@ export default {
     searchNavegation: 'Buscar',
     notificationsNavegation: 'Notificaciones',
     userProfileNavegation: 'Perfil de Usuario',
+    postDetailNavegation: 'Detalle de Publicación',
 
     // Options
     changeLanguage: 'Cambiar Idioma',
@@ -58,6 +59,10 @@ export default {
     // Search Screen
     searchTitle: 'Pantalla de Búsqueda',
     searchMessage: 'Por favor, ingrese su consulta de búsqueda',
+
+    // Post Detail Screen
+    commentsTitle: 'Comentarios',
+    commentsViewMore: 'Ver todos los comentarios',
 
     // Button Messages
     loginButton: 'Iniciar sesión',
