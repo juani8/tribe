@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { BellFill, BellPinFill, Menu, UserCircleLight } from 'assets/images';
 import { Lamp, Aa, SettingFill, ChartPin, SignInSquare } from 'assets/images';
-import { NavigateToNotifications, NavigateToUserProfile } from 'helper/navigationHandlers/CoreNavigationHandlers';
+import { NavigateToNotifications, NavigateToUserProfile, NavigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
@@ -24,7 +24,7 @@ const CoreHeader = () => {
         { icon: Aa, label: I18n.t(TextKey.settingsOptionLanguage), onPress: () => console.log('Option B Selected') },
         { icon: SettingFill, label: I18n.t(TextKey.settingsOptionAccountOptions), onPress: () => console.log('Option B Selected') },
         { icon: ChartPin, label: I18n.t(TextKey.settingsOptionMetrics), onPress: () => console.log('Option B Selected') },
-        { icon: SignInSquare, label: I18n.t(TextKey.settingsOptionLogout), onPress: () => console.log('Option B Selected') },
+        { icon: SignInSquare, label: I18n.t(TextKey.settingsOptionLogout), onPress: () => NavigateToWelcome(navigation) },
       ], I18n.t(TextKey.settingsTitle));
     };
 

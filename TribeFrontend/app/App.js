@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { Image } from 'react-native';
+import { NavigationContainer, useRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
@@ -25,15 +25,57 @@ import TextKey from 'assets/localization/TextKey';
 
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
 import { UiProvider } from 'context/UiContext';
+import CustomTextNutito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
+import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabBar() {
+    const { theme } = useTheme();
+
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarStyle: {
+                    backgroundColor: theme.colors.primary,
+                },
+                tabBarLabel: ({ focused }) => {
+                    let label;
+                    switch (route.name) {
+                        case 'Home':
+                            label = I18n.t(TextKey.homeNavegation);
+                            break;
+                        case 'Upload':
+                            label = I18n.t(TextKey.uploadNavegation);
+                            break;
+                        case 'Search':
+                            label = I18n.t(TextKey.searchNavegation);
+                            break;
+                    }
+                    return <CustomTextNutito weight='Bold' style={{color: !focused ? theme.colors.secondary : theme.colors.background}}>{label}</CustomTextNutito>;
+                },
+                tabBarIcon: ({ focused }) => {
+                    let icon;
+                    switch (route.name) {
+                        case 'Home':
+                            icon = !focused ? HomeSelected : Home;
+                            break;
+                        case 'Upload':
+                            icon = !focused ? AddSquareSelected : AddSquare; 
+                            break;
+                        case 'Search':
+                            icon = !focused ? SearchAltSelected : SearchAlt;
+                            break;
+                    }
+                    return <Image source={icon} style={{  width: 24, height: 24, marginTop:8 }} />;
+                },
+                tabBarActiveTintColor: theme.colors.background,
+                tabBarInactiveTintColor: 'gray',
+            })}
+        >
             <Tab.Screen
                 name="Home"
                 component={TimelineScreen}

@@ -31,6 +31,12 @@ export { default as Back } from './icons/Back.png';
 export { default as GoogleSignIn } from './icons/Google-Sign-In.png';
 export { default as Aa } from './icons/Aa.png';
 export { default as ChartPin } from './icons/Chart_pin.png';
+export { default as AddSquareSelected } from './icons/Add_square_selected.png';
+export { default as HomeSelected } from './icons/Home_selected.png';
+export { default as SearchAltSelected } from './icons/Search_alt_selected.png';
+export { default as AddSquare } from './icons/Add_square.png';
+export { default as Home } from './icons/Home.png';
+export { default as SearchAlt } from './icons/Search_alt.png';
 
 // logo
 export { default as LogoDarkMode } from './logo/logoDarkMode.png';
