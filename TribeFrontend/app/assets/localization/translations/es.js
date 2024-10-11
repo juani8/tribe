@@ -51,6 +51,7 @@ export default {
     // Timeline Screen
     timelineTitle: 'Pantalla de Línea de Tiempo',
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
+    timelineSeePostDetail: 'Ver mas',
 
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',

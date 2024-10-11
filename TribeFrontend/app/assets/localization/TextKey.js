@@ -74,6 +74,7 @@ const TextKey = {
     // Timeline Screen
     timelineTitle: 'timelineTitle',
     timelineMessage: 'timelineMessage',
+    timelineSeePostDetail: 'timelineSeePostDetail',
 
     // Upload Screen
     uploadTitle: 'uploadTitle',

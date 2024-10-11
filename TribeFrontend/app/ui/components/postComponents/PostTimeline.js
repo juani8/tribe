@@ -7,7 +7,11 @@ import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from
 import {NavigateToSpecificPost} from 'helper/navigationHandlers/CoreNavigationHandlers';
 import { useNavigation } from '@react-navigation/native';
 
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 
 // PostTimeline component
 const PostTimeline = ({post}) => {
@@ -35,10 +39,14 @@ const PostTimeline = ({post}) => {
       <TouchableOpacity onPress={() => NavigateToSpecificPost(navigation, post.postId)}>
         {/* Post description */}
         <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
-
-        {/* Post multimedia */}
-        <ContentCarousel multimedia={post.multimedia} />
+        <View>
+          <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.timelineSeePostDetail)}</CustomHighlightedTextNunito>
+        </View>
       </TouchableOpacity>
+
+      {/* Post multimedia */}
+      <ContentCarousel multimedia={post.multimedia} />
+
 
       {/* Post metadata */}
       <View style={styles.metadata}>
