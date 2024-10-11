@@ -19,10 +19,18 @@ export { default as PinAltFill } from './icons/Pin_alt_fill.png';
 export { default as SearchAltFill } from './icons/Search_alt_fill.png';
 export { default as SettingFill } from './icons/Setting_fill.png';
 export { default as Share } from './icons/Share.png';
-export { default as SignInSquare } from './icons/Sign_in_square.png';
+export { default as SignInSquare } from './icons/Sign_in_squre.png';
 export { default as SunFill } from './icons/Sun_fill.png';
 export { default as Trash } from './icons/Trash.png';
 export { default as UserFill } from './icons/User_fill.png';
+export { default as Chat } from './icons/Chat.png';
+export { default as UserCircleLight } from './icons/User_circle_light.png';
+export { default as Search } from './icons/Search.png';
+export { default as Menu } from './icons/Menu.png';
+export { default as Back } from './icons/Back.png';
+export { default as GoogleSignIn } from './icons/Google-Sign-In.png';
+export { default as Aa } from './icons/Aa.png';
+export { default as ChartPin } from './icons/Chart_pin.png';
 
 // logo
 export { default as LogoDarkMode } from './logo/logoDarkMode.png';

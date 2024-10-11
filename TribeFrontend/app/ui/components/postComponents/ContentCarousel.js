@@ -16,7 +16,7 @@ const ContentCarousel = ({ multimedia }) => {
       <FlatList
         data={multimedia}
         horizontal
-        style={{margin: 16}}
+        style={{marginVertical: 16}}
         bounces={false}
         onScroll={onScroll}
         scrollEventThrottle={18}

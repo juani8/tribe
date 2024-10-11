@@ -1,85 +1,102 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import ContentCarousel from './ContentCarousel';
 import { formatDistanceToNow } from 'date-fns'; // Optional: Helps to format the timestamp.
+import { useTheme } from 'context/ThemeContext';
+import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from '../../../assets/images';
+
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 // PostTimeline component
 const PostTimeline = ({post}) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
 
   return (
     <View style={styles.container}>
       {/* User info */}
-      <View style={styles.header}>
-        <Text style={styles.username}>User: {post.userId}</Text>
-        <Text style={styles.timeAgo}>
-          {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-        </Text>
+      <View style={styles.postHeader}>
+        <Image
+          source={{ uri: post.userProfilePicture }}
+          style={{ width: 65, height: 65, borderRadius: 100 }}
+          resizeMode="stretch"
+        />
+        <View style={styles.header}>
+          <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
+          <CustomTextNunito style={styles.timeAgo}>
+            {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
+          </CustomTextNunito>
+        </View>
       </View>
 
       {/* Post description */}
-      <Text style={styles.description}>{post.description}</Text>
+      <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
 
       {console.log(post.multimedia)}
       <ContentCarousel multimedia={post.multimedia} />
 
       {/* Post metadata */}
       <View style={styles.metadata}>
-        <Text style={styles.likes}>Likes: {post.likes}</Text>
-        <Text style={styles.comments}>Comments: {post.numberOfComments}</Text>
-      </View>
-
-      {/* Last comment */}
-      <View style={styles.commentSection}>
-        <Text style={styles.commentUser}>Comment by {post.lastComment.userId}:</Text>
-        <Text style={styles.commentText}>"{post.lastComment.comment}"</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
+            <Image source={Chat} style={{ width: 24, height: 24 }} />
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
+            <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
+          </View>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
+          <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
+        </View>
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: 'white',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
     borderRadius: 8,
     marginBottom: 16,
   },
-  header: {
+  postHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  header: {
+    flexDirection: 'column',
+    marginLeft: 16,
+    justifyContent: 'center',
   },
   username: {
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
+    color: theme.colors.text,
   },
   timeAgo: {
-    color: 'gray',
-    fontSize: 14,
+    fontSize: 12,
+    color: theme.colors.detailText,
   },
   description: {
-    marginVertical: 8,
-    fontSize: 16,
+    marginTop: 8,
+    fontSize: 12,
+    color: theme.colors.text,
   },
   metadata: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 8,
   },
-  likes: {
-    fontWeight: 'bold',
-  },
-  comments: {
-    fontWeight: 'bold',
-  },
-  commentSection: {
-    marginTop: 8,
-  },
-  commentUser: {
-    fontWeight: 'bold',
-  },
-  commentText: {
-    fontStyle: 'italic',
-    color: 'gray',
+  textOfMetadata: {
+    fontSize: 12,
+    color: theme.colors.detailText,
+    marginLeft: 4,
   },
 });
 

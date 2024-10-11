@@ -4,12 +4,19 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import MockUpData from 'models/MockUpPostData'; // Import mock data
 import PostTimeline from 'ui/components/postComponents/PostTimeline'; // Import PostTimeline
+import { useUiContext } from 'context/UiContext';
+import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
+import { useTheme } from 'context/ThemeContext';
 
 export default function TimelineScreen() {
   const [data, setData] = useState([]); // Initial empty array for posts
   const [page, setPage] = useState(1); // Pagination page number
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false); // Loader for infinite scroll
   const [refreshing, setRefreshing] = useState(false); // Refresh state
+
+  const { theme } = useTheme();
+
+  const styles = createStyles(theme);
 
   // Simulate fetching paginated data
   const fetchData = (nextPage = 1, refreshing = false) => {
@@ -62,11 +69,6 @@ export default function TimelineScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header title and message */}
-      <View style={styles.header}>
-        <Text style={styles.title}>{I18n.t(TextKey.timelineTitle)}</Text>
-        <Text style={styles.message}>{I18n.t(TextKey.timelineMessage)}</Text>
-      </View>
 
       {/* FlatList with pull to refresh and infinite scroll */}
       <FlatList
@@ -80,27 +82,17 @@ export default function TimelineScreen() {
         onEndReachedThreshold={0.8} // Trigger load when scrolled 80%
         ListFooterComponent={ListEndLoader} // Loader for infinite scroll
       />
+
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: 'white',
-  },
-  header: {
-    marginBottom: 16,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  message: {
-    fontSize: 16,
-    color: 'gray',
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    backgroundColor: theme.colors.background,
   },
   loader: {
     padding: 16,
