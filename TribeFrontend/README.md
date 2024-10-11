@@ -94,6 +94,34 @@
    - [Fuente de solución propuesta](https://medium.com/@abigail-edwin/solved-failure-calling-service-package-broken-pipe-32-3b860c7e04bb)
    - La solución es eliminar y reinstalar el emulador desde el **Virtual Device Manager** en Android Studio.
 
+3. **ADB no se reconoce como un comando interno o externo**:
+   a. Configurar la variable de entorno `ANDROID_HOME`**: Abre Git Bash y ejecuta:
+      ```bash
+      export ANDROID_HOME=/c/Users/<username>/AppData/Local/Android/Sdk
+      ```
+   b. Agregar `platform-tools` al `PATH`: Ejecuta:
+     ```bash
+     export PATH=$PATH:$ANDROID_HOME/platform-tools
+     ```
+   c. Verificar la configuración: Ejecuta:
+     ```bash
+     echo $ANDROID_HOME
+     echo $PATH
+     ```
+   d. Probar ADB: Ejecuta:
+     ```bash
+     adb devices
+     ```
+4. **No se encontraron emuladores**:
+   a. Crear un AVD:
+      1. Abre Android Studio.
+      2. Ve a "Tools" > "AVD Manager".
+      3. Crea un nuevo dispositivo virtual si aún no lo has hecho.
+   b. Lanzar el emulador: Selecciona el AVD que creaste y haz clic en "Launch" (triangulito).
+   c. Verificar dispositivos conectados: Ejecuta:
+     ```bash
+     adb devices
+     ```
 ## Estrucutura de subdirectorios de la carpeta App:
 
 ```bash
