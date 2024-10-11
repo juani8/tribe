@@ -95,6 +95,7 @@
    - La solución es eliminar y reinstalar el emulador desde el **Virtual Device Manager** en Android Studio.
 
 3. **ADB no se reconoce como un comando interno o externo**:
+
    a. Configurar la variable de entorno `ANDROID_HOME`**: Abre Git Bash y ejecuta:
       ```bash
       export ANDROID_HOME=/c/Users/<username>/AppData/Local/Android/Sdk
@@ -112,7 +113,7 @@
      ```bash
      adb devices
      ```
-4. **No se encontraron emuladores**:
+5. **No se encontraron emuladores**:
    a. Crear un AVD:
       1. Abre Android Studio.
       2. Ve a "Tools" > "AVD Manager".
