@@ -64,6 +64,8 @@ export default {
     // Post Detail Screen
     commentsTitle: 'Comments',
     commentsViewMore: 'See all comments',
+    commentsWriteCommentPlaceholder: 'Write a comment...',
+    commentsMaxCharactersReached: 'Max limit reached!',
 
     // Header
     headerTitle: "Discover what's new, ",

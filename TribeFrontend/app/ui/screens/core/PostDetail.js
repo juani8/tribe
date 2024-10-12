@@ -1,81 +1,96 @@
-import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Image, StyleSheet, TextInput, KeyboardAvoidingView, Platform, ScrollView, Keyboard } from 'react-native';
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
-import { formatDistanceToNow } from 'date-fns'; // Optional: Helps to format the timestamp.
+import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
 import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from 'assets/images';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import GetPostById from 'helper/PostHelper';
-
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
-
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import CustomHighlightedTextNunito from '../../components/generalPurposeComponents/CustomHighlightedTextNunito';
-
+import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
+import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 
 const PostDetail = ({ route }) => {
-  const { postId } = route.params; // Extract postId from the route
+  const { postId } = route.params;
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
 
-  const post = GetPostById(postId); // Get the post by its id
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
+      setKeyboardOffset(140);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardOffset(0);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const post = GetPostById(postId);
 
   return (
-    <View style={styles.container}>
-      {/* User info */}
-      <View style={styles.postHeader}>
-        <Image 
-          source={{ uri: post.userProfilePicture }}
-          style={{ width: 65, height: 65, borderRadius: 100 }}
-          resizeMode="stretch"
-        />
-        <View style={styles.header}>
-          <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
-          <CustomTextNunito style={styles.timeAgo}>
-            {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-          </CustomTextNunito>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      keyboardVerticalOffset={keyboardOffset}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Post content and other elements */}
+        <View style={styles.postHeader}>
+          <Image 
+            source={{ uri: post.userProfilePicture }}
+            style={{ width: 65, height: 65, borderRadius: 100 }}
+            resizeMode="stretch"
+          />
+          <View style={styles.header}>
+            <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
+            <CustomTextNunito style={styles.timeAgo}>
+              {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
+            </CustomTextNunito>
+          </View>
         </View>
-      </View>
 
-      {/* Post description */}
-      <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
+        <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
+        <ContentCarousel multimedia={post.multimedia} />
 
-      {console.log(post.multimedia)}
-      <ContentCarousel multimedia={post.multimedia} />
-
-      {/* Post metadata */}
-      <View style={styles.metadata}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
+        <View style={styles.metadata}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
+              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
+              <Image source={Chat} style={{ width: 24, height: 24 }} />
+              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
+              <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
+            </View>
+          </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
-            <Image source={Chat} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
-            <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
+            <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-          <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
-        </View>
-      </View>
 
-      <Separator color={theme.colors.detailText} style={{marginVertical: 20}} />
-      
-      {/* Comment section */} 
-      <View>
-        {/* Last comment */}
-        {post.lastComment && (
-          <>
+        <Separator color={theme.colors.detailText} style={{marginVertical: 20}} />
+        
+        {/* Comment section */}
+        <View>
+          {post.lastComment && (
             <View style={styles.commentSection}>
               <View style={{marginBottom:10}}>
-                <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>{I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})</CustomTextNunito>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between' }} >
+                <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
+                  {I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})
+                </CustomTextNunito>
+                <CustomInputNunito />
+                <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
                     <Image source={{uri: post.lastComment.userProfilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
                     <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId}</CustomTextNunito>
@@ -90,10 +105,11 @@ const PostDetail = ({ route }) => {
                 <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
               </View>
             </View>
-          </>
-        )}
-      </View>
-    </View>
+          )}
+        </View>
+        <View style={{height: 100}}></View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
