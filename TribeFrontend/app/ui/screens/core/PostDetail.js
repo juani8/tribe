@@ -107,7 +107,6 @@ const PostDetail = ({ route }) => {
             </View>
           )}
         </View>
-        <View style={{height: 100}}></View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
