@@ -64,6 +64,8 @@ export default {
     // Post Detail Screen
     commentsTitle: 'Comentarios',
     commentsViewMore: 'Ver todos los comentarios',
+    commentsWriteCommentPlaceholder: 'Escribe un comentario...',
+    commentsMaxCharactersReached: '¡Límite máximo de caracteres alcanzado!',
 
     // Button Messages
     loginButton: 'Iniciar sesión',

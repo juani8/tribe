@@ -37,6 +37,7 @@ export { default as SearchAltSelected } from './icons/Search_alt_selected.png';
 export { default as AddSquare } from './icons/Add_square.png';
 export { default as Home } from './icons/Home.png';
 export { default as SearchAlt } from './icons/Search_alt.png';
+export { default as Send } from './icons/Send.png';
 
 // logo
 export { default as LogoDarkMode } from './logo/logoDarkMode.png';

@@ -87,6 +87,8 @@ const TextKey = {
     // Post Detail Screen
     commentsTitle: 'commentsTitle',
     commentsViewMore: 'commentsViewMore',
+    commentsWriteCommentPlaceholder: 'commentsWriteCommentPlaceholder',
+    commentsMaxCharactersReached: 'commentsMaxCharactersReached',
 
     // Header
     headerTitle: 'headerTitle',
