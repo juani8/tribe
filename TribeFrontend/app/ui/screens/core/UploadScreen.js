@@ -7,7 +7,7 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import { useTheme } from 'context/ThemeContext';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { selectFromGallery, openCamera } from 'helper/permissionHandlers/StorageAndCameraPermissions';
 import CheckBox from '@react-native-community/checkbox';
 
 export default function UploadScreen() {
@@ -18,96 +18,7 @@ export default function UploadScreen() {
 
     const styles = createStyles(theme);
 
-    // Request permissions for camera and external storage
-    const requestPermission = async (permissionType, rationale) => {
-        try {
-            const granted = await PermissionsAndroid.request(permissionType, rationale);
-            return granted === PermissionsAndroid.RESULTS.GRANTED;
-        } catch (err) {
-            console.warn(err);
-            return false;
-        }
-    };
-
-    // Function to request external storage permission
-    const requestExternalStoragePermission = async () => {
-        if (Platform.OS === 'android' && Platform.Version < 29) {
-            // Request read and write permissions for Android below API 29
-            const readGranted = await requestPermission(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE, {
-                title: 'App Storage Permission',
-                message: 'App needs access to your storage to select media',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
-            });
-            const writeGranted = await requestPermission(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
-                title: 'App Storage Permission',
-                message: 'App needs access to your storage to select media',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
-            });
-            return readGranted && writeGranted;
-        } else if (Platform.OS === 'android') {
-            // For Android 10 and above, request only read permission
-            return await requestPermission(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE, {
-                title: 'App Storage Permission',
-                message: 'App needs access to your storage to select media',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
-            });
-        }
-        return true;
-    };
-
-    // Function to select media from gallery
-    const selectFromGallery = async () => {
-        if (Platform.OS === 'android') {
-            const hasPermission = await requestExternalStoragePermission();
-            if (hasPermission) {
-                launchImageLibrary({ mediaType: 'mixed', selectionLimit: 5 }, (response) => {
-                    if (response.didCancel) {
-                        console.log('User cancelled image picker');
-                    } else if (response.errorCode) {
-                        Alert.alert('Error', response.errorMessage);
-                    } else {
-                        const assets = response.assets || [];
-                        setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
-                    }
-                });
-            } else {
-                Alert.alert('Permission denied', 'App needs storage permission to access media.');
-            }
-        }
-    };
-
-    // Function to open the camera for media capture
-    const openCamera = async () => {
-        const hasPermission = await requestPermission(PermissionsAndroid.PERMISSIONS.CAMERA, {
-            title: 'App Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-        });
-
-        if (hasPermission) {
-            launchCamera({ mediaType: 'mixed' }, (response) => {
-                if (response.didCancel) {
-                    console.log('User cancelled camera');
-                } else if (response.errorCode) {
-                    Alert.alert('Error', response.errorMessage);
-                } else {
-                    const assets = response.assets || [];
-                    setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
-                }
-            });
-        } else {
-            Alert.alert('Permission denied', 'App needs camera permission to take photos or videos.');
-        }
-    };
-
+    
     // Function to remove selected media
     const removeMedia = (uri) => {
         setSelectedMedia(selectedMedia.filter(item => item.uri !== uri));
@@ -122,22 +33,32 @@ export default function UploadScreen() {
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
             <ScrollView 
                 style={[styles.container, { backgroundColor: theme.colors.background }]}
-                contentContainerStyle={{ alignItems: 'flex-start', justifyContent: 'flex-start', gap: 30 }}
+                contentContainerStyle={{ alignItems: 'flex-start', justifyContent: 'flex-start', gap: 25 }}
             >
-                {/* Display selected content */}
                 {selectedMedia.length > 0 && (
                     <View>
                         <CustomTextNunito style={{fontSize: 20}}>{I18n.t(TextKey.uploadSelectedContent)}</CustomTextNunito>
-                        <View style={styles.mediaContainer}>
-                            {selectedMedia.map((media, index) => (
-                                <View key={index} style={styles.mediaItem}>
-                                    <Image source={{ uri: media.uri }} style={styles.mediaThumbnail} />
-                                    <TouchableOpacity style={styles.removeButton} onPress={() => removeMedia(media.uri)}>
-                                        <CustomTextNunito weight={'Bold'} style={{color:theme.colors.background, marginTop: -4}}>x</CustomTextNunito>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
-                        </View>
+                        <ScrollView 
+                        horizontal 
+                        style={[styles.mediaContainer, { flexGrow: 0 }]}
+                        >
+                        {selectedMedia.map((media, index) => (
+                            <View key={index} style={styles.mediaItem}>
+                            <Image source={{ uri: media.uri }} style={styles.mediaThumbnail} />
+                            <TouchableOpacity 
+                                style={styles.removeButton} 
+                                onPress={() => removeMedia(media.uri)}
+                            >
+                                <CustomTextNunito 
+                                weight={'Bold'} 
+                                style={{ color: theme.colors.background, marginTop: -4 }}
+                                >
+                                x
+                                </CustomTextNunito>
+                            </TouchableOpacity>
+                            </View>
+                        ))}
+                        </ScrollView>
                     </View>
                 )}
                 <View>
@@ -146,7 +67,7 @@ export default function UploadScreen() {
                         {/* Buttons for selecting from gallery and opening camera */}
                         <CustomButton 
                             title={I18n.t(TextKey.uploadSelectFromGallery)} 
-                            onPress={selectFromGallery} 
+                            onPress={() => selectFromGallery(selectedMedia, setSelectedMedia)} 
                             color={theme.colors.detailText} 
                             textWeight={'Bold'}
                             fullSize={true} 
@@ -154,7 +75,7 @@ export default function UploadScreen() {
                         />
                         <CustomButton 
                             title={I18n.t(TextKey.uploadSelectOpenCamera)} 
-                            onPress={openCamera} 
+                            onPress={() => openCamera(selectedMedia, setSelectedMedia)} 
                             color={theme.colors.detailText} 
                             textWeight={'Bold'}
                             fullSize={true} 
