@@ -22,6 +22,7 @@ async function connection() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
+    process.exit(1); // Finalizar el proceso en caso de error crítico
   }
 }
 
