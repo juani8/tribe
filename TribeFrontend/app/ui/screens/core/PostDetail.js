@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, TextInput, KeyboardAvoidingView, Platform, ScrollView, Keyboard } from 'react-native';
+import { View, Image, StyleSheet, TextInput, KeyboardAvoidingView, Platform, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
-import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from 'assets/images';
+import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill, Send } from 'assets/images';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import GetPostById from 'helper/PostHelper';
 import I18n from 'assets/localization/i18n';
@@ -14,6 +14,7 @@ import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInpu
 
 const PostDetail = ({ route }) => {
   const { postId } = route.params;
+  const [commentText, setCommentText] = useState('');
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
@@ -35,80 +36,89 @@ const PostDetail = ({ route }) => {
   const post = GetPostById(postId);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
-      keyboardVerticalOffset={keyboardOffset}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Post content and other elements */}
-        <View style={styles.postHeader}>
-          <Image 
-            source={{ uri: post.userProfilePicture }}
-            style={{ width: 65, height: 65, borderRadius: 100 }}
-            resizeMode="stretch"
-          />
-          <View style={styles.header}>
-            <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
-            <CustomTextNunito style={styles.timeAgo}>
-              {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-            </CustomTextNunito>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        keyboardVerticalOffset={keyboardOffset}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          {/* Post content and other elements */}
+          <View style={styles.postHeader}>
+            <Image 
+              source={{ uri: post.userProfilePicture }}
+              style={{ width: 65, height: 65, borderRadius: 100 }}
+              resizeMode="stretch"
+            />
+            <View style={styles.header}>
+              <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
+              <CustomTextNunito style={styles.timeAgo}>
+                {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
+              </CustomTextNunito>
+            </View>
           </View>
-        </View>
 
-        <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
-        <ContentCarousel multimedia={post.multimedia} />
+          <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
+          <ContentCarousel multimedia={post.multimedia} />
 
-        <View style={styles.metadata}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
+          <View style={styles.metadata}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
+                <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
+                <Image source={Chat} style={{ width: 24, height: 24 }} />
+                <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
+                <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
+              </View>
+            </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
-              <Image source={Chat} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
-              <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
+              <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
+              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
-          </View>
-        </View>
 
-        <Separator color={theme.colors.detailText} style={{marginVertical: 20}} />
-        
-        {/* Comment section */}
-        <View>
-          {post.lastComment && (
-            <View style={styles.commentSection}>
-              <View style={{marginBottom:10}}>
-                <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
-                  {I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})
-                </CustomTextNunito>
-                <CustomInputNunito />
-                <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-                    <Image source={{uri: post.lastComment.userProfilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
-                    <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId}</CustomTextNunito>
-                  </View>
-                  <CustomTextNunito style={styles.timeAgo}>
-                    {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
+          <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
+          
+          {/* Comment section */}
+          <View>
+            {post.lastComment && (
+              <View style={styles.commentSection}>
+                <View style={{marginBottom:10}}>
+                  <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
+                    {I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})
                   </CustomTextNunito>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{width: '92%'}}>
+                      <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
+                    </View>
+                    <View>
+                      <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
+                    </View>
+                  </View>
+                  <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
+                      <Image source={{uri: post.lastComment.userProfilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
+                      <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId}</CustomTextNunito>
+                    </View>
+                    <CustomTextNunito style={styles.timeAgo}>
+                      {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
+                    </CustomTextNunito>
+                  </View>
+                  <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
                 </View>
-                <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
+                <View>
+                  <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
+                </View>
               </View>
-              <View>
-                <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
-              </View>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

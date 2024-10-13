@@ -56,6 +56,13 @@ export default {
     // Upload Screen
     uploadTitle: 'Upload Screen',
     uploadMessage: 'Please select a file to upload',
+    uploadSelectedContent: 'Selected content',
+    uploadMoreMessage: 'Add more content',
+    uploadSelectFromGallery: 'Select from gallery',
+    uploadSelectOpenCamera: 'Open camera',
+    uploadDescriptionPlaceholder: 'Enter a description...',
+    uploadAddLocation: 'Add actual location',
+    uploadConfirmation: 'Confirm',
 
     // Search Screen
     searchTitle: 'Search Screen',

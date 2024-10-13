@@ -55,7 +55,14 @@ export default {
 
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',
-    uploadMessage: 'Por favor, seleccione un archivo para subir',
+    uploadMessage: 'Por favor, seleccione un archivo (*)',
+    uploadSelectedContent: 'Contenido seleccionado',
+    uploadMoreMessage: 'Añadir mas contenido',
+    uploadSelectFromGallery: 'Seleccionar de la galería',
+    uploadSelectOpenCamera: 'Abrir cámara',
+    uploadDescriptionPlaceholder: 'Ingrese una descripción...',
+    uploadAddLocation: 'Agregar ubicación actual',
+    uploadConfirmation: 'Confirmar',
 
     // Search Screen
     searchTitle: 'Pantalla de Búsqueda',
