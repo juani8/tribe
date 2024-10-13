@@ -6,4 +6,5 @@ export default {
   buttonText: '#FFFFFF',
   detailText: '#5D5D5D',
   background: '#F9F5EF',
+  disabled: '#BDBDBD',
 }

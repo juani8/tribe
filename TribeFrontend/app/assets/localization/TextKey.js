@@ -79,6 +79,13 @@ const TextKey = {
     // Upload Screen
     uploadTitle: 'uploadTitle',
     uploadMessage: 'uploadMessage',
+    uploadSelectedContent: 'uploadSelectedContent',
+    uploadMoreMessage: 'uploadMoreMessage',
+    uploadSelectFromGallery: 'uploadSelectFromGallery',
+    uploadSelectOpenCamera: 'uploadSelectOpenCamera',
+    uploadDescriptionPlaceholder: 'uploadDescriptionPlaceholder',
+    uploadAddLocation: 'uploadAddLocation',
+    uploadConfirmation: 'uploadConfirmation',
 
     // Search Screen
     searchTitle: 'searchTitle',

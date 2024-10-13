@@ -1,3 +1,4 @@
+
 package com.tribefrontend
 
 import android.app.Application
@@ -12,6 +13,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import org.devio.rn.splashscreen.SplashScreen
 import android.os.Bundle
 
 class MainApplication : Application(), ReactApplication {
@@ -38,7 +40,5 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
-    SplashScreen.show(this) // Show the splash screen
   }
-
 }
