@@ -52,17 +52,8 @@ const requestExternalStoragePermission = async () => {
               buttonPositive: 'OK',
           });
 
-          // If you're handling audio files
-          const audioGranted = await requestPermission(PermissionsAndroid.PERMISSIONS.READ_MEDIA_AUDIO, {
-              title: 'App Storage Permission',
-              message: 'App needs access to your audio files',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-          });
-
           // Return true if any of the permissions are granted
-          return imageGranted || videoGranted || audioGranted;
+          return imageGranted || videoGranted;
       } else {
           // For Android 10+ (API 29-32)
           const readGranted = await requestPermission(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE, {
