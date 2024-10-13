@@ -107,13 +107,28 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core:1.9.0'
+    }
+}
+
 dependencies {
-    // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+
+    // Exclude any android support dependencies to avoid conflicts with AndroidX
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'com.android.support') {
+                details.useVersion "28.0.0"
+                details.because 'Using AndroidX and avoiding conflicts with com.android.support'
+            }
+        }
     }
 }
