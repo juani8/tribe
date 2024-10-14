@@ -53,6 +53,12 @@ export default {
     timelineMessage: 'This is the Timeline Screen',
     timelineSeePostDetail: 'See more',
 
+    // Timeline Screen (no connection)
+    noConnectionTitle: 'Connection Lost!',
+    noConnectionFirstMessage: 'It seems you are not connected to the Internet. To enjoy all the features of Tribe, make sure you have an active connection.',
+    noConnectionFirstMessageFirstItem: 'Check your Wi-Fi or mobile data connection',
+    noConnectionFirstMessageSecondItem: 'Try restarting the app.',
+    noConnectionSecondMessage: 'We are here to help you reconnect!',
     // Upload Screen
     uploadTitle: 'Upload Screen',
     uploadMessage: 'Please select a file to upload',

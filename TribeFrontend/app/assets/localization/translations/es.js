@@ -53,6 +53,13 @@ export default {
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
     timelineSeePostDetail: 'Ver mas',
 
+    // Timeline Screen (no conection)
+    noConectionTitle: '¡Conexión perdida!',
+    noConectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
+    noConectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
+    noConectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
+    noConectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
+
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',
     uploadMessage: 'Por favor, seleccione un archivo (*)',
