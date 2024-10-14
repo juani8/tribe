@@ -76,6 +76,13 @@ const TextKey = {
     timelineMessage: 'timelineMessage',
     timelineSeePostDetail: 'timelineSeePostDetail',
 
+    // Timeline Screen (no connection)
+    noConnectionTitle: 'noConnectionTitle',
+    noConnectionFirstMessage: 'noConnectionFirstMessage',
+    noConnectionFirstMessageFirstItem: 'noConnectionFirstMessageFirstItem',
+    noConnectionFirstMessageSecondItem: 'noConnectionFirstMessageSecondItem',
+    noConnectionSecondMessage: 'noConnectionSecondMessage',
+
     // Upload Screen
     uploadTitle: 'uploadTitle',
     uploadMessage: 'uploadMessage',
