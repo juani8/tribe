@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useTheme } from 'context/ThemeContext'; 
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme(); 
-
   const styles = createStyles(theme);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      setErrorMessage('Por favor, completa todos los campos.');
+    } else {
+      setErrorMessage('');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -19,7 +30,6 @@ const LoginScreen = ({ navigation }) => {
         Bienvenido a <Text style={[styles.brandText, {color: theme.colors.primary}]}>Tribe</Text>
       </Text>
 
-    
       <View style={styles.inputContainer}>
         <Text style={styles.labelText}>Correo</Text>
         <TextInput
@@ -27,10 +37,11 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Ingresa tu correo"
           placeholderTextColor="#a9a9a9"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
-      
       <View style={styles.inputContainer}>
         <Text style={styles.labelText}>Contraseña</Text>
         <TextInput
@@ -38,35 +49,36 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Ingresa tu contraseña"
           placeholderTextColor="#a9a9a9"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
       </View>
 
-     
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
       <TouchableOpacity 
         style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} 
+        onPress={handleLogin}
       >
         <Text style={styles.loginButtonText}>Iniciar sesión</Text>
       </TouchableOpacity>
 
-      
       <View style={styles.linksContainer}>
-      < TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
-        <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
-      </TouchableOpacity>
-
+        <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
+          <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
+        </TouchableOpacity>
       </View>
+
       <View style={styles.signupContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')}>
           <Text style={[styles.linkText, { color: theme.colors.primary }]}>Regístrate</Text>
         </TouchableOpacity>
       </View>
 
-      
       <Text style={styles.orText}>O inicia sesión con</Text>
 
-      
       <TouchableOpacity style={styles.googleButton}>
-{/*         <Image 
+        {/* <Image 
           source={theme.googleButton} 
           style={styles.googleImage}
           resizeMode="contain"
@@ -159,6 +171,13 @@ const createStyles = (theme) => StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  errorText: {
+    color: 'red',
+    marginBottom: 15,
+    marginTop: -10, 
+    textAlign: 'left',
+    width: '90%',
+  }
 });
 
 export default LoginScreen;
