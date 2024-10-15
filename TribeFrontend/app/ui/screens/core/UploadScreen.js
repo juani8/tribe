@@ -7,14 +7,15 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import { useTheme } from 'context/ThemeContext';
-import { selectFromGallery, openCamera } from 'helper/permissionHandlers/StorageAndCameraPermissions';
+import { selectFromGallery, openCamera, handleLocationToggle } from 'helper/MultimediaHelper';
 import CheckBox from '@react-native-community/checkbox';
+import Video from 'react-native-video';
 
 export default function UploadScreen() {
     const [commentText, setCommentText] = useState('');
     const [selectedMedia, setSelectedMedia] = useState([]);
     const { theme } = useTheme();
-    const [isCheckboxSelected, setCheckboxSelection] = useState(false);
+    const [checkboxSelection, setCheckboxSelection] = useState(false);
 
     const styles = createStyles(theme);
 
@@ -39,25 +40,34 @@ export default function UploadScreen() {
                     <View>
                         <CustomTextNunito style={{fontSize: 20}}>{I18n.t(TextKey.uploadSelectedContent)}</CustomTextNunito>
                         <ScrollView 
-                        horizontal 
-                        style={[styles.mediaContainer, { flexGrow: 0 }]}
+                            horizontal 
+                            style={[styles.mediaContainer, { flexGrow: 0 }]}
                         >
-                        {selectedMedia.map((media, index) => (
-                            <View key={index} style={styles.mediaItem}>
-                            <Image source={{ uri: media.uri }} style={styles.mediaThumbnail} />
-                            <TouchableOpacity 
-                                style={styles.removeButton} 
-                                onPress={() => removeMedia(media.uri)}
-                            >
-                                <CustomTextNunito 
-                                weight={'Bold'} 
-                                style={{ color: theme.colors.background, marginTop: -4 }}
-                                >
-                                x
-                                </CustomTextNunito>
-                            </TouchableOpacity>
-                            </View>
-                        ))}
+                            {selectedMedia.map((media, index) => (
+                                <View key={index} style={styles.mediaItem}>
+                                    {media.type.startsWith('image') ? (
+                                        <Image source={{ uri: media.uri }} style={styles.mediaThumbnail} />
+                                    ) : (
+                                        <Video 
+                                            source={{ uri: media.uri }}
+                                            style={styles.mediaThumbnail}
+                                            resizeMode="cover"
+                                            paused={true} // To show a thumbnail preview without auto-playing
+                                        />
+                                    )}
+                                    <TouchableOpacity 
+                                        style={styles.removeButton} 
+                                        onPress={() => removeMedia(media.uri)}
+                                    >
+                                        <CustomTextNunito 
+                                            weight={'Bold'} 
+                                            style={{ color: theme.colors.background, marginTop: -4 }}
+                                        >
+                                            x
+                                        </CustomTextNunito>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
                         </ScrollView>
                     </View>
                 )}
@@ -99,11 +109,11 @@ export default function UploadScreen() {
                 <View style={{flexDirection:'row', alignItems:'center'}}>
                     {/* Add Location Button */}
                     <CheckBox
-                        value={isCheckboxSelected}
-                        onValueChange={setCheckboxSelection}
+                        value={checkboxSelection}
+                        onValueChange={() => handleLocationToggle(checkboxSelection, setCheckboxSelection)}
                         tintColors={{ true: theme.colors.primary, false: theme.colors.primary }} // Green when checked, red when unchecked
                     />
-                    <CustomTextNunito onPress={() => setCheckboxSelection(!isCheckboxSelected)}>{I18n.t(TextKey.uploadAddLocation)}</CustomTextNunito>
+                    <CustomTextNunito onPress={() => handleLocationToggle(checkboxSelection, setCheckboxSelection)}>{I18n.t(TextKey.uploadAddLocation)}</CustomTextNunito>
                 </View>
                 <View style={{ width: '100%', alignItems:'center', justifyContent: 'center', gap: 10, marginTop: 10}}>
                     <CustomButton title={I18n.t(TextKey.uploadConfirmation)} normalizedSize={true} style={[styles.button, { alignSelf: 'flex-start' }]} locked={selectedMedia.length > 0 ? false : true} />
