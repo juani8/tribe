@@ -31,11 +31,11 @@ const LoginScreen = ({ navigation }) => {
       </Text>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.labelText}>Correo</Text>
+        <Text style={[styles.labelText, {color: theme.colors.text}]}>Correo</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, {backgroundColor: '#EFEFEF', color: theme.colors.text}]}
           placeholder="Ingresa tu correo"
-          placeholderTextColor="#a9a9a9"
+          placeholderTextColor="#A9A9A9"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -43,11 +43,11 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.labelText}>Contraseña</Text>
+        <Text style={[styles.labelText, {color: theme.colors.text}]}>Contraseña</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, {backgroundColor: '#EFEFEF', color: theme.colors.text}]}
           placeholder="Ingresa tu contraseña"
-          placeholderTextColor="#a9a9a9"
+          placeholderTextColor="#A9A9A9"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -60,29 +60,26 @@ const LoginScreen = ({ navigation }) => {
         style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} 
         onPress={handleLogin}
       >
-        <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+        <Text style={[styles.loginButtonText, { color: '#FFF' }]}>Iniciar sesión</Text>
       </TouchableOpacity>
 
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
-          <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
+          <Text style={[styles.linkText, {color: theme.colors.primary, alignSelf: 'flex-start'}]}>
+            ¿Olvidaste tu contraseña?
+          </Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.signupContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')}>
-          <Text style={[styles.linkText, { color: theme.colors.primary }]}>Regístrate</Text>
+          <Text style={[styles.linkText, { color: theme.colors.primary, alignSelf: 'flex-start', marginTop: 5 }]}>
+            Regístrate
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.orText}>O inicia sesión con</Text>
+      <Text style={[styles.orText, {color: theme.colors.text}]}>O inicia sesión con</Text>
 
       <TouchableOpacity style={styles.googleButton}>
-        {/* <Image 
-          source={theme.googleButton} 
-          style={styles.googleImage}
-          resizeMode="contain"
-        /> */}
+        <Text style={styles.googleButtonText}>Inicia sesión con Google</Text>
       </TouchableOpacity>
     </View>
   );
@@ -93,91 +90,84 @@ const createStyles = (theme) => StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8F4F0',
+    backgroundColor: theme.colors.background,
     padding: 20,
   },
   logo: {
     width: 100, 
     height: 100,
-    marginBottom: 20,
-    alignSelf: 'flex-start',
+    marginBottom: 30,
+    alignSelf: 'flex-start',  // Desplazado a la izquierda
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 30,
-    alignSelf: 'flex-start',
+    color: theme.colors.text,
+    marginBottom: 20,
+    alignSelf: 'flex-start',  // Desplazado a la izquierda
   },
   brandText: {
     fontWeight: 'bold',
   },
   inputContainer: {
-    width: '90%',
-    marginBottom: 20,
+    width: '85%',  // Márgenes más grandes para no llegar al borde
+    marginBottom: 15,
   },
   labelText: {
     fontSize: 16,
-    color: '#333',
     marginBottom: 5,
+    color: theme.colors.text,
+    alignSelf: 'flex-start',  // Texto alineado a la izquierda
   },
   input: {
     width: '100%',
-    height: 50,
-    backgroundColor: '#EFEFEF',
+    height: 55,
     borderRadius: 8,
-    paddingHorizontal: 10,
+    backgroundColor: '#EFEFEF',
+    paddingHorizontal: 15,
     fontSize: 16,
-    color: '#333',
+    color: theme.colors.text,
   },
   loginButton: {
-    width: '90%',
+    width: '85%',  // Botón más angosto, alineado con los campos de entrada
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   loginButtonText: {
-    color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
   linksContainer: {
-    width: '90%',
-    marginBottom: 5,
-  },
-  signupContainer: {
-    width: '90%',
-    alignItems: 'flex-start',
-    marginBottom: 30,
+    alignItems: 'flex-start',  // Desplazado a la izquierda
+    width: '85%',
+    marginBottom: 10,
   },
   linkText: {
-    color: theme.colors.primary,
     fontSize: 14,
   },
   orText: {
-    color: '#333',
-    marginBottom: 10,
+    marginBottom: 15,
+    color: theme.colors.text,
   },
   googleButton: {
-    width: '70%',
-    height: 40,
+    width: '85%',  // Alineado con los otros campos y botón
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    borderRadius: 8,
+    borderColor: '#d3d3d3',
+    borderWidth: 1,
+    marginTop: 15,
+    backgroundColor: '#FFFFFF',
   },
-  googleImage: {
-    width: '100%',
-    height: '100%',
+  googleButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
   },
-  errorText: {
-    color: 'red',
-    marginBottom: 15,
-    marginTop: -10, 
-    textAlign: 'left',
-    width: '90%',
-  }
 });
 
 export default LoginScreen;
