@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useTheme } from 'context/ThemeContext'; 
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme(); 
+  const styles = createStyles(theme);  
 
   const [fantasyName, setFantasyName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,105 +23,106 @@ const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}> 
       <Image 
         source={theme.logo} 
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={styles.title}>Crea tu cuenta</Text>
+      
+      <Text style={[styles.title, { color: theme.colors.text }]}>Crea tu cuenta</Text>
 
-      <Text style={styles.labelText}>Nombre de fantasía</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>Nombre de fantasía</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
         placeholder="Ingresa tu nombre de fantasía"
-        placeholderTextColor="#a9a9a9"
+        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={fantasyName}
         onChangeText={setFantasyName}
       />
 
-      <Text style={styles.labelText}>Correo</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>Correo</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
         placeholder="Ingresa tu correo"
-        placeholderTextColor="#a9a9a9"
+        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
       />
       
-      <Text style={styles.labelText}>Contraseña</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>Contraseña</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
         placeholder="Ingresa tu contraseña"
-        placeholderTextColor="#a9a9a9"
+        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
-      <Text style={styles.labelText}>Confirmar contraseña</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>Confirmar contraseña</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
         placeholder="Confirma tu contraseña"
-        placeholderTextColor="#a9a9a9"
+        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
       />
 
+      {/* Renderizamos el mensaje de error dentro de un <Text> */}
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       <TouchableOpacity 
         style={[styles.signupButton, { backgroundColor: theme.colors.primary }]} 
         onPress={handleSignup}
       >
-        <Text style={styles.signupButtonText}>Crear usuario</Text>
+        {/* El texto dentro del botón debe estar en blanco en modo claro */}
+        <Text style={[styles.signupButtonText, { color: theme.isDarkMode ? theme.colors.textInverse : '#FFF' }]}>Crear usuario</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-        <Text style={[styles.loginText, { color: theme.colors.primary }]}>Inicia sesión</Text> 
+        {/* Aquí nos aseguramos que el texto esté en un componente <Text> */}
+        <Text style={[styles.loginText, { color: theme.colors.primary }]}>Inicia sesión</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'flex-start', 
+    flexGrow: 1,
+    justifyContent: 'center', 
     paddingHorizontal: 40, 
-    paddingTop: 60, 
-    backgroundColor: '#F8F4F0',
+    paddingTop: 40,  // Disminuir padding top
+    backgroundColor: theme.colors.background,
   },
   logo: {
-    width: 100, 
-    height: 100,
-    marginBottom: 20,
+    width: 120,  
+    height: 120,
+    marginBottom: 10,  // Reducir el espacio debajo del logo
     alignSelf: 'flex-start', 
   },
   title: {
     fontSize: 24, 
     fontWeight: 'bold', 
-    color: '#333',
-    marginBottom: 30, 
-    alignSelf: 'flex-start', 
+    marginBottom: 20,  // Reducir espacio entre el título y el siguiente elemento
+    alignSelf: 'flex-start',
   },
   labelText: {
     alignSelf: 'flex-start',
     fontSize: 16,
-    color: '#333',
     marginBottom: 10, 
   },
   input: {
     width: '100%',
-    height: 50,
-    backgroundColor: '#F2F2F2', 
+    height: 55, 
     borderRadius: 8, 
     paddingHorizontal: 15, 
-    marginBottom: 20,
+    marginBottom: 15,  // Reducir espacio entre los campos
     fontSize: 16,
-    color: '#333',
+    backgroundColor: theme.colors.backgroundSecondary,  // Color del input cambia con el tema
   },
   signupButton: {
     width: '100%',
@@ -128,18 +130,17 @@ const styles = StyleSheet.create({
     borderRadius: 8, 
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 10,  // Reducir espacio debajo del botón
   },
   signupButtonText: {
-    color: '#FFF',
     fontSize: 18, 
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
   },
   loginText: {
-    marginTop: 20,
+    marginTop: 10,  // Reducir espacio superior para que sea visible
     fontSize: 16,
-    color: '#7B3EFD',
-    alignSelf: 'flex-start', 
+    alignSelf: 'flex-start',
+    color: theme.colors.primary,
   },
   errorText: {
     color: 'red',
