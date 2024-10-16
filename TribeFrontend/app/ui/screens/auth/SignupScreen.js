@@ -71,19 +71,19 @@ const SignupScreen = ({ navigation }) => {
         onChangeText={setConfirmPassword}
       />
 
-      {/* Renderizamos el mensaje de error dentro de un <Text> */}
+      
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       <TouchableOpacity 
         style={[styles.signupButton, { backgroundColor: theme.colors.primary }]} 
         onPress={handleSignup}
       >
-        {/* El texto dentro del botón debe estar en blanco en modo claro */}
+        
         <Text style={[styles.signupButtonText, { color: theme.isDarkMode ? theme.colors.textInverse : '#FFF' }]}>Crear usuario</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-        {/* Aquí nos aseguramos que el texto esté en un componente <Text> */}
+        
         <Text style={[styles.loginText, { color: theme.colors.primary }]}>Inicia sesión</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -95,19 +95,19 @@ const createStyles = (theme) => StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center', 
     paddingHorizontal: 40, 
-    paddingTop: 40,  // Disminuir padding top
+    paddingTop: 40,  
     backgroundColor: theme.colors.background,
   },
   logo: {
     width: 120,  
     height: 120,
-    marginBottom: 10,  // Reducir el espacio debajo del logo
+    marginBottom: 10, 
     alignSelf: 'flex-start', 
   },
   title: {
     fontSize: 24, 
     fontWeight: 'bold', 
-    marginBottom: 20,  // Reducir espacio entre el título y el siguiente elemento
+    marginBottom: 20,  
     alignSelf: 'flex-start',
   },
   labelText: {
@@ -120,9 +120,9 @@ const createStyles = (theme) => StyleSheet.create({
     height: 55, 
     borderRadius: 8, 
     paddingHorizontal: 15, 
-    marginBottom: 15,  // Reducir espacio entre los campos
+    marginBottom: 15,  
     fontSize: 16,
-    backgroundColor: theme.colors.backgroundSecondary,  // Color del input cambia con el tema
+    backgroundColor: theme.colors.backgroundSecondary,  
   },
   signupButton: {
     width: '100%',
@@ -130,14 +130,14 @@ const createStyles = (theme) => StyleSheet.create({
     borderRadius: 8, 
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,  // Reducir espacio debajo del botón
+    marginBottom: 10, n
   },
   signupButtonText: {
     fontSize: 18, 
     fontWeight: 'bold',
   },
   loginText: {
-    marginTop: 10,  // Reducir espacio superior para que sea visible
+    marginTop: 10,  
     fontSize: 16,
     alignSelf: 'flex-start',
     color: theme.colors.primary,
