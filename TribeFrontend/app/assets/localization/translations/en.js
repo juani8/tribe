@@ -26,7 +26,7 @@ export default {
     welcomeDescriptionThirdPage: { part1: 'At ' , part2: 'Tribe' , part3: ', every interaction is an opportunity to learn and grow.' },
     welcomeTitleFourthPage: { part1: 'Tribe', part2: ' is waiting for you' },
     welcomeGotoSignup: 'Join Now',
-    welcomeGotoLogin: 'Go to Signin',
+    welcomeGotoLogin: 'Go to Sign In',
 
     // Login Screen
     loginTitle: 'Login Screen',
@@ -66,6 +66,7 @@ export default {
     uploadMoreMessage: 'Add more content',
     uploadSelectFromGallery: 'Select from gallery',
     uploadSelectOpenCamera: 'Open camera',
+    uploadDescriptionTitle: 'Description',
     uploadDescriptionPlaceholder: 'Enter a description...',
     uploadAddLocation: 'Add actual location',
     uploadConfirmation: 'Confirm',

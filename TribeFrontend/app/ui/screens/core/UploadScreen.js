@@ -96,7 +96,7 @@ export default function UploadScreen() {
 
                 <View style={{gap:6}}>
                     {/* Description Input */}
-                    <CustomTextNunito style={{fontSize: 20}}>Descripción</CustomTextNunito>
+                    <CustomTextNunito style={{fontSize: 20}}>{I18n.t(TextKey.uploadDescriptionTitle)}</CustomTextNunito>
                     <View>
                         <CustomInputNunito
                             inputText={commentText}
@@ -111,7 +111,7 @@ export default function UploadScreen() {
                     <CheckBox
                         value={checkboxSelection}
                         onValueChange={() => handleLocationToggle(checkboxSelection, setCheckboxSelection)}
-                        tintColors={{ true: theme.colors.primary, false: theme.colors.primary }} // Green when checked, red when unchecked
+                        tintColors={{ true: theme.colors.primary, false: theme.colors.primary }}
                     />
                     <CustomTextNunito onPress={() => handleLocationToggle(checkboxSelection, setCheckboxSelection)}>{I18n.t(TextKey.uploadAddLocation)}</CustomTextNunito>
                 </View>

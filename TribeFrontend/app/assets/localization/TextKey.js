@@ -49,7 +49,7 @@ const TextKey = {
         part2: 'welcomeTitleFourthPage.part2'
     },
     welcomeGotoSignup: 'welcomeGotoSignup',
-    welcomeGotoLogin: 'welcomeGotoSignin',
+    welcomeGotoLogin: 'welcomeGotoLogin',
 
     // Login Screen
     loginTitle: 'loginTitle',
@@ -90,6 +90,7 @@ const TextKey = {
     uploadMoreMessage: 'uploadMoreMessage',
     uploadSelectFromGallery: 'uploadSelectFromGallery',
     uploadSelectOpenCamera: 'uploadSelectOpenCamera',
+    uploadDescriptionTitle: 'uploadDescriptionTitle',
     uploadDescriptionPlaceholder: 'uploadDescriptionPlaceholder',
     uploadAddLocation: 'uploadAddLocation',
     uploadConfirmation: 'uploadConfirmation',

@@ -7,8 +7,6 @@ const requestCameraPermission = async () => {
             {
                 title: 'App Camera Permission',
                 message: 'App needs access to your camera to take photos and videos.',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Deny',
                 buttonPositive: 'OK',
             }
         );

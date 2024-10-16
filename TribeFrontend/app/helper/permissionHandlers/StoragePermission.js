@@ -11,8 +11,6 @@ const requestExternalStoragePermission = async () => {
                   {
                       title: 'App Storage Permission',
                       message: 'App needs access to your storage to read media.',
-                      buttonNeutral: 'Ask Me Later',
-                      buttonNegative: 'Deny',
                       buttonPositive: 'OK',
                   }
               );
@@ -21,8 +19,6 @@ const requestExternalStoragePermission = async () => {
                   {
                       title: 'App Storage Permission',
                       message: 'App needs access to your storage to write media.',
-                      buttonNeutral: 'Ask Me Later',
-                      buttonNegative: 'Deny',
                       buttonPositive: 'OK',
                   }
               );
@@ -49,8 +45,6 @@ const requestExternalStoragePermission = async () => {
                   {
                       title: 'App Storage Permission',
                       message: 'App needs access to your storage to read media images.',
-                      buttonNeutral: 'Ask Me Later',
-                      buttonNegative: 'Deny',
                       buttonPositive: 'OK',
                   }
               );
@@ -59,8 +53,6 @@ const requestExternalStoragePermission = async () => {
                   {
                       title: 'App Storage Permission',
                       message: 'App needs access to your storage to read media videos.',
-                      buttonNeutral: 'Ask Me Later',
-                      buttonNegative: 'Deny',
                       buttonPositive: 'OK',
                   }
               );
@@ -87,8 +79,6 @@ const requestExternalStoragePermission = async () => {
                   {
                       title: 'App Storage Permission',
                       message: 'App needs access to your storage to read media.',
-                      buttonNeutral: 'Ask Me Later',
-                      buttonNegative: 'Deny',
                       buttonPositive: 'OK',
                   }
               );

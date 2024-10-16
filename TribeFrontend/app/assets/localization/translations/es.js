@@ -67,6 +67,7 @@ export default {
     uploadMoreMessage: 'Añadir mas contenido',
     uploadSelectFromGallery: 'Seleccionar de la galería',
     uploadSelectOpenCamera: 'Abrir cámara',
+    uploadDescription: 'Descripción',
     uploadDescriptionPlaceholder: 'Ingrese una descripción...',
     uploadAddLocation: 'Agregar ubicación actual',
     uploadConfirmation: 'Confirmar',

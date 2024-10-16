@@ -3,6 +3,7 @@ import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { requestLocationPermission } from 'helper/permissionHandlers/LocationPermission';
 import { requestCameraPermission } from 'helper/permissionHandlers/CameraPermission';
 import { requestExternalStoragePermission } from 'helper/permissionHandlers/StoragePermission';
+import { requestMicrophonePermission } from 'helper/permissionHandlers/MicrophonePermission';
 
 // Select media (images or videos) from gallery
 const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'mixed') => {
@@ -29,9 +30,10 @@ const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'm
 
 // Open camera for media capture (photo or video)
 const openCamera = async (selectedMedia, setSelectedMedia) => {
-    const hasPermission = await requestCameraPermission();
+    const hasCameraPermission = await requestCameraPermission() 
+    const hasMicrophonePermission = await requestMicrophonePermission();
 
-    if (hasPermission) {
+    if (hasCameraPermission && hasMicrophonePermission) {
         // Ask the user to choose between photo or video
         Alert.alert(
             'Choose Media Type',
@@ -47,23 +49,29 @@ const openCamera = async (selectedMedia, setSelectedMedia) => {
     }
 };
 
-// Function to capture either photo or video based on user selection
 const captureMedia = (mediaType, selectedMedia, setSelectedMedia) => {
     const options = mediaType === 'photo'
         ? { mediaType: 'photo' }
-        : { mediaType: 'video', videoQuality: 'high', durationLimit: 60 };
+        : { mediaType: 'video', videoQuality: 'low', durationLimit: 30 }; // Try lowering the quality and duration
 
     launchCamera(options, (response) => {
+        console.log('Response:', response); // Log the response to inspect issues
+        
         if (response.didCancel) {
             console.log('User cancelled camera');
         } else if (response.errorCode) {
             Alert.alert('Error', response.errorMessage);
         } else {
             const assets = response.assets || [];
-            setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
+            if (assets.length > 0) {
+                setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
+            } else {
+                console.log('No assets returned from camera');
+            }
         }
     });
 };
+
 
 const handleLocationToggle = async (checkboxSelection, setCheckboxSelection) => {
     const hasPermission = await requestLocationPermission();

@@ -9,8 +9,6 @@ const requestLocationPermission = async () => {
             {
                 title: 'App Location Permission',
                 message: 'App needs access to your location.',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
                 buttonPositive: 'OK',
             }
         );

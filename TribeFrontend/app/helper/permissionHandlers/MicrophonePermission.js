@@ -8,8 +8,6 @@ const requestMicrophonePermission = async () => {
           {
               title: 'App Microphone Permission',
               message: 'App needs access to your microphone to take photos and videos.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Deny',
               buttonPositive: 'OK',
           }
       );

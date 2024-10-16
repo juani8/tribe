@@ -161,8 +161,8 @@ const FourthPart = ({ styles, theme, navigation }) => {
         </CustomTextNunito>
       </View>
       <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
-        <CustomButton title={'Únete ahora'} onPress={() => NavigateToSignup(navigation)}/>
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToLogin(navigation)}>Inicia sesión</CustomHighlightedTextNunito>
+        <CustomButton title={I18n.t(TextKey.welcomeGotoSignup)} onPress={() => NavigateToSignup(navigation)}/>
+        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToLogin(navigation)}>{I18n.t(TextKey.welcomeGotoLogin)}</CustomHighlightedTextNunito>
         <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToHome(navigation)}>Home (atajo)</CustomHighlightedTextNunito>
       </View>
     </View>
