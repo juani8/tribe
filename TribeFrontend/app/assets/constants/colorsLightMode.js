@@ -6,4 +6,6 @@ export default {
   buttonText: '#FFFFFF',
   detailText: '#5D5D5D',
   background: '#F9F5EF',
+  backgroundSecondary: '#EFEFEF',
+  placeholder: '#A9A9A9', 
 }

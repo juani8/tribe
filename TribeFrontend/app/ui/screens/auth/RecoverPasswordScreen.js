@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 
@@ -6,9 +6,20 @@ const RecoverPasswordScreen = ({ navigation }) => {
   const { theme } = useTheme(); 
   const styles = createStyles(theme);
 
+  const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleVerify = () => {
+    if (!email) {
+      setErrorMessage('Por favor, ingresa tu correo electrónico.');
+    } else {
+      setErrorMessage('');
+      navigation.navigate('VerifyIdentity');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image
           source={theme.backIcon}
@@ -16,36 +27,35 @@ const RecoverPasswordScreen = ({ navigation }) => {
         />
       </TouchableOpacity>
 
-      {/* Logo */}
       <Image 
         source={theme.logo}
         style={styles.logo}
         resizeMode="contain"
       />
 
-      {/* Título principal */}
       <Text style={styles.title}>Recupera tu contraseña</Text>
 
-      {/* Texto subtítulo en negritas */}
       <Text style={styles.subtitleBold}>
         Ingresa el email con el que te registraste, te enviaremos un código para cambiar tu contraseña.
       </Text>
 
-      {/* Campo de correo electrónico */}
       <View style={styles.inputContainer}>
         <Text style={styles.labelText}>Correo</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary || theme.colors.background }]} // Fondo según el tema
           placeholder="Ingresa tu correo"
-          placeholderTextColor="#a9a9a9"
+          placeholderTextColor={theme.colors.placeholder || '#a9a9a9'}
           keyboardType="email-address"
           autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
-      {/* Botón de verificar */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('VerifyIdentity')}>
-        <Text style={styles.buttonText}>Verificar</Text>
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+      <TouchableOpacity style={styles.button} onPress={handleVerify}>
+        <Text style={[styles.buttonText, {  color: theme.colors.buttonText }]}>Verificar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -92,7 +102,7 @@ const createStyles = (theme) => StyleSheet.create({
     marginBottom: 15, 
   },
   subtitleBold: {
-    fontFamily: 'Nunito-Bold',  // Aplicamos la fuente en negritas
+    fontFamily: 'Nunito-Bold',
     fontSize: 16,
     color: theme.colors.text,
     textAlign: 'left',
@@ -113,11 +123,10 @@ const createStyles = (theme) => StyleSheet.create({
   input: {
     width: '100%',
     height: 50,
-    backgroundColor: '#EFEFEF',
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#333',
+    color: theme.colors.text,
     fontFamily: 'Nunito-Regular',
   },
   button: {
@@ -130,10 +139,17 @@ const createStyles = (theme) => StyleSheet.create({
   },
   buttonText: {
     fontFamily: 'Nunito-Bold',
-    color: '#FFF',
+    color: theme.colors.textInverse,  
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 15,
+    textAlign: 'left',
+    width: '100%',
   },
 });
 
 export default RecoverPasswordScreen;
+

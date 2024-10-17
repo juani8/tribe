@@ -130,7 +130,7 @@ const createStyles = (theme) => StyleSheet.create({
     borderRadius: 8, 
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10, n
+    marginBottom: 10, 
   },
   signupButtonText: {
     fontSize: 18, 

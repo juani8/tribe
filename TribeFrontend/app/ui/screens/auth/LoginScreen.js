@@ -33,7 +33,13 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <Text style={[styles.labelText, {color: theme.colors.text}]}>Correo</Text>
         <TextInput
-          style={[styles.input, {backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text}]}
+          style={[
+            styles.input, 
+            {
+              backgroundColor: theme.colors.background === '#161622' ? 'transparent' : theme.colors.backgroundSecondary,
+              color: theme.colors.text
+            }
+          ]}
           placeholder="Ingresa tu correo"
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           keyboardType="email-address"
@@ -45,7 +51,13 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <Text style={[styles.labelText, {color: theme.colors.text}]}>Contraseña</Text>
         <TextInput
-          style={[styles.input, {backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text}]}
+          style={[
+            styles.input, 
+            {
+              backgroundColor: theme.colors.background === '#161622' ? 'transparent' : theme.colors.backgroundSecondary,
+              color: theme.colors.text
+            }
+          ]}
           placeholder="Ingresa tu contraseña"
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           secureTextEntry
@@ -60,7 +72,7 @@ const LoginScreen = ({ navigation }) => {
         style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} 
         onPress={handleLogin}
       >
-        <Text style={[styles.loginButtonText, { color: '#FFF' }]}>Iniciar sesión</Text> 
+        <Text style={[styles.loginButtonText, { color: '#FFF' }]}>Iniciar sesión</Text>
       </TouchableOpacity>
 
       <View style={styles.linksContainer}>
@@ -123,10 +135,8 @@ const createStyles = (theme) => StyleSheet.create({
     width: '100%',
     height: 55,
     borderRadius: 8,
-    backgroundColor: theme.colors.backgroundSecondary,  
     paddingHorizontal: 15,
     fontSize: 16,
-    color: theme.colors.text,
   },
   loginButton: {
     width: '85%',  
@@ -178,4 +188,6 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default LoginScreen;
+
+
 
