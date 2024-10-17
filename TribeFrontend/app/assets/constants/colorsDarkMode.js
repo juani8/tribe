@@ -1,10 +1,11 @@
 export default {
   primary: '#CDC1FF',
-  secondary: '#E5D9F2',
-  tertiary: '#F5EFFF',
+  secondary: '#674188',
+  tertiary: '#E5D9F2',
   text: '#F5EFFF',
   buttonText: '#000000',
   detailText: '#5D5D5D',
   background: '#161622',
   disabled: '#BDBDBD',
+  options: '#F9F5EF',
 }

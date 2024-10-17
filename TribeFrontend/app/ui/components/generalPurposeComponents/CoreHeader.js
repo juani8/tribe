@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { BellFill, BellPinFill, Menu, UserCircleLight } from 'assets/images';
+import { BellFill, Menu, UserCircleLight } from 'assets/images';
+import { BellFillNight, MenuNight, UserCircleLightNight } from 'assets/images';
 import { Lamp, Aa, SettingFill, ChartPin, SignInSquare } from 'assets/images';
 import { NavigateToNotifications, NavigateToUserProfile, NavigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import CustomTextNunito from './CustomTextNunito';
@@ -15,7 +16,7 @@ import TextKey from 'assets/localization/TextKey';
 import { useUiContext } from 'context/UiContext';
 
 const CoreHeader = () => {
-    const { theme } = useTheme();
+    const { theme, isDarkMode } = useTheme();
     const { showMenu, hideMenu, isMenuVisible, menuOptions } = useUiContext();
     const navigation = useNavigation();
 
@@ -36,16 +37,16 @@ const CoreHeader = () => {
             <View style={[styles.headerContainer]}>
                 <View style={styles.itemsLeft}>
                     <TouchableOpacity onPress={() => NavigateToUserProfile(navigation)}>
-                        <Image source={UserCircleLight} style={{ width: 50, height: 50 }} />
+                        <Image source={isDarkMode ? UserCircleLightNight : UserCircleLight} style={{ width: 50, height: 50 }} />
                     </TouchableOpacity>
                     <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}John</CustomTextNunito>
                 </View>
                 <View style={styles.itemsRight}>
                     <TouchableOpacity onPress={() => NavigateToNotifications(navigation)}>
-                        <Image source={BellFill} style={{ width: 28, height: 28, marginRight: 12 }} />
+                        <Image source={isDarkMode ? BellFillNight : BellFill} style={{ width: 28, height: 28, marginRight: 12 }} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={openMenu}>
-                        <Image source={Menu} style={{ width: 28, height: 28 }} />
+                        <Image source={isDarkMode ? MenuNight : Menu} style={{ width: 28, height: 28 }} />
                     </TouchableOpacity> 
                 </View>
             </View>

@@ -1,60 +1,101 @@
-import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
-import React from 'react';
-import Animated, {interpolate, useAnimatedStyle} from 'react-native-reanimated';
+import React, { useState } from 'react';
+import { View, Image, StyleSheet, Dimensions, Modal, TouchableOpacity, Text, Pressable } from 'react-native';
+import { useTheme } from 'context/ThemeContext';
 
-const {width} = Dimensions.get('window');
 
-const LARGE_IMAGE_WIDTH = width * 0.5;
-const MEDIUM_IMAGE_WIDTH = LARGE_IMAGE_WIDTH * 0.5;
-const SMALL_IMAGE_WIDTH = MEDIUM_IMAGE_WIDTH * 0.5;
+const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false); // State to control the modal visibility
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
 
-const ContentCarouselListItem = ({uri, scrollX, index, dataLength}) => {
-  const inputRange = [
-    (index - 2) * SMALL_IMAGE_WIDTH,
-    (index - 1) * SMALL_IMAGE_WIDTH,
-    index * SMALL_IMAGE_WIDTH,
-    (index + 1) * SMALL_IMAGE_WIDTH,
-  ];
-
-  const isLastItem = dataLength === index + 1;
-  const isSecondLastItem = dataLength === index + 2;
-
-  const outputRange = isLastItem
-    ? [
-        SMALL_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-      ]
-    : isSecondLastItem
-    ? [
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-      ]
-    : [
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-        LARGE_IMAGE_WIDTH,
-      ];
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    width: interpolate(scrollX.value, inputRange, outputRange, 'clamp'),
-  }));
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
 
   return (
-    <Animated.Image source={{uri}} style={[styles.image, animatedStyle]} />
+    <>
+      {/* Main Image */}
+      <TouchableOpacity onPress={toggleModal}>
+        <Image source={{ uri }} style={[styles.image]} />
+      </TouchableOpacity>
+
+      {/* Full Screen Modal */}
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={toggleModal} // Handle back button press on Android
+        animationType="fade" // You can also use "slide" or other animations
+      >
+        {/* Overlay to mimic the blur effect with opacity */}
+        <View style={styles.overlay} />
+
+        {/* Modal Content */}
+        <View style={styles.modalContainer}>
+          {/* Full-screen image */}
+          <View style={styles.modalContent}>
+            <Image source={{ uri }} style={styles.fullScreenImage} />
+
+            {/* Close Button */}
+            <Pressable onPress={toggleModal} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>x</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   image: {
     width: 250,
     marginRight: 8,
     borderRadius: 20,
     height: 300,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent overlay
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '90%',
+    height: '80%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: theme.colors.primary,
+    borderRadius: 100,
+    paddingHorizontal: 5,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.background,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginBottom: 3,
   },
 });
 

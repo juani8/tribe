@@ -1,3 +1,5 @@
+import { ca } from "date-fns/locale";
+
 export default {
     // Pages
     welcomeNavegation: 'Welcome',
@@ -59,6 +61,7 @@ export default {
     noConnectionFirstMessageFirstItem: 'Check your Wi-Fi or mobile data connection',
     noConnectionFirstMessageSecondItem: 'Try restarting the app.',
     noConnectionSecondMessage: 'We are here to help you reconnect!',
+
     // Upload Screen
     uploadTitle: 'Upload Screen',
     uploadMessage: 'Please select a file to upload',
@@ -91,4 +94,41 @@ export default {
     settingsOptionAccountOptions: 'Account Options',
     settingsOptionMetrics: 'Metrics',
     settingsOptionLogout: 'Logout',
+
+    // Permission Dialogs
+    permissionAlertButtonPositive: 'OK',
+    permissionAlertOpenSettings: 'Open Settings',
+    permissionAlertCloseDialog: 'Close',
+
+    // CameraPermission
+    cameraPermissionAlertTitle: 'Camera Permission',
+    cameraPermissionAlertMessage: 'Tribe needs access to your camera to take photos and videos.',
+    cameraPermissionAlertDeniedMessage: 'Camera permission has been denied permanently. Please enable it in the app settings.',
+
+    // LocationPermission
+    locationPermissionAlertTitle: 'Location Permission',
+    locationPermissionAlertMessage: 'Tribe needs access to your location.',
+    locationPermissionAlertDeniedMessage: 'Location permission has been denied permanently. Please enable it in the app settings.',
+
+    // NotificationsPermission
+    notificationsPermissionAlertTitle: 'Notifications Permission',
+    notificationsPermissionAlertMessage: 'Tribe needs access to your notifications.',
+    notificationsPermissionAlertDeniedMessage: 'Notifications permission has been denied permanently. Please enable it in the app settings.',
+
+    // StoragePermission
+    storagePermissionAlertTitle: 'Storage Permission',
+    storagePermissionAlertMessage: 'Tribe needs access to your storage to read media.',
+    storagePermissionAlertDeniedMessage: 'Storage permission has been denied permanently. Please enable it in the app settings.',
+
+    // MultimediaHelper
+    multimediaHelperPermissionDenied: 'Permission denied',
+    multimediaHelperStoragePermissionDeniedMessage: 'App needs storage permission to access media.',
+    multimediaHelperCameraPermissionDeniedMessage: 'App needs camera and microphone permission to take photos or videos.',
+    multimediaHelperLocationPermissionDeniedMessage: 'App needs location permission to add location.',
+    multimediaHelperChooseMediaTypeTitle: 'Choose Media Type', 
+    multimediaHelperChooseMediaTypeMessage: 'Would you like to take a photo or record a video?',
+    multimediaHelperChooseMediaPhoto: 'Take Photo',
+    multimediaHelperChooseMediaVideo: 'Record Video',
+    multimediaHelperChooseMediaCancel: 'Cancel',
+    multimediaHelperChooseMediaClose: 'Close',
 };

@@ -1,13 +1,16 @@
 import { PermissionsAndroid, Platform, Alert, Linking } from 'react-native';
 
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+
 const requestCameraPermission = async () => {
     try {
         const accessCamera = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.CAMERA,
             {
-                title: 'App Camera Permission',
-                message: 'App needs access to your camera to take photos and videos.',
-                buttonPositive: 'OK',
+                title: I18n.t(TextKey.cameraPermissionAlertTitle),
+                message: I18n.t(TextKey.cameraPermissionAlertMessage),
+                buttonPositive: I18n.t(TextKey.cameraPermissionAlertButtonPositive),
             }
         );
         
@@ -17,11 +20,11 @@ const requestCameraPermission = async () => {
             return false; 
         } else if (accessCamera === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
             Alert.alert(
-                'Camera Permission',
-                'Camera permission has been denied permanently. Please enable it in the app settings.',
+                I18n.t(TextKey.cameraPermissionAlertTitle),
+                I18n.t(TextKey.cameraPermissionAlertDeniedMessage),
                 [
-                    { text: 'Open Settings', onPress: () => Linking.openSettings() },
-                    { text: 'Close', style: 'cancel' }
+                    { text: I18n.t(TextKey.cameraPermissionAlertOpenSettings), onPress: () => Linking.openSettings() },
+                    { text: I18n.t(TextKey.cameraPermissionAlertCloseDialog), style: 'cancel' }
                 ]
             );
             return false;

@@ -1,5 +1,8 @@
 import { PermissionsAndroid, Platform, Alert, Linking } from 'react-native';
 
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+
 // Request external storage permission
 
 const requestLocationPermission = async () => {
@@ -7,9 +10,9 @@ const requestLocationPermission = async () => {
         const accessFineLocation = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
-                title: 'App Location Permission',
-                message: 'App needs access to your location.',
-                buttonPositive: 'OK',
+                title: I18n.t(TextKey.locationPermissionAlertTitle),
+                message: I18n.t(TextKey.locationPermissionAlertMessage),
+                buttonPositive: I18n.t(TextKey.permissionAlertButtonPositive),
             }
         );
         
@@ -19,11 +22,11 @@ const requestLocationPermission = async () => {
             return false; 
         } else if (accessFineLocation === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
             Alert.alert(
-                'Location Permission',
-                'Location permission has been denied permanently. Please enable it in the app settings.',
+                I18n.t(TextKey.locationPermissionAlertTitle),
+                I18n.t(TextKey.locationPermissionAlertDeniedMessage),
                 [
-                    { text: 'Open Settings', onPress: () => Linking.openSettings() },
-                    { text: 'Close', style: 'cancel' }
+                    { text: I18n.t(TextKey.permissionAlertOpenSettings), onPress: () => Linking.openSettings() },
+                    { text: I18n.t(TextKey.permissionAlertCloseDialog), style: 'cancel' }
                 ]
             );
             return false;

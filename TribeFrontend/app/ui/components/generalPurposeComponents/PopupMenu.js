@@ -17,7 +17,7 @@ import { useTheme } from 'context/ThemeContext';
 const { height } = Dimensions.get('window');
 
 const PopupMenu = ({ visible, onClose, options }) => {
-  const { theme } = useTheme();
+  const { theme, isDarkMode } = useTheme();
 
   return (
     <Modal
@@ -51,7 +51,7 @@ const PopupMenu = ({ visible, onClose, options }) => {
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
                       {item.icon && <Image source={item.icon} style={{ width: 24, height: 24, resizeMode: 'contain', marginLeft: 6, marginRight: 12 }} />}
-                      <CustomTextNunito style={{ color: theme.colors.background, fontSize: 18 }}>{item.label}</CustomTextNunito>
+                      <CustomTextNunito style={{ color: theme.colors.options, fontSize: 18 }}>{item.label}</CustomTextNunito>
                     </View>
                     {item.complement && <item.complement />}
                   </View>

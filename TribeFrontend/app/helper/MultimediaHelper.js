@@ -5,6 +5,9 @@ import { requestCameraPermission } from 'helper/permissionHandlers/CameraPermiss
 import { requestExternalStoragePermission } from 'helper/permissionHandlers/StoragePermission';
 import { requestMicrophonePermission } from 'helper/permissionHandlers/MicrophonePermission';
 
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+
 // Select media (images or videos) from gallery
 const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'mixed') => {
     const hasPermission = await requestExternalStoragePermission();
@@ -14,9 +17,9 @@ const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'm
             { mediaType, selectionLimit: 5 },
             (response) => {
                 if (response.didCancel) {
-                    console.log('User cancelled media selection');
+                    console.log('User cancelled camera');
                 } else if (response.errorCode) {
-                    Alert.alert('Error', response.errorMessage);
+                    Alert.alert(I18n.t(TextKey.Error), response.errorMessage);
                 } else {
                     const assets = response.assets || [];
                     setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
@@ -24,28 +27,28 @@ const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'm
             }
         );
     } else {
-        Alert.alert('Permission denied', 'App needs storage permission to access media.');
+        Alert.alert(I18n.t(TextKey.multimediaHelperPermissionDenied), I18n.t(TextKey.multimediaHelperStoragePermissionDeniedMessage));
     }
 };
 
 // Open camera for media capture (photo or video)
 const openCamera = async (selectedMedia, setSelectedMedia) => {
-    const hasCameraPermission = await requestCameraPermission() 
+    const hasCameraPermission = await requestCameraPermission();
     const hasMicrophonePermission = await requestMicrophonePermission();
 
     if (hasCameraPermission && hasMicrophonePermission) {
         // Ask the user to choose between photo or video
         Alert.alert(
-            'Choose Media Type',
-            'Would you like to take a photo or record a video?',
+            I18n.t(TextKey.multimediaHelperChooseMediaTypeTitle),
+            I18n.t(TextKey.multimediaHelperChooseMediaTypeMessage),
             [
-                { text: 'Take Photo', onPress: () => captureMedia('photo', selectedMedia, setSelectedMedia) },
-                { text: 'Record Video', onPress: () => captureMedia('video', selectedMedia, setSelectedMedia) },
-                { text: 'Cancel', style: 'cancel' }
+                { text: I18n.t(TextKey.multimediaHelperChooseMediaVideoPhoto), onPress: () => captureMedia('photo', selectedMedia, setSelectedMedia) },
+                { text: I18n.t(TextKey.multimediaHelperChooseMediaVideo), onPress: () => captureMedia('video', selectedMedia, setSelectedMedia) },
+                { text: I18n.t(TextKey.multimediaHelperChooseMediaCancel), style: 'cancel' }
             ]
         );
     } else {
-        Alert.alert('Permission denied', 'App needs camera permission to take photos or videos.');
+        Alert.alert(I18n.t(TextKey.multimediaHelperPermissionDenied), I18n.t(TextKey.multimediaHelperCameraPermissionDeniedMessage));
     }
 };
 
@@ -60,7 +63,7 @@ const captureMedia = (mediaType, selectedMedia, setSelectedMedia) => {
         if (response.didCancel) {
             console.log('User cancelled camera');
         } else if (response.errorCode) {
-            Alert.alert('Error', response.errorMessage);
+            Alert.alert(I18n.t(TextKey.Error), response.errorMessage);
         } else {
             const assets = response.assets || [];
             if (assets.length > 0) {
@@ -72,21 +75,19 @@ const captureMedia = (mediaType, selectedMedia, setSelectedMedia) => {
     });
 };
 
-
 const handleLocationToggle = async (checkboxSelection, setCheckboxSelection) => {
     const hasPermission = await requestLocationPermission();
     if (hasPermission) {
         setCheckboxSelection(!checkboxSelection); // Toggle the checkbox only if permission is granted
     } else {
         Alert.alert(
-            'Permission denied', 
-            'App needs location permission to add location.',
+            I18n.t(TextKey.multimediaHelperPermissionDenied), 
+            I18n.t(TextKey.multimediaHelperLocationPermissionDeniedMessage),
             [
-                { text: 'Close', style: 'cancel' }
+                { text: I18n.t(TextKey.multimediaHelperChooseMediaClose), style: 'cancel' }
             ]
         );
     }
 };
-
 
 export { selectFromGallery, openCamera, handleLocationToggle };

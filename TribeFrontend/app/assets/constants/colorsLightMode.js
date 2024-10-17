@@ -7,4 +7,5 @@ export default {
   detailText: '#5D5D5D',
   background: '#F9F5EF',
   disabled: '#BDBDBD',
+  options: '#F9F5EF',
 }
