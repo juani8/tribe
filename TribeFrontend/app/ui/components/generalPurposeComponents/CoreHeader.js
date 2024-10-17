@@ -17,17 +17,17 @@ import { useUiContext } from 'context/UiContext';
 
 const CoreHeader = () => {
     const { theme, isDarkMode } = useTheme();
-    const { showMenu, hideMenu, isMenuVisible, menuOptions } = useUiContext();
+    const { showMenu, hideMenu, isMenuVisible, menuOptions, menuTitle } = useUiContext();
     const navigation = useNavigation();
 
     const openMenu = () => {
-      showMenu([
+      showMenu(options = [
         { icon: Lamp, label: I18n.t(TextKey.settingsOptionTheme), onPress: () => console.log('Option A Selected') },
         { icon: Aa, label: I18n.t(TextKey.settingsOptionLanguage), onPress: () => console.log('Option B Selected') },
         { icon: SettingFill, label: I18n.t(TextKey.settingsOptionAccountOptions), onPress: () => console.log('Option B Selected') },
         { icon: ChartPin, label: I18n.t(TextKey.settingsOptionMetrics), onPress: () => console.log('Option B Selected') },
         { icon: SignInSquare, label: I18n.t(TextKey.settingsOptionLogout), onPress: () => NavigateToWelcome(navigation) },
-      ], I18n.t(TextKey.settingsTitle));
+      ], title = I18n.t(TextKey.settingsTitle));
     };
 
     const styles = createStyles(theme);
@@ -54,13 +54,13 @@ const CoreHeader = () => {
             <Separator theme={theme} />
 
             {isMenuVisible && (
-                    <PopupMenu
+                <PopupMenu
                     visible={isMenuVisible}
                     onClose={hideMenu}
                     options={menuOptions}
-                    />
-                )
-            }
+                    title={menuTitle}
+                />
+            )}
         </View>
     );
 };

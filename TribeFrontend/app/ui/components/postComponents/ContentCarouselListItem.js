@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Image, StyleSheet, Dimensions, Modal, TouchableOpacity, Text, Pressable } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
-
+import { BlurView } from '@react-native-community/blur';
 
 const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control the modal visibility
@@ -26,8 +26,12 @@ const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
         onRequestClose={toggleModal} // Handle back button press on Android
         animationType="fade" // You can also use "slide" or other animations
       >
-        {/* Overlay to mimic the blur effect with opacity */}
-        <View style={styles.overlay} />
+        <BlurView
+          style={StyleSheet.absoluteFill}
+          blurType="dark"  // You can adjust the blur effect ("light", "dark", etc.)
+          blurAmount={10}  // The intensity of the blur
+          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.6)"  // Fallback color
+        />
 
         {/* Modal Content */}
         <View style={styles.modalContainer}>

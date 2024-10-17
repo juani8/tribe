@@ -85,7 +85,7 @@ export default function TimelineScreen() {
   // If offline, show a message
   if (!isConnected) {
     return (
-      <View style={{ backgroundColor: theme.colors.background }}>
+      <View style={{ backgroundColor: theme.colors.background, flex:1 }}>
         <View style={{ padding: 16, gap: 30, marginTop: 20 }}>
           <View>
             <CustomTextNunito weight={'SemiBold'} style={{ fontSize: 20 }}>{I18n.t(TextKey.noConnectionTitle)}</CustomTextNunito> 

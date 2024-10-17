@@ -78,7 +78,7 @@ export default function UploadScreen() {
                         <CustomButton 
                             title={I18n.t(TextKey.uploadSelectFromGallery)} 
                             onPress={() => selectFromGallery(selectedMedia, setSelectedMedia)} 
-                            color={theme.colors.tertiary} 
+                            color={theme.colors.uploadButtons} 
                             textWeight={'Bold'}
                             fullSize={true} 
                             style={styles.button} 
@@ -86,7 +86,7 @@ export default function UploadScreen() {
                         <CustomButton 
                             title={I18n.t(TextKey.uploadSelectOpenCamera)} 
                             onPress={() => openCamera(selectedMedia, setSelectedMedia)} 
-                            color={theme.colors.tertiary} 
+                            color={theme.colors.uploadButtons} 
                             textWeight={'Bold'}
                             fullSize={true} 
                             style={styles.button} 

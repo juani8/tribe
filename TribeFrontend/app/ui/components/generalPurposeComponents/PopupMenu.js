@@ -1,22 +1,18 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   Modal,
   FlatList,
   StyleSheet,
-  Dimensions,
-  Image
+  Image,
 } from 'react-native';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
+import { BlurView } from '@react-native-community/blur';
 
-// Get screen dimensions
-const { height } = Dimensions.get('window');
-
-const PopupMenu = ({ visible, onClose, options }) => {
+const PopupMenu = ({ visible, onClose, options, title }) => {
   const { theme, isDarkMode } = useTheme();
 
   return (
@@ -37,27 +33,48 @@ const PopupMenu = ({ visible, onClose, options }) => {
             exiting={FadeOutUp.duration(500)}
             style={styles.container}
           >
-            <FlatList
-              data={options}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.optionContainer}
-                  onPress={() => {
-                    item.onPress();
-                    onClose(); // Close after selecting an option
+              {/* Content Wrapper */}
+              <View style={styles.contentWrapper}>
+                <CustomTextNunito
+                  weight={'Bold'}
+                  style={{
+                    textAlign: 'center',
+                    marginVertical: 10,
+                    color: theme.colors.options,
+                    fontSize: 20,
                   }}
                 >
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-                      {item.icon && <Image source={item.icon} style={{ width: 24, height: 24, resizeMode: 'contain', marginLeft: 6, marginRight: 12 }} />}
-                      <CustomTextNunito style={{ color: theme.colors.options, fontSize: 18 }}>{item.label}</CustomTextNunito>
-                    </View>
-                    {item.complement && <item.complement />}
-                  </View>
-                </TouchableOpacity>
-              )}
-            />
+                  {title}
+                </CustomTextNunito>
+
+                <View>
+                  <FlatList
+                    data={options}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.optionContainer}
+                        onPress={() => {
+                          item.onPress();
+                          onClose(); // Close after selecting an option
+                        }}
+                      >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        {item.icon && <Image source={item.icon} style={{ width: 24, height: 24, resizeMode: 'contain', marginLeft: 6, marginRight: 12 }} />}
+                          <CustomTextNunito
+                            style={{
+                              color: theme.colors.options,
+                              fontSize: 18,
+                            }}
+                          >
+                            {item.label}
+                          </CustomTextNunito>
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              </View>
           </Animated.View>
         )}
       </TouchableOpacity>
