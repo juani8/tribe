@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { useTheme } from 'context/ThemeContext'; 
+import { useTheme } from 'context/ThemeContext';
+import TextKey from 'assets/localization/TextKey';
+import I18n from 'assets/localization/i18n';
 
 const LoginScreen = ({ navigation }) => {
-  const { theme } = useTheme(); 
+  const { theme } = useTheme();
   const styles = createStyles(theme);
 
   const [email, setEmail] = useState('');
@@ -12,7 +14,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = () => {
     if (!email || !password) {
-      setErrorMessage('Por favor, completa todos los campos.');
+      setErrorMessage(I18n.t(TextKey.loginMessage)); // Usamos I18n.t para traducir los mensajes
     } else {
       setErrorMessage('');
     }
@@ -20,27 +22,25 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image 
-        source={theme.logo} 
+      <Image
+        source={theme.logo}
         style={styles.logo}
         resizeMode="contain"
       />
-    
+
       <Text style={styles.welcomeText}>
-        Bienvenido a <Text style={[styles.brandText, {color: theme.colors.primary}]}>Tribe</Text>
+        {I18n.t(TextKey.loginTitle)}
       </Text>
 
+      <Text style={styles.loginMessage}>{I18n.t(TextKey.loginMessage)}</Text>
+
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, {color: theme.colors.text}]}>Correo</Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>
+          {I18n.t('emailLabel')}
+        </Text>
         <TextInput
-          style={[
-            styles.input, 
-            {
-              backgroundColor: theme.colors.background === '#161622' ? 'transparent' : theme.colors.backgroundSecondary,
-              color: theme.colors.text
-            }
-          ]}
-          placeholder="Ingresa tu correo"
+          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+          placeholder={I18n.t('emailPlaceholder')}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           keyboardType="email-address"
           value={email}
@@ -49,16 +49,12 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, {color: theme.colors.text}]}>Contraseña</Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>
+          {I18n.t('passwordLabel')}
+        </Text>
         <TextInput
-          style={[
-            styles.input, 
-            {
-              backgroundColor: theme.colors.background === '#161622' ? 'transparent' : theme.colors.backgroundSecondary,
-              color: theme.colors.text
-            }
-          ]}
-          placeholder="Ingresa tu contraseña"
+          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+          placeholder={I18n.t('passwordPlaceholder')}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           secureTextEntry
           value={password}
@@ -68,27 +64,24 @@ const LoginScreen = ({ navigation }) => {
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-      <TouchableOpacity 
-        style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} 
-        onPress={handleLogin}
-      >
-        <Text style={[styles.loginButtonText, { color: '#FFF' }]}>Iniciar sesión</Text>
+      <TouchableOpacity style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} onPress={handleLogin}>
+        <Text style={[styles.loginButtonText, { color: '#FFF' }]}>{I18n.t(TextKey.loginButton)}</Text>
       </TouchableOpacity>
 
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
-          <Text style={[styles.linkText, {color: theme.colors.primary}]}>
-            ¿Olvidaste tu contraseña?
+          <Text style={[styles.linkText, { color: theme.colors.primary }]}>
+            {I18n.t(TextKey.goToRecoverPassword)}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')}>
           <Text style={[styles.linkText, { color: theme.colors.primary, marginTop: 5 }]}>
-            Regístrate
+            {I18n.t(TextKey.goToSignup)}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.orText, {color: theme.colors.text}]}>O inicia sesión con</Text>
+      <Text style={[styles.orText, { color: theme.colors.text }]}>{I18n.t(TextKey.gmailLogin)}</Text>
 
       <TouchableOpacity style={styles.googleButton}>
         <Text style={styles.googleButtonText}>Inicia sesión con Google</Text>
@@ -106,30 +99,32 @@ const createStyles = (theme) => StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 100, 
+    width: 100,
     height: 100,
     marginBottom: 30,
-    alignSelf: 'flex-start',  
+    alignSelf: 'flex-start',
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.text,
     marginBottom: 20,
-    alignSelf: 'flex-start',  
+    alignSelf: 'flex-start',
   },
-  brandText: {
-    fontWeight: 'bold',
+  loginMessage: {
+    fontSize: 16,
+    marginBottom: 15,
+    color: theme.colors.text,
   },
   inputContainer: {
-    width: '85%', 
+    width: '85%',
     marginBottom: 15,
   },
   labelText: {
     fontSize: 16,
     marginBottom: 5,
     color: theme.colors.text,
-    alignSelf: 'flex-start',  
+    alignSelf: 'flex-start',
   },
   input: {
     width: '100%',
@@ -137,9 +132,10 @@ const createStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
+    backgroundColor: theme.colors.backgroundSecondary,
   },
   loginButton: {
-    width: '85%',  
+    width: '85%',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -149,28 +145,21 @@ const createStyles = (theme) => StyleSheet.create({
   loginButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFF',  
   },
   linksContainer: {
-    alignItems: 'flex-start',  
+    alignItems: 'flex-start',
     width: '85%',
     marginBottom: 10,
   },
   linkText: {
     fontSize: 14,
   },
-  errorText: {
-    color: 'red',
-    marginBottom: 15,
-    textAlign: 'left',
-    width: '85%',
-  },
   orText: {
     marginBottom: 15,
     color: theme.colors.text,
   },
   googleButton: {
-    width: '85%',  
+    width: '85%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -188,6 +177,8 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default LoginScreen;
+
+
 
 
 

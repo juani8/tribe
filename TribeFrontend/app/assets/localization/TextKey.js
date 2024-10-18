@@ -54,11 +54,24 @@ const TextKey = {
     loginButton: 'loginButton',
     goToSignup: 'goToSignup',
     goToRecoverPassword: 'goToRecoverPassword',
+    emailLabel: 'emailLabel', 
+    passwordLabel: 'passwordLabel', 
+    emailPlaceholder: 'emailPlaceholder', 
+    passwordPlaceholder: 'passwordPlaceholder',
+    gmailLogin: 'gmailLogin',
 
     // Signup Screen
     signupTitle: 'signupTitle',
-    signupButton: 'signupButton',
-    goToLoginButton: 'goToLoginButton',
+    nameAccount: 'nameAccount',
+    enterName: 'enterName',
+    emailAccount: 'emailAccount',
+    enterEmail: 'enterEmail',
+    passwordAccount: 'passwordAccount',
+    enterPassword: 'enterPassword',
+    confirmPassword: 'confirmPassword',
+    enterConfirmPassword: 'enterConfirmPassword',
+    createUserButton: 'createUserButton',
+    logIn: 'logIn',
 
     // Password recovery Screen
     passwordRecoveryTitle: 'passwordRecoveryTitle',

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useTheme } from 'context/ThemeContext'; 
+import TextKey from 'assets/localization/TextKey';
+import I18n from 'assets/localization/i18n';
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme(); 
@@ -14,9 +16,9 @@ const SignupScreen = ({ navigation }) => {
 
   const handleSignup = () => {
     if (!fantasyName || !email || !password || !confirmPassword) {
-      setErrorMessage('Por favor, completa todos los campos.');
+      setErrorMessage(I18n.t(TextKey.completeFields)); // Usa el key correcto
     } else if (password !== confirmPassword) {
-      setErrorMessage('Las contraseñas no coinciden.');
+      setErrorMessage(I18n.t(TextKey.passwordsDontMatch)); // Usa el key correcto
     } else {
       setErrorMessage('');
     }
@@ -30,61 +32,58 @@ const SignupScreen = ({ navigation }) => {
         resizeMode="contain"
       />
       
-      <Text style={[styles.title, { color: theme.colors.text }]}>Crea tu cuenta</Text>
+      <Text style={[styles.title, { color: theme.colors.text }]}>{I18n.t(TextKey.signupTitle)}</Text>
 
-      <Text style={[styles.labelText, { color: theme.colors.text }]}>Nombre de fantasía</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.nameAccount)}</Text>
       <TextInput
         style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
-        placeholder="Ingresa tu nombre de fantasía"
+        placeholder={I18n.t(TextKey.enterName)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={fantasyName}
         onChangeText={setFantasyName}
       />
 
-      <Text style={[styles.labelText, { color: theme.colors.text }]}>Correo</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.emailAccount)}</Text>
       <TextInput
         style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
-        placeholder="Ingresa tu correo"
+        placeholder={I18n.t(TextKey.enterEmail)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
       />
       
-      <Text style={[styles.labelText, { color: theme.colors.text }]}>Contraseña</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.passwordAccount)}</Text>
       <TextInput
         style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
-        placeholder="Ingresa tu contraseña"
+        placeholder={I18n.t(TextKey.enterPassword)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
-      <Text style={[styles.labelText, { color: theme.colors.text }]}>Confirmar contraseña</Text>
+      <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.confirmPassword)}</Text>
       <TextInput
         style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
-        placeholder="Confirma tu contraseña"
+        placeholder={I18n.t(TextKey.enterConfirmPassword)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
       />
 
-      
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       <TouchableOpacity 
         style={[styles.signupButton, { backgroundColor: theme.colors.primary }]} 
         onPress={handleSignup}
       >
-        
-        <Text style={[styles.signupButtonText, { color: theme.isDarkMode ? theme.colors.textInverse : '#FFF' }]}>Crear usuario</Text>
+        <Text style={[styles.signupButtonText, { color: theme.isDarkMode ? theme.colors.textInverse : '#FFF' }]}>{I18n.t(TextKey.createUserButton)}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-        
-        <Text style={[styles.loginText, { color: theme.colors.primary }]}>Inicia sesión</Text>
+        <Text style={[styles.loginText, { color: theme.colors.primary }]}>{I18n.t(TextKey.logIn)}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -152,3 +151,4 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default SignupScreen;
+
