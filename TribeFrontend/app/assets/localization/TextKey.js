@@ -74,8 +74,12 @@ const TextKey = {
     logIn: 'logIn',
 
     // Password recovery Screen
-    passwordRecoveryTitle: 'passwordRecoveryTitle',
-    passwordRecoveryButton: 'passwordRecoveryButton',
+    recoverPasswordTitle: 'recoverPasswordTitle',
+    recoverPasswordDescription: 'recoverPasswordDescription',
+    emailLabel: 'emailLabel',
+    emailPlaceholder: 'emailPlaceholder',
+    verifyButton: 'verifyButton',
+
 
     // Initial configuration Screen
     initialConfigurationTitle: 'initialConfigurationTitle',

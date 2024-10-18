@@ -53,8 +53,11 @@ export default {
     passwordsDontMatch: 'Passwords do not match.',
 
     // Password recovery Screen
-    passwordRecoveryTitle: 'Password recovery Screen',
-    passwordRecoveryButton: 'Verify',
+    recoverPasswordTitle: 'Recover your password',
+    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a code to change your password.',
+    emailLabel: 'Email',
+    mailPlaceholder: 'Enter your email',
+    verifyButton: 'Verify',
 
     // Initial configuration Screen
     initialConfigurationTitle: 'Initial configuration Screen',

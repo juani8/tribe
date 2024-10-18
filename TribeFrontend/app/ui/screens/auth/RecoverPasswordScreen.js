@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
+import TextKey from 'assets/localization/TextKey';
+import I18n from 'assets/localization/i18n';
 
 const RecoverPasswordScreen = ({ navigation }) => {
   const { theme } = useTheme(); 
@@ -11,7 +13,7 @@ const RecoverPasswordScreen = ({ navigation }) => {
 
   const handleVerify = () => {
     if (!email) {
-      setErrorMessage('Por favor, ingresa tu correo electrónico.');
+      setErrorMessage(I18n.t(TextKey.completeFields)); // Traducción del mensaje de error
     } else {
       setErrorMessage('');
       navigation.navigate('VerifyIdentity');
@@ -33,17 +35,17 @@ const RecoverPasswordScreen = ({ navigation }) => {
         resizeMode="contain"
       />
 
-      <Text style={styles.title}>Recupera tu contraseña</Text>
+      <Text style={styles.title}>{I18n.t(TextKey.recoverPasswordTitle)}</Text>
 
       <Text style={styles.subtitleBold}>
-        Ingresa el email con el que te registraste, te enviaremos un código para cambiar tu contraseña.
+        {I18n.t(TextKey.recoverPasswordDescription)} {/* Cambié `recoverPasswordSubtitle` por `recoverPasswordDescription` */}
       </Text>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.labelText}>Correo</Text>
+        <Text style={styles.labelText}>{I18n.t(TextKey.emailLabel)}</Text>
         <TextInput
           style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary || theme.colors.background }]} // Fondo según el tema
-          placeholder="Ingresa tu correo"
+          placeholder={I18n.t(TextKey.emailPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#a9a9a9'}
           keyboardType="email-address"
           autoCapitalize="none"
@@ -55,7 +57,7 @@ const RecoverPasswordScreen = ({ navigation }) => {
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       <TouchableOpacity style={styles.button} onPress={handleVerify}>
-        <Text style={[styles.buttonText, {  color: theme.colors.buttonText }]}>Verificar</Text>
+        <Text style={[styles.buttonText, {  color: theme.colors.buttonText }]}>{I18n.t(TextKey.verifyButton)}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -52,11 +52,12 @@ export default {
     completeFields: 'Por favor, completa todos los campos.',
     passwordsDontMatch: 'Las contraseñas no coinciden.',
 
-
-
     // Password recovery Screen
-    passwordRecoveryTitle: 'Recuperación de Contraseña',
-    passwordRecoveryButton: 'Verificar',
+    recoverPasswordTitle: 'Recupera tu contraseña',
+    recoverPasswordDescription: 'Ingresa el email con el que te registraste, te enviaremos un código para cambiar tu contraseña.',
+    emailLabel: 'Correo',
+    emailPlaceholder: 'Ingresa tu correo',
+    verifyButton: 'Verificar',
 
     // Initial configuration Screen
     initialConfigurationTitle: 'Configuración Inicial',
