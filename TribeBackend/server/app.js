@@ -10,15 +10,16 @@ app.use(express.json());
 // Rutas
 app.get('/', (req, res) => {
   try {
-    res.status(200).send({ message: 'Server is up and running!' });
+    res.status(200).send({ message: 'El servidor está funcionando correctamente.' });
   } catch (error) {
-    res.status(500).send({ message: 'Internal Server Error' });
+    res.status(500).send({ message: 'Error interno del servidor' });
   }
 });
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send({ message: 'Algo salió mal' });
+  console.error("Error detectado:", err.message);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).send({ message: err.message || 'Ocurrió un error inesperado.' });
 });
 
 module.exports = app;

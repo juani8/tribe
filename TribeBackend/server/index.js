@@ -7,8 +7,9 @@ async function init() {
   try {
     await connection();
     const port = process.env.PORT || 8080;
+    const host = process.env.HOST || 'http://localhost';
     app.listen(port, () => {
-      console.log(`Listening on port ${port}`);
+      console.log(`Servidor escuchando en: ${host}:${port}`);
     });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);

@@ -19,9 +19,15 @@ async function connection() {
   try {
     await client.connect();
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log("Conexión exitosa a MongoDB!");
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    if (error.name === 'MongoNetworkError') {
+      console.error('Error de red al conectar con MongoDB:', error);
+    } else if (error.name === 'MongoParseError') {
+      console.error('Error al analizar la URI de MongoDB:', error);
+    } else {
+      console.error('Error inesperado al conectar con MongoDB:', error);
+    }
     process.exit(1); // Finalizar el proceso en caso de error crítico
   }
 }
