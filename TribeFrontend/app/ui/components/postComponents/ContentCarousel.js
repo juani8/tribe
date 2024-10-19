@@ -28,6 +28,7 @@ const ContentCarousel = ({ multimedia }) => {
             scrollX={scrollX}
             index={index}
             dataLength={multimedia.length}
+            images={multimedia}
           />
         )}
       />

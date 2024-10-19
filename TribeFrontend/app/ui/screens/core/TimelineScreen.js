@@ -85,25 +85,26 @@ export default function TimelineScreen() {
   // If offline, show a message
   if (!isConnected) {
     return (
-      <View style={{ padding: 16, gap: 30, marginTop: 20 }}>
-        <View>
-          <CustomTextNunito weight={'SemiBold'} style={{ fontSize: 20 }}>{I18n.t(TextKey.noConnectionTitle)}</CustomTextNunito> 
+      <View style={{ backgroundColor: theme.colors.background, flex:1 }}>
+        <View style={{ padding: 16, gap: 30, marginTop: 20 }}>
+          <View>
+            <CustomTextNunito weight={'SemiBold'} style={{ fontSize: 20 }}>{I18n.t(TextKey.noConnectionTitle)}</CustomTextNunito> 
+          </View>
+          <View>
+            <CustomTextNunito weight={'Regular'}>{I18n.t(TextKey.noConnectionFirstMessage)}</CustomTextNunito>
+            <CustomTextNunito weight={'Regular'}>• {I18n.t(TextKey.noConnectionFirstMessageFirstItem)}</CustomTextNunito>
+            <CustomTextNunito weight={'Regular'}>• {I18n.t(TextKey.noConnectionFirstMessageSecondItem)}</CustomTextNunito>
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <LottieView
+              source={require('assets/lottie/lostConnectionLottie.json')}
+              autoPlay
+              loop
+              style={{ width: 300, height: 300 }}
+            />
+            <CustomTextNunito weight={'Regular'}>{I18n.t(TextKey.noConnectionSecondMessage)}</CustomTextNunito> 
+          </View>
         </View>
-        <View>
-          <CustomTextNunito weight={'Regular'}>{I18n.t(TextKey.noConnectionFirstMessage)}</CustomTextNunito>
-          <CustomTextNunito weight={'Regular'}>• {I18n.t(TextKey.noConnectionFirstMessageFirstItem)}</CustomTextNunito>
-          <CustomTextNunito weight={'Regular'}>• {I18n.t(TextKey.noConnectionFirstMessageSecondItem)}</CustomTextNunito>
-        </View>
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <LottieView
-            source={require('assets/lottie/lostConnectionLottie.json')}
-            autoPlay
-            loop
-            style={{ width: 300, height: 300 }}
-          />
-          <CustomTextNunito weight={'Regular'}>{I18n.t(TextKey.noConnectionSecondMessage)}</CustomTextNunito> 
-        </View>
-
       </View>
     );
   }

@@ -49,7 +49,7 @@ const TextKey = {
         part2: 'welcomeTitleFourthPage.part2'
     },
     welcomeGotoSignup: 'welcomeGotoSignup',
-    welcomeGotoLogin: 'welcomeGotoSignin',
+    welcomeGotoLogin: 'welcomeGotoLogin',
 
     // Login Screen
     loginTitle: 'loginTitle',
@@ -90,6 +90,7 @@ const TextKey = {
     uploadMoreMessage: 'uploadMoreMessage',
     uploadSelectFromGallery: 'uploadSelectFromGallery',
     uploadSelectOpenCamera: 'uploadSelectOpenCamera',
+    uploadDescriptionTitle: 'uploadDescriptionTitle',
     uploadDescriptionPlaceholder: 'uploadDescriptionPlaceholder',
     uploadAddLocation: 'uploadAddLocation',
     uploadConfirmation: 'uploadConfirmation',
@@ -114,6 +115,43 @@ const TextKey = {
     settingsOptionAccountOptions: 'settingsOptionAccountOptions',
     settingsOptionMetrics: 'settingsOptionMetrics',
     settingsOptionLogout: 'settingsOptionLogout',
+
+    // Permission Dialogs
+    permissionAlertButtonPositive: 'permissionAlertButtonPositive',
+    permissionAlertOpenSettings: 'permissionAlertOpenSettings',
+    permissionAlertCloseDialog: 'permissionAlertCloseDialog',
+
+    // CameraPermission
+    cameraPermissionAlertTitle: 'cameraPermissionAlertTitle',
+    cameraPermissionAlertMessage: 'cameraPermissionAlertMessage',
+    cameraPermissionAlertDeniedMessage: 'cameraPermissionAlertDeniedMessage',
+
+    // LocationPermission
+    locationPermissionAlertTitle: 'locationPermissionAlertTitle',
+    locationPermissionAlertMessage: 'locationPermissionAlertMessage',
+    locationPermissionAlertDeniedMessage: 'locationPermissionAlertDeniedMessage',
+
+    // NotificationsPermission
+    notificationsPermissionAlertTitle: 'notificationsPermissionAlertTitle',
+    notificationsPermissionAlertMessage: 'notificationsPermissionAlertMessage',
+    notificationsPermissionAlertDeniedMessage: 'notificationsPermissionAlertDeniedMessage',
+
+    // StoragePermission
+    storagePermissionAlertTitle: 'storagePermissionAlertTitle',
+    storagePermissionAlertMessage: 'storagePermissionAlertMessage',
+    storagePermissionAlertDeniedMessage: 'storagePermissionAlertDeniedMessage',
+
+    // MultimediaHelper
+    multimediaHelperPermissionDenied: 'multimediaHelperPermissionDenied',
+    multimediaHelperStoragePermissionDeniedMessage: 'multimediaHelperStoragePermissionDeniedMessage',
+    multimediaHelperCameraPermissionDeniedMessage: 'multimediaHelperCameraPermissionDeniedMessage',
+    multimediaHelperLocationPermissionDeniedMessage: 'multimediaHelperLocationPermissionDeniedMessage',
+    multimediaHelperChooseMediaTypeTitle: 'multimediaHelperChooseMediaTypeTitle',
+    multimediaHelperChooseMediaTypeMessage: 'multimediaHelperChooseMediaTypeMessage',
+    multimediaHelperChooseMediaPhoto: 'multimediaHelperChooseMediaPhoto',
+    multimediaHelperChooseMediaVideo: 'multimediaHelperChooseMediaVideo',
+    multimediaHelperChooseMediaCancel: 'multimediaHelperChooseMediaCancel',
+    multimediaHelperChooseMediaClose: 'multimediaHelperChooseMediaClose'
 };
 
 export default TextKey;
