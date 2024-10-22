@@ -67,7 +67,7 @@ export default {
     uploadMoreMessage: 'Añadir mas contenido',
     uploadSelectFromGallery: 'Seleccionar de la galería',
     uploadSelectOpenCamera: 'Abrir cámara',
-    uploadDescription: 'Descripción',
+    uploadDescriptionTitle: 'Descripción',
     uploadDescriptionPlaceholder: 'Ingrese una descripción...',
     uploadAddLocation: 'Agregar ubicación actual',
     uploadConfirmation: 'Confirmar',
@@ -131,5 +131,5 @@ export default {
     multimediaHelperChooseMediaPhoto: 'Tomar foto',
     multimediaHelperChooseMediaVideo: 'Grabar video',
     multimediaHelperChooseMediaCancel: 'Cancelar',
-    multimediaHelperChooseMediaClose: 'Cerrar'
+    multimediaHelperChooseMediaClose: 'Cerrar',
 };
