@@ -250,17 +250,20 @@ let transporter = nodemailer.createTransport({
 Check the first guide: [Set Up and Use Mailtrap](#set-up-and-use-mailtrap).
 
 ### **2. Prepare Postman for Requests**
+**A. Start the backend server:**
+1. Navigate to the `TribeBackend` directory in your terminal.
+2. Run the command: `npm start` to launch the server and ensure it is running correctly.
 
-**A. Open Postman:**
+**B. Open Postman:**
 
 1. Launch the Postman application on your computer.
 
-**B. Create a New Collection:**
+**C. Create a New Collection:**
 
 1. Click on **Collections** in the left sidebar.
 2. Click on **New Collection** and give it a name, such as `Tribe API`.
 
-**C. Add Requests to the Collection:**
+**D. Add Requests to the Collection:**
 For each request, follow these steps:
 
 ---
@@ -353,15 +356,18 @@ For each request, follow these steps:
 Check the first guide: [Set Up and Use Mailtrap](#set-up-and-use-mailtrap).
 
 ### **2. Prepare Postman for Requests**
+**A. Start the backend server:**
+1. Navigate to the `TribeBackend` directory in your terminal.
+2. Run the command: `npm start` to launch the server and ensure it is running correctly.
 
-**A. Open Postman:** Launch the Postman application on your computer.
+**B. Open Postman:** Launch the Postman application on your computer.
 
-**B. Create a New Collection:**
+**C. Create a New Collection:**
 
 1. If you don’t have a collection, click on **Collections** in the left sidebar.
 2. Click on **New Collection** and give it a name, such as `Tribe API`.
 
-**C. Add Requests to the Collection:**
+**D. Add Requests to the Collection:**
 For each request, follow these steps:
 
 ---
@@ -462,7 +468,10 @@ For each request, follow these steps:
     - **Current Value**: Leave this empty for now.
 3. **Save Changes**: Click the **Save** button.
 ### **3. Store `authToken` After Login**
-1. **Create Login Request**: In Postman, create a request for your login endpoint.
+1. **Start the backend server:**
+   - Navigate to the `TribeBackend` directory in your terminal.
+   - Run the command: `npm start` to launch the server and ensure it is running correctly.
+2. **Create Login Request**: In Postman, create a request for your login endpoint.
     - **Method**: `POST`
     - **URL**: `http://localhost:8080/auths/sessions`
     - **Body**:
@@ -473,9 +482,8 @@ For each request, follow these steps:
           "password": "1234"
         }
         ```
-
-2. **Send the Request**: Click the **Send** button.
-3. **Capture the Token**: Once you receive the response, you need to extract the `authToken` from the response body. For example:
+3. **Send the Request**: Click the **Send** button.
+4. **Capture the Token**: Once you receive the response, you need to extract the `authToken` from the response body. For example:
 
     ```json
     {
@@ -483,7 +491,7 @@ For each request, follow these steps:
     }
     ```
 
-4. **Set the Token in Environment Variable**:
+5. **Set the Token in Environment Variable**:
     - Go to the Scripts tab of your login request.
     - In the Post-response section add the following code to automatically set the `authToken` in the environment variable:
 
@@ -503,7 +511,7 @@ For each request, follow these steps:
         }
         ```
 
-5. **Save the Request**: Click the **Save** button.
+6. **Save the Request**: Click the **Save** button.
 
 ### **4. Use `authToken` in Other Requests**
 
