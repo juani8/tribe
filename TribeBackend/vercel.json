@@ -15,6 +15,10 @@
     "github": {
         "enabled": true,
         "autoJobCancelation": true,
-        "silent": false
+        "silent": false,
+        "deploymentEnabled": {
+            "main": true,
+            "*": false
+        }
     }
 }
