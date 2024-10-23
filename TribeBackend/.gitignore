@@ -1,5 +1,2 @@
 .vercel
 .env
-jest.config.js
-/tests
-/__mocks__
