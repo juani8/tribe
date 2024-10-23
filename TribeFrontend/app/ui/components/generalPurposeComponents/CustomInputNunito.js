@@ -1,38 +1,36 @@
 import React, { useState } from 'react';
-import { TextInput, View, StyleSheet, Image } from 'react-native';
+import { TextInput, View, StyleSheet } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
-import { Send } from 'assets/images';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from './CustomTextNunito';
 
-const CustomInputNunito = ({ style, onPress, maxLength = 140, ...props }) => {
+const CustomInputNunito = ({ inputText, setInputText, maxLength = 140, placeholder,...props }) => {
   const { theme } = useTheme();
-  const [text, setText] = useState('');
   const [isFocused, setIsFocused] = useState(false);  // Track focus state
 
   const fontStyle = { fontFamily: `Nunito-Regular` };
   const color = theme.colors.detailText;
 
   // Function to handle text change and update the character count
-  const handleTextChange = (inputText) => {
-    setText(inputText);
+  const handleTextChange = (newInputText) => {
+    setInputText(newInputText);
   };
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-      <View style={{ width: '92%' }}>
+      <View style={{ width: '100%' }}>
         {/* Character counter and alert */}
         {isFocused && (
           <View style={styles.characterCounterContainer}>
             <CustomTextNunito style={[
               styles.characterCount,
-              { color: text.length >= maxLength ? 'red' : color }  // Change text color to red if max length is reached
+              { color: inputText.length >= maxLength ? 'red' : color }  // Change text color to red if max length is reached
             ]}>
-              {text.length}/{maxLength}
+              {inputText.length}/{maxLength}
             </CustomTextNunito>
-            {text.length >= maxLength && (
+            {inputText.length >= maxLength && (
               <CustomTextNunito style={styles.limitAlert}>{I18n.t(TextKey.commentsMaxCharactersReached)}</CustomTextNunito>
             )}
           </View>
@@ -41,28 +39,26 @@ const CustomInputNunito = ({ style, onPress, maxLength = 140, ...props }) => {
             style={[
               fontStyle, 
               {
-                borderColor: text.length >= maxLength ? 'red' : color,  // Change border color when max is reached
+                borderColor: inputText.length >= maxLength ? 'red' : color,  // Change border color when max is reached
                 borderWidth: 1.5, 
                 borderRadius: 10, 
                 padding: 10,
                 height: isFocused ? 100 : 40, // Adjust height when focused
                 textAlignVertical: 'top',  // Align text to the top when multiline
+                color: theme.colors.text,
               }
             ]}
             onChangeText={handleTextChange}
-            value={text}
+            value={inputText}
             multiline={true}   // Allow multiline text
             numberOfLines={isFocused ? 4 : 1}  // Change number of lines based on focus
             onFocus={() => setIsFocused(true)}  // Set focus state
             onBlur={() => setIsFocused(false)}  // Remove focus state when not focused
             maxLength={maxLength}  // Set character limit
-            placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)}
-            onPress={onPress}
+            placeholder={placeholder}
+            placeholderTextColor={theme.colors.text}
             {...props}
           />
-      </View>
-      <View>
-        <Image source={Send} style={{ width: 30, height: 30, marginTop: isFocused ? 20 : 0 }} />
       </View>
     </View>
   );

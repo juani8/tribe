@@ -53,9 +53,24 @@ export default {
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
     timelineSeePostDetail: 'Ver mas',
 
+    // Timeline Screen (no conection)
+    noConectionTitle: '¡Conexión perdida!',
+    noConectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
+    noConectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
+    noConectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
+    noConectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
+
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',
-    uploadMessage: 'Por favor, seleccione un archivo para subir',
+    uploadMessage: 'Por favor, seleccione un archivo (*)',
+    uploadSelectedContent: 'Contenido seleccionado',
+    uploadMoreMessage: 'Añadir mas contenido',
+    uploadSelectFromGallery: 'Seleccionar de la galería',
+    uploadSelectOpenCamera: 'Abrir cámara',
+    uploadDescription: 'Descripción',
+    uploadDescriptionPlaceholder: 'Ingrese una descripción...',
+    uploadAddLocation: 'Agregar ubicación actual',
+    uploadConfirmation: 'Confirmar',
 
     // Search Screen
     searchTitle: 'Pantalla de Búsqueda',
@@ -80,4 +95,41 @@ export default {
     settingsOptionAccountOptions: 'Opciones de cuenta',
     settingsOptionMetrics: 'Métricas',
     settingsOptionLogout: 'Cerrar sesión',
+
+    // Permission Dialogs
+    permissionAlertOpenSettings: 'Abrir Configuración',
+    permissionAlertCloseDialog: 'Cerrar',
+    permissionAlertButtonPositive: 'OK',
+
+    // CameraPermission
+    cameraPermissionAlertTitle: 'Permiso de Cámara',
+    cameraPermissionAlertMessage: 'Tribe necesita acceso a tu cámara para tomar fotos y videos.',
+    cameraPermissionAlertDeniedMessage: 'El permiso de cámara ha sido denegado permanentemente. Por favor, habilítalo en la configuración de la app.',
+
+    // LocationPermission
+    locationPermissionAlertTitle: 'Permiso de Ubicación',
+    locationPermissionAlertMessage: 'Tribe necesita acceso a tu ubicación.',
+    locationPermissionAlertDeniedMessage: 'El permiso de ubicación ha sido denegado permanentemente. Por favor, habilítalo en la configuración de la app.',
+
+    // NotificationsPermission
+    notificationsPermissionAlertTitle: 'Permiso de Notificaciones',
+    notificationsPermissionAlertMessage: 'Tribe necesita acceso a tus notificaciones.',
+    notificationsPermissionAlertDeniedMessage: 'El permiso de notificaciones ha sido denegado permanentemente. Por favor, habilítalo en la configuración de la app.',
+
+    // StoragePermission
+    storagePermissionAlertTitle: 'Permiso de Almacenamiento',
+    storagePermissionAlertMessage: 'Tribe necesita acceso a tu almacenamiento para leer medios.',
+    storagePermissionAlertDeniedMessage: 'El permiso de almacenamiento ha sido denegado permanentemente. Por favor, habilítalo en la configuración de la app.',
+
+    // MultimediaHelper
+    multimediaHelperPermissionDenied: 'Permiso denegado',
+    multimediaHelperStoragePermissionDeniedMessage: 'La aplicación necesita permiso de almacenamiento para acceder a los medios.',
+    multimediaHelperCameraPermissionDeniedMessage: 'La aplicación necesita permiso de cámara y micrófono para tomar fotos o videos.',
+    multimediaHelperLocationPermissionDeniedMessage: 'La aplicación necesita permiso de ubicación para agregar la ubicación.',
+    multimediaHelperChooseMediaTypeTitle: 'Elige el tipo de medio', 
+    multimediaHelperChooseMediaTypeMessage: '¿Te gustaría tomar una foto o grabar un video?',
+    multimediaHelperChooseMediaPhoto: 'Tomar foto',
+    multimediaHelperChooseMediaVideo: 'Grabar video',
+    multimediaHelperChooseMediaCancel: 'Cancelar',
+    multimediaHelperChooseMediaClose: 'Cerrar'
 };

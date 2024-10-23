@@ -31,33 +31,29 @@ export { default as Back } from './icons/Back.png';
 export { default as GoogleSignIn } from './icons/Google-Sign-In.png';
 export { default as Aa } from './icons/Aa.png';
 export { default as ChartPin } from './icons/Chart_pin.png';
-export { default as AddSquareSelected } from './icons/Add_square_selected.png';
-export { default as HomeSelected } from './icons/Home_selected.png';
-export { default as SearchAltSelected } from './icons/Search_alt_selected.png';
-export { default as AddSquare } from './icons/Add_square.png';
-export { default as Home } from './icons/Home.png';
-export { default as SearchAlt } from './icons/Search_alt.png';
+export { default as AddSquare } from './icons/Add_square_selected.png';
+export { default as Home } from './icons/Home_selected.png';
+export { default as SearchAlt } from './icons/Search_alt_selected.png';
+export { default as AddSquareSelected } from './icons/Add_square.png';
+export { default as HomeSelected } from './icons/Home.png';
+export { default as SearchAltSelected } from './icons/Search_alt.png';
 export { default as Send } from './icons/Send.png';
+
+//icons night
+export { default as BackNight } from './iconsNight/Back_night.png';
+export { default as BellFillNight } from './iconsNight/Bell_fill_night.png';
+export { default as BookmarkFillNight } from './iconsNight/Bookmark_fill_night.png';
+export { default as FavoriteFillNight } from './iconsNight/Favorite_fill_night.png';
+export { default as MenuNight } from './iconsNight/Menu_night.png';
+export { default as SearchNight } from './iconsNight/Search_night.png';
+export { default as UserCircleLightNight } from './iconsNight/User_cicrle_light_night.png';
+export { default as AddSquareSelectedNight } from './iconsNight/Add_square_night.png';
+export { default as HomeSelectedNight } from './iconsNight/Home_night.png';
+export { default as SearchAltSelectedNight } from './iconsNight/Search_alt_night.png';
+export { default as AddSquareNight } from './iconsNight/Add_square_selected_night.png';
+export { default as HomeNight } from './iconsNight/Home_selected_night.png';
+export { default as SearchAltNight } from './iconsNight/Search_alt_selected_night.png';
 
 // logo
 export { default as LogoDarkMode } from './logo/logoDarkMode.png';
 export { default as LogoLightMode } from './logo/logoLightMode.png';
-
-// randomGeneratedImages
-export { default as RandomGeneratedImage1 } from './randomGeneratedImages/randomGeneratedImage (1).png';
-export { default as RandomGeneratedImage2 } from './randomGeneratedImages/randomGeneratedImage (2).png';
-export { default as RandomGeneratedImage3 } from './randomGeneratedImages/randomGeneratedImage (3).png';
-export { default as RandomGeneratedImage4 } from './randomGeneratedImages/randomGeneratedImage (4).png';
-export { default as RandomGeneratedImage5 } from './randomGeneratedImages/randomGeneratedImage (5).png';
-export { default as RandomGeneratedImage6 } from './randomGeneratedImages/randomGeneratedImage (6).png';
-export { default as RandomGeneratedImage7 } from './randomGeneratedImages/randomGeneratedImage (7).png';
-export { default as RandomGeneratedImage8 } from './randomGeneratedImages/randomGeneratedImage (8).png';
-export { default as RandomGeneratedImage9 } from './randomGeneratedImages/randomGeneratedImage (9).png';
-export { default as RandomGeneratedImage10 } from './randomGeneratedImages/randomGeneratedImage (10).png';
-export { default as RandomGeneratedImage11 } from './randomGeneratedImages/randomGeneratedImage (11).png';
-export { default as RandomGeneratedImage12 } from './randomGeneratedImages/randomGeneratedImage (12).png';
-export { default as RandomGeneratedImage13 } from './randomGeneratedImages/randomGeneratedImage (13).png';
-export { default as RandomGeneratedImage14 } from './randomGeneratedImages/randomGeneratedImage (14).png';
-export { default as RandomGeneratedImage15 } from './randomGeneratedImages/randomGeneratedImage (15).png';
-export { default as RandomGeneratedImage16 } from './randomGeneratedImages/randomGeneratedImage (16).png';
-export { default as RandomGeneratedImage17 } from './randomGeneratedImages/randomGeneratedImage (17).png';

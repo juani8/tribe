@@ -1,31 +1,41 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 require('dotenv').config();
 
 /**
- * Middleware para verificar y decodificar el token JWT proporcionado en el encabezado de autorización.
- * 
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @param {Function} next - Función de middleware para pasar el control al siguiente middleware.
+ * Middleware to verify and decode the JWT token provided in the Authorization header.
+ *
+ * @param {Object} req - HTTP request object.
+ * @param {Object} res - HTTP response object.
+ * @param {Function} next - Middleware function to pass control to the next middleware.
  */
-const auth = (req, res, next) => {
-  // Obtener el token del encabezado de autorización
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+const auth = async (req, res, next) => {
+    console.log('Authorization Header:', req.header('Authorization'));
+    // Get the token from the Authorization header
+    const token = req.header('Authorization')?.replace('Bearer ', '');
 
-  if (!token) {
-    return res.status(401).json({ message: 'No se proporcionó token, autorización denegada' });
-  }
+    console.log('Extracted Token:', token);
 
-  // Verificar y decodificar el token JWT utilizando la clave privada almacenada en las variables de entorno
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(400).json({ message: 'Token invalido' });
-    } else {
-      // Almacenar el ID del usuario validado en la solicitud para su uso posterior
-      req.user = decoded.user;
-      next();
+    if (!token) {
+        console.log('No token provided');
+        return res.status(401).json({ message: 'Token not provided, authorization denied' });
     }
-  });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log('Decoded token:', decoded);  // Log the decoded token
+        req.user = await User.findById(decoded.id);
+        if (!req.user) {
+            console.log('User not found');
+            return res.status(401).json({ message: 'User not found.' });
+        }
+
+        console.log('Authenticated user:', req.user); // Log the authenticated user
+        next();
+    } catch (error) {
+        console.error('Token error:', error);
+        res.status(401).json({ message: 'Invalid token.' });
+    }
 };
 
 module.exports = auth;

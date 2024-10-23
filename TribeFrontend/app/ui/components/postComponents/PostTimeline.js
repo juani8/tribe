@@ -55,7 +55,7 @@ const PostTimeline = ({post}) => {
             <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }} onPress={() => NavigateToSpecificPost(navigation, post.postId)}>
             <Image source={Chat} style={{ width: 24, height: 24 }} />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
           </View>

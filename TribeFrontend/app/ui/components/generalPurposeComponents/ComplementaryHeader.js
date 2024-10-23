@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Back } from 'assets/images';
+import { Back, BackNight } from 'assets/images';
 import { NavigateBack } from 'helper/navigationHandlers/ExtraNavigationHandlers';
 import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
@@ -11,7 +11,7 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 const ComplementaryHeader = ({title}) => {
-    const { theme } = useTheme();
+    const { theme, isDarkMode } = useTheme();
     const navigation = useNavigation();
 
 
@@ -22,7 +22,7 @@ const ComplementaryHeader = ({title}) => {
             <View style={[styles.headerContainer]}>
                 <View style={styles.itemsLeft}>
                     <TouchableOpacity onPress={() => NavigateBack(navigation)}>
-                        <Image source={Back} style={{ width: 40, height: 40 }} />
+                        <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
                     </TouchableOpacity>
                     <CustomTextNunito weight='Bold' style={{fontSize: 18, color: theme.colors.primary, marginLeft: 12}}>{title}</CustomTextNunito>
                 </View>

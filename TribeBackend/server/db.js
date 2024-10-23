@@ -2,6 +2,7 @@ require('dotenv').config({ path: '../.env' });
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const uri = process.env.MONGODB_URI;
+
 if (!uri) {
   console.error('MONGODB_URI no está definida en el archivo .env');
   process.exit(1);
@@ -32,4 +33,4 @@ async function connection() {
   }
 }
 
-module.exports = connection;
+module.exports = connectDB;

@@ -29,13 +29,14 @@ import { UiProvider } from 'context/UiContext';
 import CustomTextNutito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
+import { AddSquareSelectedNight, HomeSelectedNight, SearchAltSelectedNight, AddSquareNight, HomeNight, SearchAltNight } from 'assets/images';
 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabBar() {
-    const { theme } = useTheme();
+    const { theme, isDarkMode } = useTheme();
 
     return (
         <Tab.Navigator
@@ -56,19 +57,19 @@ function TabBar() {
                             label = I18n.t(TextKey.searchNavegation);
                             break;
                     }
-                    return <CustomTextNutito weight='Bold' style={{color: !focused ? theme.colors.secondary : theme.colors.background}}>{label}</CustomTextNutito>;
+                    return <CustomTextNutito weight='Bold' style={{color: (isDarkMode ? focused ? theme.colors.secondary : theme.colors.background : !focused ? theme.colors.secondary : theme.colors.background)}}>{label}</CustomTextNutito>;
                 },
                 tabBarIcon: ({ focused }) => {
                     let icon;
                     switch (route.name) {
                         case 'Home':
-                            icon = !focused ? HomeSelected : Home;
+                            icon = focused ? (isDarkMode ? HomeSelectedNight : HomeSelected) : (isDarkMode ? HomeNight : Home);
                             break;
                         case 'Upload':
-                            icon = !focused ? AddSquareSelected : AddSquare; 
+                            icon = focused ? (isDarkMode ? AddSquareSelectedNight : AddSquareSelected) : (isDarkMode ? AddSquareNight : AddSquare); 
                             break;
                         case 'Search':
-                            icon = !focused ? SearchAltSelected : SearchAlt;
+                            icon = focused ? (isDarkMode ? SearchAltSelectedNight : SearchAltSelected) : (isDarkMode ? SearchAltNight : SearchAlt);
                             break;
                     }
                     return <Image source={icon} style={{  width: 24, height: 24, marginTop:8 }} />;
@@ -104,6 +105,7 @@ function TabBar() {
         </Tab.Navigator>
     );
 }
+
 
 function MainStack() {
     const { theme } = useTheme();
@@ -186,8 +188,19 @@ export default function App() {
 }
 
 function AppContent() {
+    // Define your linking configuration
+    const linking = {
+        prefixes: ['https://tribe.com'], // Your app's deep link prefix
+        config: {
+            screens: {
+                RecoverPassword: 'reset-password?token=:token', // Define the deep link path
+                Login: 'login?token=:token',
+            },
+        },
+    };
+
     return (
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
             <MainStack />
         </NavigationContainer>
     );

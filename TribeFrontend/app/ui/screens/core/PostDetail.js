@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, TextInput, KeyboardAvoidingView, Platform, ScrollView, Keyboard } from 'react-native';
+import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
-import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from 'assets/images';
+import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill, Send } from 'assets/images';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import GetPostById from 'helper/PostHelper';
 import I18n from 'assets/localization/i18n';
@@ -14,6 +14,7 @@ import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInpu
 
 const PostDetail = ({ route }) => {
   const { postId } = route.params;
+  const [commentText, setCommentText] = useState('');
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
@@ -35,11 +36,7 @@ const PostDetail = ({ route }) => {
   const post = GetPostById(postId);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
-      keyboardVerticalOffset={keyboardOffset}
-    >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Post content and other elements */}
         <View style={styles.postHeader}>
@@ -79,7 +76,7 @@ const PostDetail = ({ route }) => {
           </View>
         </View>
 
-        <Separator color={theme.colors.detailText} style={{marginVertical: 20}} />
+        <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
         
         {/* Comment section */}
         <View>
@@ -89,7 +86,14 @@ const PostDetail = ({ route }) => {
                 <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
                   {I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})
                 </CustomTextNunito>
-                <CustomInputNunito />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{width: '92%'}}>
+                    <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
+                  </View>
+                  <View>
+                    <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
+                  </View>
+                </View>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
                     <Image source={{uri: post.lastComment.userProfilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
@@ -108,7 +112,7 @@ const PostDetail = ({ route }) => {
           )}
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

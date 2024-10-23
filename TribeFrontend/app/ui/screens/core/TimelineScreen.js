@@ -1,22 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
-import I18n from 'assets/localization/i18n';
-import TextKey from 'assets/localization/TextKey';
+import { View, Text, FlatList, RefreshControl, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import NetInfo from '@react-native-community/netinfo'; // Import NetInfo for network status
 import MockUpData from 'models/MockUpPostData'; // Import mock data
 import PostTimeline from 'ui/components/postComponents/PostTimeline'; // Import PostTimeline
-import { useUiContext } from 'context/UiContext';
-import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 import { useTheme } from 'context/ThemeContext';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+
+import LottieView from 'lottie-react-native';
 
 export default function TimelineScreen() {
   const [data, setData] = useState([]); // Initial empty array for posts
   const [page, setPage] = useState(1); // Pagination page number
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false); // Loader for infinite scroll
   const [refreshing, setRefreshing] = useState(false); // Refresh state
+  const [isConnected, setIsConnected] = useState(true); // Network status
 
   const { theme } = useTheme();
-
   const styles = createStyles(theme);
+
+  // Check and monitor network status
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    // Cleanup the listener when component unmounts
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   // Simulate fetching paginated data
   const fetchData = (nextPage = 1, refreshing = false) => {
@@ -67,9 +82,35 @@ export default function TimelineScreen() {
     ) : null;
   };
 
+  // If offline, show a message
+  if (!isConnected) {
+    return (
+      <View style={{ backgroundColor: theme.colors.background, flex:1 }}>
+        <View style={{ padding: 16, gap: 30, marginTop: 20 }}>
+          <View>
+            <CustomTextNunito weight={'SemiBold'} style={{ fontSize: 20 }}>{I18n.t(TextKey.noConnectionTitle)}</CustomTextNunito> 
+          </View>
+          <View>
+            <CustomTextNunito weight={'Regular'}>{I18n.t(TextKey.noConnectionFirstMessage)}</CustomTextNunito>
+            <CustomTextNunito weight={'Regular'}>• {I18n.t(TextKey.noConnectionFirstMessageFirstItem)}</CustomTextNunito>
+            <CustomTextNunito weight={'Regular'}>• {I18n.t(TextKey.noConnectionFirstMessageSecondItem)}</CustomTextNunito>
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <LottieView
+              source={require('assets/lottie/lostConnectionLottie.json')}
+              autoPlay
+              loop
+              style={{ width: 300, height: 300 }}
+            />
+            <CustomTextNunito weight={'Regular'}>{I18n.t(TextKey.noConnectionSecondMessage)}</CustomTextNunito> 
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-
       {/* FlatList with pull to refresh and infinite scroll */}
       <FlatList
         data={data}
@@ -82,7 +123,6 @@ export default function TimelineScreen() {
         onEndReachedThreshold={0.8} // Trigger load when scrolled 80%
         ListFooterComponent={ListEndLoader} // Loader for infinite scroll
       />
-
     </View>
   );
 }
@@ -97,5 +137,9 @@ const createStyles = (theme) => StyleSheet.create({
     padding: 16,
     alignItems: 'center',
   },
+  offlineText: {
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
+  },
 });
-

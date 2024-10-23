@@ -30,6 +30,7 @@ export const UiProvider = ({ children }) => {
         showMenu,
         hideMenu,
         menuOptions,
+        menuTitle
       }}
     >
       {children}

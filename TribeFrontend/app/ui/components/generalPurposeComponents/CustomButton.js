@@ -3,25 +3,31 @@ import { Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from './CustomTextNunito';
 
-const CustomButton = ({ title, onPress }) => {
+const CustomButton = ({ title, color, normalizedSize, fullSize, onPress, textWeight, locked }) => {
   const { theme } = useTheme();
   const [scale] = useState(new Animated.Value(1)); 
 
+  const colorApplied = color ? color : theme.colors.primary; 
+
   // Function to handle the press in (shrink effect)
   const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
+    if (!locked) {
+      Animated.spring(scale, {
+        toValue: 0.95,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   // Function to handle the press out (grow back effect)
   const handlePressOut = () => {
-    Animated.spring(scale, {
-      toValue: 1,
-      friction: 3,
-      useNativeDriver: true,
-    }).start();
+    if (!locked) {
+      Animated.spring(scale, {
+        toValue: 1,
+        friction: 3,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   return (
@@ -30,10 +36,19 @@ const CustomButton = ({ title, onPress }) => {
         activeOpacity={0.8}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        onPress={onPress}
-        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        onPress={!locked ? onPress : null}
+        style={[
+          styles.button,
+          { 
+            minWidth: normalizedSize ? 250 : fullSize ? '100%' : 'auto', 
+            backgroundColor: locked ? theme.colors.disabled : colorApplied
+          }
+        ]}
+        disabled={locked}
       >
-        <CustomTextNunito weight='SemiBold' style={{ color: theme.colors.buttonText }}>{title}</CustomTextNunito>
+        <CustomTextNunito weight={textWeight ? textWeight : 'SemiBold'} style={{ color: theme.colors.buttonText }}>
+          {title}
+        </CustomTextNunito>
       </TouchableOpacity>
     </Animated.View>
   );
