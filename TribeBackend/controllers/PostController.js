@@ -4,11 +4,11 @@ const { validationResult } = require('express-validator');
 
 /**
  * Crea un nuevo post.
- * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene los detalles del nuevo post.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-const createPost = async (req, res) => {
+exports.createPost = async (req, res) => {
     console.log("Iniciando el proceso de creación de un nuevo post...");
     const { description, multimedia, location } = req.body;
 
@@ -37,11 +37,11 @@ const createPost = async (req, res) => {
 
 /**
  * Obtiene los detalles de un post específico.
- * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con los detalles del post si se encuentra, o un mensaje de error.
  */
-const getPostById = async (req, res) => {
+exports.getPostById = async (req, res) => {
     const { postId } = req.params;
 
     try {
@@ -58,11 +58,11 @@ const getPostById = async (req, res) => {
 
 /**
  * Obtiene todos los comentarios de un post específico.
- * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con la lista de comentarios del post.
  */
-const getCommentsByPostId = async (req, res) => {
+exports.getCommentsByPostId = async (req, res) => {
     const { postId } = req.params;
     const { offset = 0, limit = 10 } = req.query;
 
@@ -86,11 +86,11 @@ const getCommentsByPostId = async (req, res) => {
 
 /**
  * Crea un comentario en un post específico.
- * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post y el contenido del comentario.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con el comentario creado o un mensaje de error.
  */
-const createComment = async (req, res) => {
+exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
 
@@ -124,11 +124,11 @@ const createComment = async (req, res) => {
 
 /**
  * Da un 'like' a un post.
- * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con el post actualizado si se hace el 'like' correctamente.
  */
-const likePost = async (req, res) => {
+exports.likePost = async (req, res) => {
     const { postId } = req.params;
 
     try {
@@ -149,11 +149,11 @@ const likePost = async (req, res) => {
 
 /**
  * Elimina un 'like' de un post.
- * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con un código de estado 204 si se elimina el 'like' correctamente.
  */
-const unlikePost = async (req, res) => {
+exports.unlikePost = async (req, res) => {
     const { postId } = req.params;
 
     try {
@@ -174,11 +174,11 @@ const unlikePost = async (req, res) => {
 
 /**
  * Obtiene posts para el timeline o feed.
- * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de paginación y ordenación.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con los posts del timeline.
  */
-const getTimelinePosts = async (req, res) => {
+exports.getTimelinePosts = async (req, res) => {
     const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
 
     try {
@@ -196,15 +196,4 @@ const getTimelinePosts = async (req, res) => {
         console.error("Error en getTimelinePosts:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
-};
-
-// Exportar las funciones del controlador
-module.exports = {
-    createPost,
-    getPostById,
-    getCommentsByPostId,
-    createComment,
-    likePost,
-    unlikePost,
-    getTimelinePosts
 };
