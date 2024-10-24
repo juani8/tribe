@@ -188,8 +188,19 @@ export default function App() {
 }
 
 function AppContent() {
+    // Define your linking configuration
+    const linking = {
+        prefixes: ['https://tribe.com'], // Your app's deep link prefix
+        config: {
+            screens: {
+                RecoverPassword: 'reset-password?token=:token', // Define the deep link path
+                Login: 'login?token=:token',
+            },
+        },
+    };
+
     return (
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
             <MainStack />
         </NavigationContainer>
     );
