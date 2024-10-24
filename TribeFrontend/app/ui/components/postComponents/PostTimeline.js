@@ -18,7 +18,6 @@ const PostTimeline = ({ post }) => {
   const styles = createStyles(theme);
   const navigation = useNavigation();
   
-
   // State to hold city name
   const [cityName, setCityName] = useState('');
 
