@@ -45,6 +45,7 @@ exports.getPostById = async (req, res) => {
     const { postId } = req.params;
 
     try {
+        // REVISAR POPULATE: ESTO TIENE QUE DEVOLVER SOLAMENTE EL ULTIMO COMENTARIO.
         const post = await Post.findById(postId).populate('comments');
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
@@ -64,6 +65,8 @@ exports.getPostById = async (req, res) => {
  */
 exports.getCommentsByPostId = async (req, res) => {
     const { postId } = req.params;
+    // REVISAR ESTA DEFINICIÓN PORQUE EL OFFSET Y LIMIT DEBERIAN DE PODER MODIFICARSE
+    // AGREGAR UNA VALIDACION DE QUE SI EL OFFSET ES MAYOR QUE LA CANTIDAD DE COMENTARIOS, DEVUELVA ALGO QUE INDIQUE ESO
     const { offset = 0, limit = 10 } = req.query;
 
     try {
@@ -75,6 +78,7 @@ exports.getCommentsByPostId = async (req, res) => {
         const comments = await Comment.find({ postId })
             .skip(parseInt(offset))
             .limit(parseInt(limit))
+            // CHEQUEAR ESTE POPULATE
             .populate('userId', 'nickName profileImage');
 
         res.status(200).json(comments);
@@ -179,6 +183,7 @@ exports.unlikePost = async (req, res) => {
  * @returns {Promise<void>} - Responde con los posts del timeline.
  */
 exports.getTimelinePosts = async (req, res) => {
+    // MODIFICAR ESTO POR QUE PARA LA PRIMERA ENTREGA NO VAMOS A TENER FOLLOWINGS, DEBERIA TOMAR TODOS LOS POSTS DE LA COLECCION DE POSTS Y LISTO
     const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
 
     try {
@@ -186,6 +191,8 @@ exports.getTimelinePosts = async (req, res) => {
         const followedUsers = await User.findById(req.user.id).select('following');
         
         // Buscar los posts de los usuarios seguidos
+        // MODIFICARLO PARA NO DEVOLVER TODO, OJO CON LO DE LOS COMENTARIOS
+        // JUANI NECESITA PARA EL TIMELINE TODO MENOS LOS COMENTARIOS (SOLAMENTE EL NUMERO DE COMENTARIOS)
         const posts = await Post.find({ userId: { $in: followedUsers.following } })
             .skip(parseInt(offset))
             .limit(parseInt(limit))
@@ -197,3 +204,5 @@ exports.getTimelinePosts = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 };
+
+// HACER DOS METODOS INTERNOS, UNO PARA TRAER LOS NUMEROS DE COMENTARIOS Y OTRO PARA TRAER EL ULTIMO COMENTARIO
