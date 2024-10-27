@@ -1,6 +1,7 @@
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const { validationResult } = require('express-validator');
+const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 
 /**
  * Crea un nuevo post.
@@ -10,19 +11,26 @@ const { validationResult } = require('express-validator');
  */
 exports.createPost = async (req, res) => {
     console.log("Iniciando el proceso de creación de un nuevo post...");
-    const { description, multimedia, location } = req.body;
+    const { description, multimedia, latitude, longitude } = req.body;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
     }
 
     try {
+        // Obtener el nombre de la ciudad usando las coordenadas
+        const city = await getCityFromCoordinates(latitude, longitude);
+
         const newPost = new Post({
             userId: req.user.id,
             description,
             multimedia,
-            location
+            location: {
+                latitude, 
+                longitude, 
+                city
+            }
         });
 
         const savedPost = await newPost.save();
@@ -31,7 +39,12 @@ exports.createPost = async (req, res) => {
         res.status(201).send({ data: savedPost, message: 'Post creado exitosamente' });
     } catch (error) {
         console.error("Error en createPost:", error);
-        res.status(500).send({ message: 'Error interno del servidor', error: error.message });
+        
+        if (error.message.includes('Coordenadas inválidas') || error.message.includes('Ciudad no encontrada')) {
+            return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
+        }
+        
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 };
 
@@ -44,13 +57,27 @@ exports.createPost = async (req, res) => {
 exports.getPostById = async (req, res) => {
     const { postId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
+
     try {
-        // REVISAR POPULATE: ESTO TIENE QUE DEVOLVER SOLAMENTE EL ULTIMO COMENTARIO.
-        const post = await Post.findById(postId).populate('comments');
+        const post = await Post.findById(postId).lean();
+        
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
-        res.status(200).json(post);
+
+        const totalComments = await Comment.countDocuments({ postId });
+        const lastComment = await Comment.findOne({ postId }).sort({ createdAt: -1 }).populate('userId');
+
+        const response = {
+            ...post,
+            totalComments,
+            lastComment: lastComment || 'Aún no hay comentarios'
+        };
+
+        res.status(200).json(response);
     } catch (error) {
         console.error("Error en getPostById:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -58,28 +85,42 @@ exports.getPostById = async (req, res) => {
 };
 
 /**
- * Obtiene todos los comentarios de un post específico.
+ * Obtiene todos los comentarios de un post específico. Cada vez que el usuario navega a una nueva página, el frontend hace una nueva 
+ * solicitud al backend con los parámetros de paginación actualizados (por ejemplo, offset y limit).
  * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con la lista de comentarios del post.
  */
 exports.getCommentsByPostId = async (req, res) => {
     const { postId } = req.params;
-    // REVISAR ESTA DEFINICIÓN PORQUE EL OFFSET Y LIMIT DEBERIAN DE PODER MODIFICARSE
-    // AGREGAR UNA VALIDACION DE QUE SI EL OFFSET ES MAYOR QUE LA CANTIDAD DE COMENTARIOS, DEVUELVA ALGO QUE INDIQUE ESO
+    /**
+     * Los valores 0 y 10 son valores por defecto, en caso de que no sean proporcionados en la query. 
+     * El frontend es responsable de calcular y enviar el offset correcto en cada solicitud para obtener la página deseada. 
+     * El offset se incrementa en función del limit cada vez que se navega a una nueva página (offset + limit)
+     */
     const { offset = 0, limit = 10 } = req.query;
 
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
+
     try {
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId).populate({
+            path: 'comments',
+            options: {
+                sort: { createdAt: -1 },
+                skip: parseInt(offset),
+                limit: parseInt(limit)
+            },
+            // Llena el campo userId en cada comentario con los datos del usuario, seleccionando solo nickName y profileImage.
+            populate: { path: 'userId', select: 'nickName profileImage' }
+        });
+
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
-        const comments = await Comment.find({ postId })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            // CHEQUEAR ESTE POPULATE
-            .populate('userId', 'nickName profileImage');
+        const comments = post.comments;
 
         res.status(200).json(comments);
     } catch (error) {
@@ -103,9 +144,25 @@ exports.createComment = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
+
+    /**
+     * En este método se están realizando dos operaciones críticas:
+     * 1. Guardar un nuevo comentario en la colección Comment.
+     * 2. Actualizar el post correspondiente para incluir el ID del nuevo comentario en su array de comentarios.
+     * Si una de estas operaciones falla y la otra se completa, la base de datos puede quedar en un estado inconsistente. Usar una
+     * transacción asegura que ambas operaciones se completen correctamente o ninguna se aplique.
+     */
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId).session(session);
         if (!post) {
+            await session.abortTransaction();
+            session.endSession();
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
@@ -115,12 +172,17 @@ exports.createComment = async (req, res) => {
             comment: content
         });
 
-        const savedComment = await newComment.save();
+        const savedComment = await newComment.save({ session });
         post.comments.push(savedComment._id);
-        await post.save();
+        await post.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
 
         res.status(201).json(savedComment);
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
         console.error("Error en createComment:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
@@ -134,6 +196,10 @@ exports.createComment = async (req, res) => {
  */
 exports.likePost = async (req, res) => {
     const { postId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
 
     try {
         const post = await Post.findById(postId);
@@ -160,6 +226,10 @@ exports.likePost = async (req, res) => {
 exports.unlikePost = async (req, res) => {
     const { postId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
+
     try {
         const post = await Post.findById(postId);
         if (!post) {
@@ -182,27 +252,62 @@ exports.unlikePost = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con los posts del timeline.
  */
-exports.getTimelinePosts = async (req, res) => {
-    // MODIFICAR ESTO POR QUE PARA LA PRIMERA ENTREGA NO VAMOS A TENER FOLLOWINGS, DEBERIA TOMAR TODOS LOS POSTS DE LA COLECCION DE POSTS Y LISTO
+/**exports.getTimeline = async (req, res) => {
     const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
 
     try {
         // Obtener los IDs de los usuarios seguidos por el usuario autenticado
         const followedUsers = await User.findById(req.user.id).select('following');
+        if (!followedUsers) {
+            return res.status(404).json({ message: 'Usuarios seguidos no encontrados.' });
+        }
         
         // Buscar los posts de los usuarios seguidos
-        // MODIFICARLO PARA NO DEVOLVER TODO, OJO CON LO DE LOS COMENTARIOS
-        // JUANI NECESITA PARA EL TIMELINE TODO MENOS LOS COMENTARIOS (SOLAMENTE EL NUMERO DE COMENTARIOS)
-        const posts = await Post.find({ userId: { $in: followedUsers.following } })
+        const posts = await Post.find({ userId: { $in: user.following } })
             .skip(parseInt(offset))
             .limit(parseInt(limit))
-            .sort({ [sort]: order === 'desc' ? -1 : 1 });
+            .select('-comments') 
+            .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .lean();
 
-        res.status(200).json(posts);
+        const postSummary = await Promise.all(posts.map(async post => {
+            const totalComments = await Comment.countDocuments({ postId: post._id });
+            return {
+                ...post,
+                totalComments
+            };
+        }));
+
+        res.status(200).json(postSummary);
     } catch (error) {
-        console.error("Error en getTimelinePosts:", error);
+        console.error("Error en getTimeline:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
-};
+};*/
+exports.getTimeline = async (req, res) => {
+    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
 
-// HACER DOS METODOS INTERNOS, UNO PARA TRAER LOS NUMEROS DE COMENTARIOS Y OTRO PARA TRAER EL ULTIMO COMENTARIO
+    try {
+        // Buscar los posts en la colección Post
+        const posts = await Post.find()
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .select('-comments') 
+            .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .lean();
+
+        // Calcular el número de comentarios para cada post
+        const postSummary = await Promise.all(posts.map(async post => {
+            const totalComments = await Comment.countDocuments({ postId: post._id });
+            return {
+                ...post,
+                totalComments
+            };
+        }));
+
+        res.status(200).json(postSummary);
+    } catch (error) {
+        console.error("Error en getTimeline:", error);
+        res.status(500).json({ message: 'Error interno del servidor. Por favor, inténtalo de nuevo más tarde.' });
+    }
+};
