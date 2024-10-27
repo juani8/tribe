@@ -29,23 +29,41 @@ export default {
     welcomeGotoLogin: 'Iniciar sesión',
 
     // Login Screen
-    loginTitle: 'Pantalla de Inicio de Sesión',
+    loginTitle: 'Inicio de Sesión',
     loginMessage: 'Por favor, ingrese sus credenciales',
     loginButton: 'Iniciar sesión',
     goToSignup: 'Ir a Registrarse',
     goToRecoverPassword: 'Ir a Recuperar Contraseña',
+    emailLabel: 'Correo',
+    passwordLabel: 'Contraseña',
+    emailPlaceholder: 'Ingresa tu correo',
+    passwordPlaceholder: 'Ingresa tu contraseña',
+    gmailLogin: 'O',
 
     // Signup Screen
-    signupTitle: 'Pantalla de Registro',
-    signupButton: 'Registrarse',
-    goToLoginButton: 'Ir a Iniciar sesión',
+    signupTitle: 'Crea tu cuenta',
+    nameAccount: 'Nombre de fantasía',
+    enterName: 'Ingresa tu nombre de fantasía',
+    emailAccount: 'Email',
+    enterEmail: 'Ingresa tu email',
+    passwordAccount: 'Contraseña',
+    enterPassword: 'Ingresa tu contraseña',
+    confirmPassword: 'Confirmar contraseña',
+    enterConfirmPassword: 'Confirma tu contraseña',
+    createUserButton: 'Crear usuario',
+    logIn: 'Incia sesion',
+    completeFields: 'Por favor, completa todos los campos.',
+    passwordsDontMatch: 'Las contraseñas no coinciden.',
 
     // Password recovery Screen
-    passwordRecoveryTitle: 'Pantalla de Recuperación de Contraseña',
-    passwordRecoveryButton: 'Verificar',
+    recoverPasswordTitle: 'Recupera tu contraseña',
+    recoverPasswordDescription: 'Ingresa el email con el que te registraste, te enviaremos un código para cambiar tu contraseña.',
+    emailLabel: 'Correo',
+    emailPlaceholder: 'Ingresa tu correo',
+    verifyButton: 'Verificar',
 
     // Initial configuration Screen
-    initialConfigurationTitle: 'Pantalla de Configuración Inicial',
+    initialConfigurationTitle: 'Configuración Inicial',
     initialConfigurationButton: 'Continuar',
 
     // Timeline Screen
@@ -67,7 +85,7 @@ export default {
     uploadMoreMessage: 'Añadir mas contenido',
     uploadSelectFromGallery: 'Seleccionar de la galería',
     uploadSelectOpenCamera: 'Abrir cámara',
-    uploadDescription: 'Descripción',
+    uploadDescriptionTitle: 'Descripción',
     uploadDescriptionPlaceholder: 'Ingrese una descripción...',
     uploadAddLocation: 'Agregar ubicación actual',
     uploadConfirmation: 'Confirmar',
@@ -131,5 +149,5 @@ export default {
     multimediaHelperChooseMediaPhoto: 'Tomar foto',
     multimediaHelperChooseMediaVideo: 'Grabar video',
     multimediaHelperChooseMediaCancel: 'Cancelar',
-    multimediaHelperChooseMediaClose: 'Cerrar'
+    multimediaHelperChooseMediaClose: 'Cerrar',
 };

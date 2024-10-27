@@ -14,6 +14,7 @@ import { BlurView } from '@react-native-community/blur';
 
 const PopupMenu = ({ visible, onClose, options, title }) => {
   const { theme, isDarkMode } = useTheme();
+  
 
   return (
     <Modal

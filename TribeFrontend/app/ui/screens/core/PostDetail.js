@@ -6,6 +6,7 @@ import { useTheme } from 'context/ThemeContext';
 import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill, Send } from 'assets/images';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import GetPostById from 'helper/PostHelper';
+import { getCityFromCoordinates } from 'networking/services/OSMApiService';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
@@ -18,6 +19,9 @@ const PostDetail = ({ route }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+
+  // State to hold the city name
+  const [cityName, setCityName] = useState('');
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
@@ -34,6 +38,18 @@ const PostDetail = ({ route }) => {
   }, []);
 
   const post = GetPostById(postId);
+
+  useEffect(() => {
+    // Fetch city name based on post location coordinates
+    const fetchCityName = async () => {
+      if (post.location?.latitude && post.location?.longitude) {
+        const city = await getCityFromCoordinates(post.location.latitude, post.location.longitude);
+        setCityName(city);
+      }
+    };
+    
+    fetchCityName();
+  }, [post.location]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -72,7 +88,7 @@ const PostDetail = ({ route }) => {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{cityName}</CustomTextNunito>
           </View>
         </View>
 

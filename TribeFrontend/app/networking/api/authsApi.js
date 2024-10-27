@@ -68,25 +68,3 @@ export const verifyPasswordToken = async (token) => {
     throw error;
   }
 };
-
-// Cambiar la contraseña del usuario actual
-export const changeUserPassword = async (passwordData) => {
-  try {
-    const response = await axios.patch(`${BASE_URL}/users/me/passwords`, passwordData);
-    return response.data;
-  } catch (error) {
-    console.error('Error cambiando la contraseña del usuario:', error);
-    throw error;
-  }
-};
-
-// Cerrar sesión del usuario actual
-export const logoutUser = async () => {
-  try {
-    const response = await axios.post(`${BASE_URL}/users/me/logout`);
-    return response.data;
-  } catch (error) {
-    console.error('Error cerrando sesión del usuario:', error);
-    throw error;
-  }
-};
