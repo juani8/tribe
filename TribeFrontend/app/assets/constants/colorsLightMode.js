@@ -9,4 +9,6 @@ export default {
   background: '#F9F5EF',
   disabled: '#BDBDBD',
   options: '#F9F5EF',
+  backgroundSecondary: '#EFEFEF',
+  placeholder: '#A9A9A9', 
 }
