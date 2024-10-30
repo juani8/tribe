@@ -22,6 +22,10 @@ const PostSchema = new mongoose.Schema({
         longitude: {
             type: Number,
             required: true
+        },
+        city: {
+            type: String,
+            required: true
         }
     },
     likes: {

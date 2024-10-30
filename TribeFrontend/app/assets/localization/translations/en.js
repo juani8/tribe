@@ -36,15 +36,33 @@ export default {
     loginButton: 'Login',
     goToSignup: 'Go to Signup',
     goToRecoverPassword: 'Go to Recover Password',
+    emailLabel: 'Email',
+    passwordLabel: 'Password',
+    emailPlaceholder: 'Enter your email',
+    passwordPlaceholder: 'Enter your password',
+    gmailLogin: 'Or',
 
     // Signup Screen
-    signupTitle: 'Signup Screen',
-    signupButton: 'Signup',
-    goToLoginButton: 'Go to Login',
+    signupTitle: 'Create your account',
+    nameAccount: 'Fantasy Name',
+    enterName: 'Enter your fantasy name',
+    emailAccount: 'Email',
+    enterEmail: 'Enter your email',
+    passwordAccount: 'Password',
+    enterPassword: 'Enter your password',
+    confirmPassword: 'Confirm password',
+    enterConfirmPassword: 'Confirm your password',
+    createUserButton: 'Create account',
+    logIn: 'Sign in',
+    completeFields: 'Please fill in all fields.',
+    passwordsDontMatch: 'Passwords do not match.',
 
     // Password recovery Screen
-    passwordRecoveryTitle: 'Password recovery Screen',
-    passwordRecoveryButton: 'Verify',
+    recoverPasswordTitle: 'Recover your password',
+    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a code to change your password.',
+    emailLabel: 'Email',
+    mailPlaceholder: 'Enter your email',
+    verifyButton: 'Verify',
 
     // Initial configuration Screen
     initialConfigurationTitle: 'Initial configuration Screen',

@@ -1,23 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import ContentCarousel from './ContentCarousel';
 import { formatDistanceToNow } from 'date-fns'; // Optional: Helps to format the timestamp.
 import { useTheme } from 'context/ThemeContext';
 import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from '../../../assets/images';
-import {NavigateToSpecificPost} from 'helper/navigationHandlers/CoreNavigationHandlers';
+import { NavigateToSpecificPost } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import { useNavigation } from '@react-navigation/native';
-
+import { getCityFromCoordinates } from 'networking/services/OSMApiService';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 
-// PostTimeline component
-const PostTimeline = ({post}) => {
+const PostTimeline = ({ post }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation();
+  
+  // State to hold city name
+  const [cityName, setCityName] = useState('');
+
+  useEffect(() => {
+    // Fetch city name based on post location coordinates
+    const fetchCityName = async () => {
+      if (post.location?.latitude && post.location?.longitude) {
+        const city = await getCityFromCoordinates(post.location.latitude, post.location.longitude);
+        setCityName(city);
+      }
+    };
+    
+    fetchCityName();
+  }, [post.location]);
 
   return (
     <View style={styles.container}>
@@ -47,7 +61,6 @@ const PostTimeline = ({post}) => {
       {/* Post multimedia */}
       <ContentCarousel multimedia={post.multimedia} />
 
-
       {/* Post metadata */}
       <View style={styles.metadata}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
@@ -65,7 +78,7 @@ const PostTimeline = ({post}) => {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-          <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
+          <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{cityName}</CustomTextNunito>
         </View>
       </View>
     </View>
