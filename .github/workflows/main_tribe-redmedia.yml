@@ -54,4 +54,4 @@ jobs:
           app-name: 'tribe-redmedia'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3C57518197AD4A4BB9854BFCAC88CD40 }}
-          package: TribeBackend
+          package: node-app
