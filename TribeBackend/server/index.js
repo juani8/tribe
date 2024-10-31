@@ -7,13 +7,18 @@ async function init() {
   try {
     await connection();
     const port = process.env.PORT || 8080;
-    const host = process.env.HOST || 'http://localhost';
+    const host = process.env.HOST || 'http://localhost:8080';
     app.listen(port, () => {
-      console.log(`Servidor escuchando en: ${host}:${port}`);
+      // Si el host de Azure esta definido, Azure establece automáticamente el puerto para la aplicación.
+      if (process.env.HOST) {
+        console.log(`Servidor escuchando en: ${host}`); 
+      } else {
+        console.log(`Servidor escuchando en: ${host}:${port}`);
+      }
     });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);
-    process.exit(1); // Finalizar el proceso si ocurre un error crítico
+    process.exit(1); 
   }
 }
 
