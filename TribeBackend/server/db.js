@@ -45,7 +45,9 @@ mongoose.set('strictQuery', false);
 module.exports = async() => {
   try {
     // Conectar a MongoDB
-    await mongoose.connect(uri)
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 30000,
+    });
     console.log(`MongoDB '${uri}' conectada!`)
   } catch (err) {
     console.log(`No se pudo conectar a la base de datos: ${err}`)
