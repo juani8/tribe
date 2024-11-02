@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Establece tu URL base aquí
-const BASE_URL = 'https://your-api-url.com';
+const BASE_URL = 'https://tribe-redmedia.vercel.app:8080';
 
 // Obtener el perfil del usuario autenticado
 export const getUserProfile = async () => {

@@ -10,7 +10,7 @@ const requestCameraPermission = async () => {
             {
                 title: I18n.t(TextKey.cameraPermissionAlertTitle),
                 message: I18n.t(TextKey.cameraPermissionAlertMessage),
-                buttonPositive: I18n.t(TextKey.cameraPermissionAlertButtonPositive),
+                buttonPositive: I18n.t(TextKey.permissionAlertButtonPositive),
             }
         );
         

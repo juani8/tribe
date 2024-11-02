@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Text, StyleSheet, Alert, Keyboard, PermissionsAndroid, KeyboardAvoidingView, Platform, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
-import { Back } from 'assets/images';
+import { View, ScrollView, StyleSheet, Keyboard, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
@@ -10,6 +9,8 @@ import { useTheme } from 'context/ThemeContext';
 import { selectFromGallery, openCamera, handleLocationToggle } from 'helper/MultimediaHelper';
 import CheckBox from '@react-native-community/checkbox';
 import Video from 'react-native-video';
+import { getLocation } from 'helper/LocationHelper';
+import { createPost } from 'networking/api/postsApi';
 
 export default function UploadScreen() {
     const [commentText, setCommentText] = useState('');
@@ -19,6 +20,29 @@ export default function UploadScreen() {
 
     const styles = createStyles(theme);
 
+    const handleCreatePost = async () => {
+        // Check if there is any media selected
+        if (selectedMedia.length === 0) {
+            return;
+        } else {
+            // Create the post with the selected media
+            try {
+                const postMedia = await uploadMedia(selectedMedia);
+                const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: null, longitude: null };
+                const postComment = (commentText.trim().length > 0) ? commentText : null;
+                const postData = { 
+                    multimedia: postMedia, 
+                    description: postComment, 
+                    latitude: latitude, 
+                    longitude: longitude 
+                };
+                // Send the post data to the backend
+                await createPost(postData);                
+            } catch (error) {
+                console.error(error);
+            }
+        };
+    }
     
     // Function to remove selected media
     const removeMedia = (uri) => {
@@ -116,7 +140,13 @@ export default function UploadScreen() {
                     <CustomTextNunito onPress={() => handleLocationToggle(checkboxSelection, setCheckboxSelection)}>{I18n.t(TextKey.uploadAddLocation)}</CustomTextNunito>
                 </View>
                 <View style={{ width: '100%', alignItems:'center', justifyContent: 'center', gap: 10, marginTop: 10}}>
-                    <CustomButton title={I18n.t(TextKey.uploadConfirmation)} normalizedSize={true} style={[styles.button, { alignSelf: 'flex-start' }]} locked={selectedMedia.length > 0 ? false : true} />
+                    <CustomButton 
+                        title={I18n.t(TextKey.uploadConfirmation)} 
+                        normalizedSize={true} 
+                        style={[styles.button, { alignSelf: 'flex-start' }]} 
+                        locked={selectedMedia.length > 0 ? false : true} 
+                        onPress={handleCreatePost}
+                    />
                 </View>
             </ScrollView>
         </TouchableWithoutFeedback>

@@ -6,7 +6,6 @@ import { useTheme } from 'context/ThemeContext';
 import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from '../../../assets/images';
 import { NavigateToSpecificPost } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import { useNavigation } from '@react-navigation/native';
-import { getCityFromCoordinates } from 'networking/services/OSMApiService';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
@@ -18,39 +17,26 @@ const PostTimeline = ({ post }) => {
   const styles = createStyles(theme);
   const navigation = useNavigation();
   
-  // State to hold city name
-  const [cityName, setCityName] = useState('');
-
-  useEffect(() => {
-    // Fetch city name based on post location coordinates
-    const fetchCityName = async () => {
-      if (post.location?.latitude && post.location?.longitude) {
-        const city = await getCityFromCoordinates(post.location.latitude, post.location.longitude);
-        setCityName(city);
-      }
-    };
-    
-    fetchCityName();
-  }, [post.location]);
 
   return (
     <View style={styles.container}>
       {/* User info */}
       <View style={styles.postHeader}>
         <Image
-          source={{ uri: post.userProfilePicture }}
+          source={{ uri: post.profilePicture }}
           style={{ width: 65, height: 65, borderRadius: 100 }}
           resizeMode="stretch"
         />
         <View style={styles.header}>
-          <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
+          <CustomTextNunito style={styles.username}>{post.nickname}</CustomTextNunito>
           <CustomTextNunito style={styles.timeAgo}>
-            {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
+            {console.log(post.createdAt)}
+            {formatDistanceToNow(new Date(post.createdAt))} ago
           </CustomTextNunito>
         </View>
       </View>
 
-      <TouchableOpacity onPress={() => NavigateToSpecificPost(navigation, post.postId)}>
+      <TouchableOpacity onPress={() => NavigateToSpecificPost(navigation, post)}>
         {/* Post description */}
         <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
         <View>
@@ -68,17 +54,17 @@ const PostTimeline = ({ post }) => {
             <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }} onPress={() => NavigateToSpecificPost(navigation, post.postId)}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }} onPress={() => NavigateToSpecificPost(navigation, post)}>
             <Image source={Chat} style={{ width: 24, height: 24 }} />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
-          </View>
+          </TouchableOpacity>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
             <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
           </View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-          <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{cityName}</CustomTextNunito>
+          <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.location.city}</CustomTextNunito>
         </View>
       </View>
     </View>

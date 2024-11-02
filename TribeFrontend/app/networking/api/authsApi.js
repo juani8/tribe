@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Establezca su URL base aquí
-const BASE_URL = 'https://your-api-url.com';
+const BASE_URL = 'https://tribe-redmedia.vercel.app:8080';
 
 // Registro de usuario
 export const registerUser = async (registrationData) => {

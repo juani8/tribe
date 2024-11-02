@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import Back from 'assets/images/icons/Back.png';
+import BackNight from 'assets/images/iconsNight/Back_night.png';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito'; 
 import { requestPasswordReset } from 'api/authsApi'; 
-import { Back, BackNight } from 'assets/images';  
+ 
 
 const RecoverPasswordScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();  
