@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { storeToken, getToken } from 'helper/JWTHelper';
 
-// Establezca su URL base aquí
-const BASE_URL = 'https://tribe-redmedia.vercel.app:8080';
+const BASE_URL = 'http://10.0.2.2:8080';
 
 // Registro de usuario
 export const registerUser = async (registrationData) => {

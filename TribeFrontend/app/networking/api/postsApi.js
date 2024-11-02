@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
 
-// Establezca su URL base aquí
 const BASE_URL = 'http://10.0.2.2:8080';
 
 // Crear una nueva publicación
