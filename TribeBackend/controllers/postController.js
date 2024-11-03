@@ -129,6 +129,7 @@ exports.getCommentsByPostId = async (req, res) => {
     }
 };
 
+
 /**
  * Crea un comentario en un post específico.
  * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post y el contenido del comentario.
@@ -299,9 +300,12 @@ exports.getTimeline = async (req, res) => {
         // Calcular el número de comentarios para cada post
         const postSummary = await Promise.all(posts.map(async post => {
             const totalComments = await Comment.countDocuments({ postId: post._id });
+            const lastComment = await Comment.findOne({ postId: post._id }).sort({ createdAt: -1 });
+
             return {
                 ...post,
-                totalComments
+                totalComments,
+                lastComment: lastComment || null
             };
         }));
 
