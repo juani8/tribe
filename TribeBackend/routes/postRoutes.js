@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const postController = require('../controllers/tempController');
+const postController = require('../controllers/postController');
 const auth = require('../middlewares/auth');
 
 // Aplicar el middleware de autenticación a todas las rutas de post
