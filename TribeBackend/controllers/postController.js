@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const { validationResult } = require('express-validator');
@@ -40,7 +41,7 @@ exports.createPost = async (req, res) => {
     } catch (error) {
         console.error("Error en createPost:", error);
         
-        if (error.message.includes('Coordenadas inválidas') || error.message.includes('Ciudad no encontrada')) {
+        if (error.message.includes('Coordenadas inválidas')) {
             return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
         }
         
@@ -149,21 +150,9 @@ exports.createComment = async (req, res) => {
         return res.status(400).json({ message: 'postId inválido' });
     }
 
-    /**
-     * En este método se están realizando dos operaciones críticas:
-     * 1. Guardar un nuevo comentario en la colección Comment.
-     * 2. Actualizar el post correspondiente para incluir el ID del nuevo comentario en su array de comentarios.
-     * Si una de estas operaciones falla y la otra se completa, la base de datos puede quedar en un estado inconsistente. Usar una
-     * transacción asegura que ambas operaciones se completen correctamente o ninguna se aplique.
-     */
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
-        const post = await Post.findById(postId).session(session);
+        const post = await Post.findById(postId);
         if (!post) {
-            await session.abortTransaction();
-            session.endSession();
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
@@ -173,17 +162,21 @@ exports.createComment = async (req, res) => {
             comment: content
         });
 
-        const savedComment = await newComment.save({ session });
-        post.comments.push(savedComment._id);
-        await post.save({ session });
+        // Intenta guardar el comentario y maneja cualquier error que ocurra
+        let savedComment;
+        try {
+            savedComment = await newComment.save();
+        } catch (error) {
+            console.error("Error al guardar el comentario:", error);
+            return res.status(500).json({ message: 'No se pudo crear el comentario', error: error.message });
+        }
 
-        await session.commitTransaction();
-        session.endSession();
+        // Solo actualiza el post si el comentario se creó correctamente
+        post.comments.push(savedComment._id);
+        await post.save();
 
         res.status(201).json(savedComment);
     } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
         console.error("Error en createComment:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
@@ -287,6 +280,7 @@ exports.unlikePost = async (req, res) => {
 };*/
 exports.getTimeline = async (req, res) => {
     const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+    console.log("Parámetros de consulta:", { offset, limit, sort, order });
 
     try {
         // Buscar los posts en la colección Post
@@ -297,10 +291,15 @@ exports.getTimeline = async (req, res) => {
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
             .lean();
 
+        console.log(`Cantidad de posts encontrados: ${posts.length}`);
+
         // Calcular el número de comentarios para cada post
         const postSummary = await Promise.all(posts.map(async post => {
             const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id }).sort({ createdAt: -1 });
+
+            console.log(`Buscando comentarios para el post ID: ${post._id}`);
+            console.log(`Post ID: ${post._id}, Total Comments: ${totalComments}, Último Comentario:`, lastComment);
 
             return {
                 ...post,
