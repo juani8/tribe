@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const Like = require('../models/Like');
-const { validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 
 /**
@@ -80,12 +80,16 @@ exports.getTimeline = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-exports.createPost = async (req, res) => {
+/**exports.createPost = async (req, res) => {
     const { description, multimedia, latitude, longitude } = req.body;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
+    }
+
+    if (!multimedia) {
+        return res.status(400).json({ error: 400, message: 'El contenido multimedia es obligatorio.' });
     }
 
     try {
@@ -115,7 +119,55 @@ exports.createPost = async (req, res) => {
         
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
-};
+};*/
+
+exports.createPost = [
+    // Validación de los campos
+    check('multimedia').notEmpty().withMessage('El contenido multimedia es obligatorio.'),
+    check('description').optional(),
+    check('latitude').optional(),
+    check('longitude').optional(),
+
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.', errors: errors.array() });
+        }
+
+        const { description, multimedia, latitude, longitude } = req.body;
+
+        try {
+            let city;
+            if (latitude !== undefined && longitude !== undefined) {
+                // Obtener el nombre de la ciudad usando las coordenadas
+                city = await getCityFromCoordinates(latitude, longitude);
+            }
+
+            const newPost = new Post({
+                userId: req.user.id,
+                description,
+                multimedia,
+                location: {
+                    latitude, 
+                    longitude, 
+                    city
+                }
+            });
+
+            const savedPost = await newPost.save();
+
+            res.status(201).send({ data: savedPost, message: 'Post creado exitosamente' });
+        } catch (error) {
+            console.error("Error en createPost:", error);
+            
+            if (error.message.includes('Coordenadas inválidas')) {
+                return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
+            }
+            
+            res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        }
+    }
+];
 
 /**
  * Obtiene los detalles de un post específico.
