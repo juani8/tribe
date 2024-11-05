@@ -12,6 +12,14 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      HOST: ${{ vars.HOST }}
+      SMPT_SERVER: ${{ vars.SMPT_SERVER }}
+      SMPT_PORT: ${{ vars.SMPT_PORT }}
+      SMPT_USER: ${{ vars.SMPT_USER }}
+      SMPT_PASS: ${{ secrets.SMPT_PASS }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}      
 
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +35,13 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+          echo "HOST=$HOST"
+          echo "SMPT_SERVER=$SMPT_SERVER"
+          echo "SMPT_PORT=$SMPT_PORT"
+          echo "SMPT_USER=$SMPT_USER"
+          echo "SMPT_PASS=$SMPT_PASS"
+          echo "MONGODB_URI=$MONGODB_URI"
+          echo "JWT_SECRET=$JWT_SECRET"
       
       - name: Zip TribeBackend for deployment
         run: |
@@ -46,6 +61,14 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+    env:
+      HOST: ${{ vars.HOST }}
+      SMPT_SERVER: ${{ vars.SMPT_SERVER }}
+      SMPT_PORT: ${{ vars.SMPT_PORT }}
+      SMPT_USER: ${{ vars.SMPT_USER }}
+      SMPT_PASS: ${{ secrets.SMPT_PASS }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     steps:
       - name: Download artifact from build job
