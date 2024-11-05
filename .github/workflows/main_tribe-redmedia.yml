@@ -19,7 +19,8 @@ jobs:
       SMPT_USER: ${{ vars.SMPT_USER }}
       SMPT_PASS: ${{ secrets.SMPT_PASS }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}      
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}     
+      NODE_ENV: ${{ vars.NODE_ENV }} 
 
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +43,7 @@ jobs:
           echo "SMPT_PASS=$SMPT_PASS"
           echo "MONGODB_URI=$MONGODB_URI"
           echo "JWT_SECRET=$JWT_SECRET"
+          echo "NODE_ENV=$NODE_ENV"
       
       - name: Zip TribeBackend for deployment
         run: |
@@ -69,6 +71,7 @@ jobs:
       SMPT_PASS: ${{ secrets.SMPT_PASS }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      NODE_ENV: ${{ vars.NODE_ENV }} 
 
     steps:
       - name: Download artifact from build job
