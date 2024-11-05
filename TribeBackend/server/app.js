@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('../routes/authRoutes');
+const postRoutes = require('../routes/postRoutes');
 const userRoutes = require('../routes/userRoutes');
 const auth = require('../middlewares/auth');
 
@@ -18,6 +19,7 @@ app.use(express.json());
 
 // Rutas
 app.use('/auths', authRoutes);
+app.use('/posts', auth, postRoutes);
 app.use('/users', auth, userRoutes);
 
 app.get('/', (req, res) => {

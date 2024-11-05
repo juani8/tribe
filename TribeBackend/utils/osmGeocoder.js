@@ -9,15 +9,15 @@
  *  https://nominatim.org/release-docs/latest/api/Search/
  */
 require("dotenv").config();
-import axios from 'axios';
+const axios = require('axios');
 
 const axiosInstance = axios.create({
-    baseURL: 'https://nominatim.openstreetmap.org',
-    headers: {
-      'User-Agent': 'MyApp/1.0 (myemail@example.com)',
-      'Referer': process.env.HOST || 'http://localhost',
-    },
-    timeout: 5000, // Tiempo de espera de 5 segundos
+  baseURL: 'https://nominatim.openstreetmap.org',
+  headers: {
+    'User-Agent': 'MyApp/1.0 (myemail@example.com)',
+    'Referer': process.env.HOST || 'http://localhost',
+  },
+  timeout: 5000, // Tiempo de espera de 5 segundos
 });
 
 /**
@@ -41,7 +41,7 @@ function validateCoordinates(latitude, longitude) {
  * @param {number} longitude - La longitud para hacer la geocodificación inversa.
  * @returns {Promise<string>} - El nombre de la ciudad.
  */
-export async function getCityFromCoordinates(latitude, longitude) {
+async function getCityFromCoordinates(latitude, longitude) {
     if (!validateCoordinates(latitude, longitude)) {
       throw new Error('Coordenadas inválidas');
     }
@@ -59,10 +59,21 @@ export async function getCityFromCoordinates(latitude, longitude) {
   
       console.log('Respuesta OSM:', response.data);
   
-      if (response.data && response.data.address && response.data.address.city) {
-        return response.data.address.city;
+      if (response.data && response.data.address) {
+        // Intenta obtener la ciudad primero
+        if (response.data.address.city) {
+            return response.data.address.city;
+        } 
+        // Si no se encuentra la ciudad, intenta obtener el país
+        else if (response.data.address.state) {
+            return response.data.address.state;
+        } 
+        // Si no hay ni ciudad ni país, devuelve "Desconocido"
+        else {
+            return "Desconocido";
+        }
       } else {
-        throw new Error('Ciudad no encontrada');
+        return "Desconocido"; // En caso de que la respuesta no tenga la estructura esperada
       }
     } catch (error) {
         console.error('Error al obtener la ciudad desde OSM:', error);
@@ -79,3 +90,7 @@ export async function getCityFromCoordinates(latitude, longitude) {
         }
     }
 }
+
+module.exports = {
+  getCityFromCoordinates
+};

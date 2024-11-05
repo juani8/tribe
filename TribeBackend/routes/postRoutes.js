@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const PostController = require('../controllers/postController');
-const auth = require('../middlewares/auth');
+const postController = require('../controllers/postController');
 
-// Aplicar el middleware de autenticación a todas las rutas de post
-router.use(auth);
-
-router.post('/posts', PostController.createPost);
-router.get('/posts/:postId', PostController.getPostById);
-router.get('/posts/:postId/comments', PostController.getCommentsByPostId);
-router.post('/posts/:postId/comments', PostController.createComment);
-router.post('/posts/:postId/likes', PostController.likePost);
-router.delete('/posts/:postId/likes', PostController.unlikePost);
-router.get('/timeline', PostController.getTimeline);
+router.get('/timeline', postController.getTimeline);
+router.post('/', postController.createPost);
+router.get('/:postId', postController.getPostById);
+router.get('/:postId/comments', postController.getCommentsByPostId);
+router.post('/:postId/comments', postController.createComment);
+router.post('/:postId/likes', postController.likePost);
+router.delete('/:postId/likes', postController.unlikePost);
+router.get('/:postId/likes/:userId', postController.checkLike);
 
 module.exports = router;
