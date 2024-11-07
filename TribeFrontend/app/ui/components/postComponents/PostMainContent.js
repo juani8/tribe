@@ -12,23 +12,26 @@ import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 
-const PostTimeline = ({ post }) => {
+const PostMainContent = ({ post }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation();
   
+  useEffect(() => {
+    console.log('PostMainContent.js - post', post);
+  }, [post]);
 
   return (
     <View style={styles.container}>
       {/* User info */}
       <View style={styles.postHeader}>
         <Image
-          source={{ uri: post.profilePicture }}
+          source={{ uri: post.userId.profileImage }}
           style={{ width: 65, height: 65, borderRadius: 100 }}
           resizeMode="stretch"
         />
         <View style={styles.header}>
-          <CustomTextNunito style={styles.username}>{post.nickname}</CustomTextNunito>
+          <CustomTextNunito style={styles.username}>{post.userId.nickName}</CustomTextNunito>
           <CustomTextNunito style={styles.timeAgo}>
             {console.log(post.createdAt)}
             {formatDistanceToNow(new Date(post.createdAt))} ago
@@ -75,10 +78,9 @@ const PostTimeline = ({ post }) => {
 
 const createStyles = (theme) => StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
     paddingVertical: 4,
     borderRadius: 8,
-    marginBottom: 16,
+    marginTop: 16,
   },
   postHeader: {
     flexDirection: 'row',
@@ -115,4 +117,4 @@ const createStyles = (theme) => StyleSheet.create({
   },
 });
 
-export default PostTimeline;
+export default PostMainContent;

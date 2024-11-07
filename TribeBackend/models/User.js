@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     name: {type: String},
     lastName: {type: String},
     nickName: { type: String, required: true },
@@ -20,4 +20,4 @@ const userSchema = new mongoose.Schema({
     numberOfFavorites: { type: Number, default: 0 },
 }, { timestamps: true }); 
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);

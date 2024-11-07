@@ -1,5 +1,6 @@
 require('dotenv').config({ path: '../.env' });
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const mongoose = require('mongoose');
 
 const uri = process.env.MONGODB_URI;
 
@@ -18,8 +19,9 @@ const client = new MongoClient(uri, {
 
 async function connection() {
   try {
-    await client.connect();
-    await client.db("admin").command({ ping: 1 });
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 30000,
+    });
     console.log("Conexión exitosa a MongoDB!");
   } catch (error) {
     if (error.name === 'MongoNetworkError') {

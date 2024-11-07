@@ -1,7 +1,7 @@
 // TimelineScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
-import PostTimeline from 'ui/components/postComponents/PostTimeline';
+import PostMainContent from 'ui/components/postComponents/PostMainContent';
 import { useTheme } from 'context/ThemeContext';
 import { getTimelinePosts, checkServerStatus } from 'networking/api/postsApi';
 import NetInfo from '@react-native-community/netinfo';
@@ -108,7 +108,7 @@ export default function TimelineScreen() {
     <View style={styles.container}>
       <FlatList
         data={data}
-        renderItem={({ item }) => <PostTimeline post={item} />}
+        renderItem={({ item }) => <PostMainContent post={item} />}
         keyExtractor={(item, index) => `${item.userId}-${index}`}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={fetchNextPage}
@@ -127,6 +127,7 @@ export default function TimelineScreen() {
 
 const createStyles = (theme) => StyleSheet.create({
   container: {
+    paddingHorizontal: 20,
     flex: 1,
     paddingTop: 10,
     backgroundColor: theme.colors.background,

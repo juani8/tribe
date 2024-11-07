@@ -8,7 +8,6 @@ const PostSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true
     },
     multimedia: {
         type: [String],
@@ -17,13 +16,14 @@ const PostSchema = new mongoose.Schema({
     location: {
         latitude: {
             type: Number,
-            required: true
         },
         longitude: {
             type: Number,
-            required: true
+        },
+        city: {
+            type: String,
         }
-    },
+    }, 
     likes: {
         type: Number,
         default: 0
