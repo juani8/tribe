@@ -1,48 +1,78 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
+import { verifyRegistrationToken } from 'networking/api/authsApi'; 
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito'; 
+import Back from 'assets/images/icons/Back.png';
+import BackNight from 'assets/images/iconsNight/Back_night.png';
 
 const VerifyIdentityScreen = ({ navigation }) => {
-  const { theme } = useTheme();
+  const { theme, isDarkMode } = useTheme();
   const styles = createStyles(theme);
+
+  const [token, setToken] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleVerifyToken = async () => {
+    try {
+      if (!token) {
+        setErrorMessage('Por favor ingresa el token de verificación.');
+        return;
+      }
+
+      // Llamada a la API para verificar el token
+      const response = await verifyRegistrationToken(token); // Envía el token al backend
+      console.log('Token verificado:', response);
+
+      // Si la verificación es exitosa, redirigimos al usuario
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error verificando el token:', error);
+      setErrorMessage('Error verificando el token. Inténtalo de nuevo.');
+    }
+  };
 
   return (
     <View style={styles.container}>
-      
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image
-          source={theme.backIcon}
-          style={styles.backIcon}
-        />
+        <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
 
-      
       <Image 
         source={theme.logo}
         style={styles.logo}
         resizeMode="contain"
       />
 
-      
-      <Text style={styles.title}>Verifica tu identidad</Text>
+      <CustomTextNunito style={styles.title} weight="Bold">
+        Verifica tu identidad
+      </CustomTextNunito>
 
-      
-      <Text style={styles.paragraph}>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
         Hemos enviado un correo electrónico para confirmar que realmente eres tú.
-      </Text>
-      <Text style={styles.paragraph}>
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
         Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.
-      </Text>
-      <Text style={styles.paragraph}>
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
         Si no visualizas el correo, verifica la carpeta de spam.
-      </Text>
+      </CustomTextNunito>
 
-      
-      <Image 
-        //source={require('assets/images/emailSent.png')}  
-        //style={styles.emailImage}
-        //resizeMode="contain"
+      <TextInput
+        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary }]}
+        placeholder="Ingresa el token de verificación"
+        placeholderTextColor={theme.colors.placeholder}
+        value={token}
+        onChangeText={setToken}
       />
+
+      {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
+
+      <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyToken}>
+        <CustomTextNunito style={styles.verifyButtonText} weight="Bold">
+          Verificar Token
+        </CustomTextNunito>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -79,26 +109,45 @@ const createStyles = (theme) => StyleSheet.create({
     alignSelf: 'flex-start',
   },
   title: {
-    fontFamily: 'Nunito-Bold',
     fontSize: 26,
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
     color: theme.colors.text,  
     textAlign: 'left',
     marginBottom: 20,
   },
   paragraph: {
-    fontFamily: 'Nunito-Regular',
     fontSize: 16,
-    fontWeight: '600',  
+    fontWeight: '600',
     color: theme.colors.text,  
     lineHeight: 24,
     marginBottom: 10,
   },
-  emailImage: {
+  input: {
     width: '100%',
-    height: 150,
-    marginTop: 30,
-    alignSelf: 'center',
+    height: 50,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: theme.colors.text,
+    marginTop: 20,
+  },
+  verifyButton: {
+    width: '100%',
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 14,
+    borderRadius: 30,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  verifyButtonText: {
+    fontSize: 16,
+    color: '#FFF',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 15,
+    textAlign: 'left',
+    width: '100%',
   },
 });
 

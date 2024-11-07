@@ -6,7 +6,13 @@ const BASE_URL = 'http://10.0.2.2:8080';
 // Crear una nueva publicación
 export const createPost = async (postData) => {
     try {
-        const response = await axios.post(`${BASE_URL}/posts`, postData);
+        const token = await getToken();
+        console.log('createPost', postData);
+        const response = await axios.post(`${BASE_URL}/posts`, postData, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error al crear la publicación:', error);
@@ -29,7 +35,7 @@ export const getUserPosts = async () => {
 export const getTimelinePosts = async () => {
     try {
         const token = await getToken();
-        const response = await axios.get(`${BASE_URL}/timeline`, {
+        const response = await axios.get(`${BASE_URL}/timeline?order=asc`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -114,14 +120,12 @@ export const bypassLogin = async () => {
     try {
         const response = await axios.post(`${BASE_URL}/auths/sessions/bypass`);
         const token = response.data.token;
-        console.log('Token:', token);
-    
-        // Store the token using Keychain
+            
+        // Store the token
         await storeToken(token);
     
         // Retrieve the token for use
         const storedToken = await getToken();
-        console.log('Retrieved token:', storedToken);
     } catch (error) {
         console.error('Error in bypassLogin:', error);
     }

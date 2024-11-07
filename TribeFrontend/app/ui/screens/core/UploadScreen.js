@@ -27,17 +27,24 @@ export default function UploadScreen() {
         } else {
             // Create the post with the selected media
             try {
-                const postMedia = await uploadMedia(selectedMedia);
-                const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: null, longitude: null };
+                const postMedia = selectedMedia.map(media => media.uri);
                 const postComment = (commentText.trim().length > 0) ? commentText : null;
+                const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: undefined, longitude: undefined };
+                
                 const postData = { 
                     multimedia: postMedia, 
                     description: postComment, 
                     latitude: latitude, 
                     longitude: longitude 
                 };
+
                 // Send the post data to the backend
-                await createPost(postData);                
+                await createPost(postData);
+
+                // Reset the states
+                setSelectedMedia([]);
+                setCommentText('');
+                setCheckboxSelection(false);
             } catch (error) {
                 console.error(error);
             }

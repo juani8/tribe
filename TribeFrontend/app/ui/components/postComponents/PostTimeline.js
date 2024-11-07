@@ -38,7 +38,7 @@ const PostTimeline = ({ post }) => {
 
       <TouchableOpacity onPress={() => NavigateToSpecificPost(navigation, post)}>
         {/* Post description */}
-        <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
+        <CustomTextNunito style={styles.description}>{post.description ?? ''}</CustomTextNunito>
         <View>
           <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.timelineSeePostDetail)}</CustomHighlightedTextNunito>
         </View>
@@ -64,7 +64,9 @@ const PostTimeline = ({ post }) => {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-          <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.location.city}</CustomTextNunito>
+          {post.location?.city && (
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.location.city}</CustomTextNunito>
+          )}
         </View>
       </View>
     </View>
