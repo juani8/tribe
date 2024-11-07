@@ -1,3 +1,4 @@
+require("dotenv").config();
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
@@ -9,11 +10,11 @@ exports.sendMagicLink = async (email, userId) => {
 
         // Create a transporter object using SMTP transport
         let transporter = nodemailer.createTransport({
-            host: 'smtp.mailtrap.io',  // Replace with your SMTP server
-            port: 2525,  // Replace with your SMTP server's port
+            host: process.env.SMPT_SERVER,  // Replace with your SMTP server
+            port: process.env.SMPT_PORT,  // Replace with your SMTP server's port
             auth: {
-                user: '0c95a07e53bba9',  // Replace with your SMTP user
-                pass: '55b48250a562fc'  // Replace with your SMTP password
+                user: process.env.SMPT_USER,  // Replace with your SMTP user
+                pass: process.env.SMPT_PASS  // Replace with your SMTP password
             }
         });
 

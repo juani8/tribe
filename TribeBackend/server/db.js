@@ -1,11 +1,11 @@
-require('dotenv').config({ path: '../.env' });
+/**require('dotenv').config({ path: '../.env' });
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const mongoose = require('mongoose');
 
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
-  console.error('MONGODB_URI no está definida en el archivo .env');
+  console.error('La URI de MongoDB no está definida en el archivo .env');
   process.exit(1);
 }
 
@@ -35,4 +35,23 @@ async function connection() {
   }
 }
 
-module.exports = connection;
+module.exports = connection;*/
+
+const mongoose = require("mongoose");
+require('dotenv').config();
+ 
+const uri = process.env.MONGODB_URI_LOCAL;
+ 
+mongoose.set('strictQuery', false);
+
+module.exports = async() => {
+  try {
+    // Conectar a MongoDB
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 30000,
+    });
+    console.log(`MongoDB '${uri}' conectada!`)
+  } catch (err) {
+    console.log(`No se pudo conectar a la base de datos: ${err}`)
+  };
+};

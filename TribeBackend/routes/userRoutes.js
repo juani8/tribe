@@ -5,7 +5,7 @@ const { getProfile, updateProfile, deleteProfile, getUsers, followUser, unfollow
 } = require('../controllers/userController');
 const router = express.Router();
 
-// Apply the auth middleware globally to all user routes
+// Aplicar el middleware de autenticación a todas las rutas de post
 router.use(auth);
 
 router.get('/me', getProfile);

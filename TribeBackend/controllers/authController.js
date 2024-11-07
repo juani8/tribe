@@ -53,20 +53,36 @@ exports.verifyMagicLink = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        //console.log('Login attempt with email:', email);
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(401).json({ message: 'Invalid credentials.' });
+
+        if (!user) {
+            //console.log('Invalid credentials: user not found');
+            return res.status(401).json({ message: 'Invalid credentials.' });
+        }
+
+        //console.log('User found:', user);
 
         if (!user.isVerified) {
+            //console.log('User not verified:', user.email);
             return res.status(403).json({ message: 'Please verify your email before logging in.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials.' });
+        //console.log('Password match:', isMatch);
+
+        if (!isMatch) {
+            //console.log('Invalid credentials: password does not match');
+            return res.status(401).json({ message: 'Invalid credentials.' });
+        }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        //console.log('Generated token:', token);
+
         res.status(200).json({ token, user });
     } catch (error) {
+        console.error('Internal server error:', error);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };

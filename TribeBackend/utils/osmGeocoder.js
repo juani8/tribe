@@ -12,12 +12,12 @@ require("dotenv").config();
 const axios = require('axios');
 
 const axiosInstance = axios.create({
-    baseURL: 'https://nominatim.openstreetmap.org',
-    headers: {
-      'User-Agent': 'MyApp/1.0 (myemail@example.com)',
-      'Referer': process.env.HOST || 'http://localhost',
-    },
-    timeout: 5000, // Tiempo de espera de 5 segundos
+  baseURL: 'https://nominatim.openstreetmap.org',
+  headers: {
+    'User-Agent': 'MyApp/1.0 (myemail@example.com)',
+    'Referer': process.env.HOST || 'http://localhost',
+  },
+  timeout: 5000, // Tiempo de espera de 5 segundos
 });
 
 /**
@@ -59,11 +59,21 @@ async function getCityFromCoordinates(latitude, longitude) {
   
       console.log('Respuesta OSM:', response.data);
   
-      if (response.data && response.data.address && response.data.address.city) {
-        return response.data.address.city;
+      if (response.data && response.data.address) {
+        // Intenta obtener la ciudad primero
+        if (response.data.address.city) {
+            return response.data.address.city;
+        } 
+        // Si no se encuentra la ciudad, intenta obtener el país
+        else if (response.data.address.state) {
+            return response.data.address.state;
+        } 
+        // Si no hay ni ciudad ni país, devuelve "Desconocido"
+        else {
+            return "Desconocido";
+        }
       } else {
-        console.warn('Ciudad no encontrada para las coordenadas:', latitude, longitude);
-        return 'Ciudad desconocida'; // Fallback value
+        return "Desconocido"; // En caso de que la respuesta no tenga la estructura esperada
       }
     } catch (error) {
         console.error('Error al obtener la ciudad desde OSM:', error);
@@ -81,7 +91,6 @@ async function getCityFromCoordinates(latitude, longitude) {
     }
 }
 
-
 module.exports = {
-    getCityFromCoordinates,
+  getCityFromCoordinates
 };

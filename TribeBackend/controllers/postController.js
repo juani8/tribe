@@ -1,8 +1,78 @@
 const mongoose = require('mongoose');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
+const Like = require('../models/Like');
 const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
+
+/**
+ * Obtiene posts para el timeline o feed.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de paginación y ordenación.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con los posts del timeline.
+ */
+/**exports.getTimeline = async (req, res) => {
+    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+
+    try {
+        // Obtener los IDs de los usuarios seguidos por el usuario autenticado
+        const followedUsers = await User.findById(req.user.id).select('following');
+        if (!followedUsers) {
+            return res.status(404).json({ message: 'Usuarios seguidos no encontrados.' });
+        }
+        
+        // Buscar los posts de los usuarios seguidos
+        const posts = await Post.find({ userId: { $in: user.following } })
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .select('-comments') 
+            .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .lean();
+
+        const postSummary = await Promise.all(posts.map(async post => {
+            const totalComments = await Comment.countDocuments({ postId: post._id });
+            return {
+                ...post,
+                totalComments
+            };
+        }));
+
+        res.status(200).json(postSummary);
+    } catch (error) {
+        console.error("Error en getTimeline:", error);
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
+};*/
+exports.getTimeline = async (req, res) => {
+    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+
+    try {
+        // Buscar los posts en la colección Post
+        const posts = await Post.find()
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .select('-comments') 
+            .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .lean();
+
+        // Calcular el número de comentarios para cada post
+        const postSummary = await Promise.all(posts.map(async post => {
+            const totalComments = await Comment.countDocuments({ postId: post._id });
+            const lastComment = await Comment.findOne({ postId: post._id }).sort({ createdAt: -1 });
+
+            return {
+                ...post,
+                totalComments,
+                lastComment: lastComment || null
+            };
+        }));
+
+        res.status(200).json(postSummary);
+    } catch (error) {
+        console.error("Error en getTimeline:", error);
+        res.status(500).json({ message: 'Error interno del servidor. Por favor, inténtalo de nuevo más tarde.' });
+    }
+};
 
 /**
  * Crea un nuevo post.
@@ -10,6 +80,47 @@ const { getCityFromCoordinates } = require('../utils/osmGeocoder');
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
+/**exports.createPost = async (req, res) => {
+    const { description, multimedia, latitude, longitude } = req.body;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
+    }
+
+    if (!multimedia) {
+        return res.status(400).json({ error: 400, message: 'El contenido multimedia es obligatorio.' });
+    }
+
+    try {
+        // Obtener el nombre de la ciudad usando las coordenadas
+        const city = await getCityFromCoordinates(latitude, longitude);
+
+        const newPost = new Post({
+            userId: req.user.id,
+            description,
+            multimedia,
+            location: {
+                latitude, 
+                longitude, 
+                city
+            }
+        });
+
+        const savedPost = await newPost.save();
+
+        res.status(201).send({ data: savedPost, message: 'Post creado exitosamente' });
+    } catch (error) {
+        console.error("Error en createPost:", error);
+        
+        if (error.message.includes('Coordenadas inválidas')) {
+            return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
+        }
+        
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
+};*/
+
 exports.createPost = [
     // Validación de los campos
     check('multimedia').notEmpty().withMessage('El contenido multimedia es obligatorio.'),
@@ -56,7 +167,7 @@ exports.createPost = [
             res.status(500).json({ message: 'Error interno del servidor', error: error.message });
         }
     }
-]; 
+];
 
 /**
  * Obtiene los detalles de un post específico.
@@ -92,7 +203,7 @@ exports.getPostById = async (req, res) => {
         console.error("Error en getPostById:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
-};   
+};
 
 /**
  * Obtiene todos los comentarios de un post específico. Cada vez que el usuario navega a una nueva página, el frontend hace una nueva 
@@ -199,6 +310,7 @@ exports.createComment = async (req, res) => {
  */
 exports.likePost = async (req, res) => {
     const { postId } = req.params;
+    const userId = req.user._id;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({ message: 'postId inválido' });
@@ -209,6 +321,9 @@ exports.likePost = async (req, res) => {
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
+
+        const like = new Like({ postId, userId });
+        await like.save();
 
         post.likes += 1;
         await post.save();
@@ -228,6 +343,7 @@ exports.likePost = async (req, res) => {
  */
 exports.unlikePost = async (req, res) => {
     const { postId } = req.params;
+    const userId = req.user._id; 
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({ message: 'postId inválido' });
@@ -239,6 +355,9 @@ exports.unlikePost = async (req, res) => {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
+        const like = await Like.findOne({ postId, userId });
+        await Like.deleteOne({ _id: like._id });
+
         post.likes = Math.max(0, post.likes - 1);
         await post.save();
 
@@ -249,73 +368,25 @@ exports.unlikePost = async (req, res) => {
     }
 };
 
-/**
- * Obtiene posts para el timeline o feed.
- * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de paginación y ordenación.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con los posts del timeline.
- */
-/**exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+exports.checkLike = async (req, res) => {
+    const { postId, userId } = req.params;
 
-    try {
-        // Obtener los IDs de los usuarios seguidos por el usuario autenticado
-        const followedUsers = await User.findById(req.user.id).select('following');
-        if (!followedUsers) {
-            return res.status(404).json({ message: 'Usuarios seguidos no encontrados.' });
-        }
-        
-        // Buscar los posts de los usuarios seguidos
-        const posts = await Post.find({ userId: { $in: user.following } })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .select('-comments') 
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .lean();
-
-        const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ postId: post._id });
-            return {
-                ...post,
-                totalComments
-            };
-        }));
-
-        res.status(200).json(postSummary);
-    } catch (error) {
-        console.error("Error en getTimeline:", error);
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
     }
-};*/
 
-exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'userId inválido' });
+    }
 
     try {
-        // Buscar los posts en la colección Post
-        const posts = await Post.find()
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .select('-comments') 
-            .populate('userId', 'profileImage nickName')
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .lean();
-
-        // Calcular el número de comentarios para cada post
-        const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ postId: post._id });
-            const lastComment = await Comment.findOne({ postId: post._id }).sort({ createdAt: -1 });
-
-            return {
-                ...post,
-                totalComments,
-                lastComment: lastComment || null
-            };
-        }));
-
-        res.status(200).json(postSummary);
+        const like = await Like.findOne({ postId, userId });
+        if (like) {
+            return res.json({ liked: true });
+        } else {
+            return res.json({ liked: false });
+        }
     } catch (error) {
-        console.error("Error en getTimeline:", error);
-        res.status(500).json({ message: 'Error interno del servidor. Por favor, inténtalo de nuevo más tarde.' });
+        return res.status(500).json({ error: 'Error al verificar el like' });
     }
 };
