@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { storeToken, getToken } from 'helper/JWTHelper';
 
-// Establezca su URL base aquí
-const BASE_URL = 'https://your-api-url.com';
+const BASE_URL = 'http://10.0.2.2:8080';
 
 // Crear una nueva publicación
 export const createPost = async (postData) => {
@@ -28,7 +28,13 @@ export const getUserPosts = async () => {
 // Obtener publicaciones para la línea de tiempo (feed)
 export const getTimelinePosts = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/timeline`);
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/timeline`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        console.log('getTimelinePosts', response.data);
         return response.data;
     } catch (error) {
         console.error('Error al obtener las publicaciones de la línea de tiempo:', error);
@@ -36,10 +42,12 @@ export const getTimelinePosts = async () => {
     }
 };
 
+
 // Obtener una publicación específica por su ID
 export const getPostById = async (postId) => {
     try {
         const response = await axios.get(`${BASE_URL}/posts/${postId}`);
+        console.log('getPostById', response.data);
         return response.data;
     } catch (error) {
         console.error(`Error al obtener la publicación con ID ${postId}:`, error);
@@ -90,3 +98,43 @@ export const unlikePost = async (postId) => {
         throw error;
     }
 };
+
+export const checkServerStatus = async () => {
+    try {
+      const response = await axios.get(BASE_URL);
+      console.log(response)
+      return response.status === 200;
+    } catch (error) {
+      console.error('Error checking server status:', error);
+      return false;
+    }
+};
+
+export const bypassLogin = async () => {
+    try {
+        const response = await axios.post(`${BASE_URL}/auths/sessions/bypass`);
+        const token = response.data.token;
+        console.log('Token:', token);
+    
+        // Store the token using Keychain
+        await storeToken(token);
+    
+        // Retrieve the token for use
+        const storedToken = await getToken();
+        console.log('Retrieved token:', storedToken);
+    } catch (error) {
+        console.error('Error in bypassLogin:', error);
+    }
+};
+  
+
+export const createTestUser = async () => {
+    try {
+        const response = await axios.post(`${BASE_URL}/auths/sessions/test-user`);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating test user:', error);
+        throw error;
+    }
+};
+

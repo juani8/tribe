@@ -42,7 +42,7 @@ const openCamera = async (selectedMedia, setSelectedMedia) => {
             I18n.t(TextKey.multimediaHelperChooseMediaTypeTitle),
             I18n.t(TextKey.multimediaHelperChooseMediaTypeMessage),
             [
-                { text: I18n.t(TextKey.multimediaHelperChooseMediaVideoPhoto), onPress: () => captureMedia('photo', selectedMedia, setSelectedMedia) },
+                { text: I18n.t(TextKey.multimediaHelperChooseMediaPhoto), onPress: () => captureMedia('photo', selectedMedia, setSelectedMedia) },
                 { text: I18n.t(TextKey.multimediaHelperChooseMediaVideo), onPress: () => captureMedia('video', selectedMedia, setSelectedMedia) },
                 { text: I18n.t(TextKey.multimediaHelperChooseMediaCancel), style: 'cancel' }
             ]

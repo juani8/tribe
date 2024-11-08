@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, Dimensions, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LottieView from 'lottie-react-native';
 
 import I18n from 'assets/localization/i18n';
@@ -13,6 +13,8 @@ import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 
 import { NavigateToLogin, NavigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
 import { NavigateToHome }  from 'helper/navigationHandlers/CoreNavigationHandlers';
+
+import { bypassLogin, createTestUser } from 'networking/api/postsApi';
 
 const WelcomeScreen = ({ navigation }) => {
   const [sliderState, setSliderState] = useState({ currentPage: 0 });
@@ -32,6 +34,13 @@ const WelcomeScreen = ({ navigation }) => {
   };
 
   const { currentPage: pageIndex } = sliderState;
+
+  useEffect(() => {
+    //createTestUser();
+    setTimeout(() => {
+      bypassLogin();
+    }, 1);
+  }, []);
 
   return (
     <>
