@@ -3,9 +3,10 @@ import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import ContentCarousel from './ContentCarousel';
 import { formatDistanceToNow } from 'date-fns'; // Optional: Helps to format the timestamp.
 import { useTheme } from 'context/ThemeContext';
-import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from '../../../assets/images';
+import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from 'assets/images';
 import { NavigateToSpecificPost } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import { useNavigation } from '@react-navigation/native';
+import { likePost, unlikePost, bookmarkPost, unbookmarkPost } from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
@@ -16,6 +17,40 @@ const PostMainContent = ({ post }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation();
+  const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [likeCount, setLikeCount] = useState(post.likes);
+  const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
+
+  const handleFavoriteToggle = async () => {
+    try {
+      if (isLiked) {
+        setIsLiked(false);
+        setLikeCount(likeCount - 1);
+        await unlikePost(post._id);
+      } else {
+        setIsLiked(true);
+        setLikeCount(likeCount + 1);
+        await likePost(post._id);
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
+
+  const handleBookmarkToggle = () => {
+    try {
+      if (isBookmarked) {
+        setIsBookmarked(false);
+        await unbookmarkPost(post._id);
+      } else {
+        setIsBookmarked(true);
+        await bookmarkPost(post._id);
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    }
+  };
+  };
   
   useEffect(() => {
     console.log('PostMainContent.js - post', post);
@@ -53,17 +88,17 @@ const PostMainContent = ({ post }) => {
       {/* Post metadata */}
       <View style={styles.metadata}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
-          </View>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => handleFavoriteToggle()}>
+            <Image source={isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{likeCount}</CustomTextNunito>
+          </TouchableOpacity>
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }} onPress={() => NavigateToSpecificPost(navigation, post)}>
             <Image source={Chat} style={{ width: 24, height: 24 }} />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
           </TouchableOpacity>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }} onPress={() => handleBookmarkToggle()}>
             <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image source={PinAltFill} style={{ width: 24, height: 24 }} />

@@ -1,5 +1,4 @@
-/**require('dotenv').config({ path: '../.env' });
-const { MongoClient, ServerApiVersion } = require('mongodb');
+require('dotenv').config({ path: '../.env' });
 const mongoose = require('mongoose');
 
 const uri = process.env.MONGODB_URI;
@@ -9,49 +8,17 @@ if (!uri) {
   process.exit(1);
 }
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
 async function connection() {
   try {
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 30000,
-    });
-    console.log("Conexión exitosa a MongoDB!");
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });    console.log('Conexión exitosa a MongoDB!');
   } catch (error) {
-    if (error.name === 'MongoNetworkError') {
-      console.error('Error de red al conectar con MongoDB:', error);
-    } else if (error.name === 'MongoParseError') {
-      console.error('Error al analizar la URI de MongoDB:', error);
-    } else {
-      console.error('Error inesperado al conectar con MongoDB:', error);
-    }
-    process.exit(1); // Finalizar el proceso en caso de error crítico
+    console.error('Error al conectar con MongoDB:', error);
+    process.exit(1);
   }
 }
 
-module.exports = connection;*/
-
-const mongoose = require("mongoose");
-require('dotenv').config();
+module.exports = connection;
  
-const uri = process.env.MONGODB_URI_LOCAL;
- 
-mongoose.set('strictQuery', false);
-
-module.exports = async() => {
-  try {
-    // Conectar a MongoDB
-    await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 30000,
-    });
-    console.log(`MongoDB '${uri}' conectada!`)
-  } catch (err) {
-    console.log(`No se pudo conectar a la base de datos: ${err}`)
-  };
-};

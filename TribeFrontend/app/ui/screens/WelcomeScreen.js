@@ -36,11 +36,11 @@ const WelcomeScreen = ({ navigation }) => {
   const { currentPage: pageIndex } = sliderState;
 
   useEffect(() => {
-    //createTestUser();
+    // createTestUser();
     setTimeout(() => {
       bypassLogin();
     }, 1);
-  }, []);
+  }, []); 
 
   return (
     <>

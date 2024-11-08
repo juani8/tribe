@@ -85,7 +85,7 @@ exports.login = async (req, res) => {
         console.error('Internal server error:', error);
         res.status(500).json({ message: 'Internal server error.' });
     }
-};
+}; 
 
 // Request password reset (send magic link)
 // This is the function that will handle requests made to /auths/sessions/passwords to request a password reset
@@ -162,9 +162,9 @@ exports.bypassLogin = async (req, res) => {
         console.error('Error in bypassLogin:', error); // Log the error for debugging
         res.status(500).json({ message: 'Internal server error.' });
     }
-};
+}; 
 
-exports.createTestUser = async () => {
+exports.createTestUser = async (res) => {
     try {  
         const userExists = await User.findOne({ email: 'testuser@a.com' });
         console.log('User exists:', userExists);
