@@ -4,11 +4,7 @@ const connection = require("./db");
 const app = require("./app");
  
 async function init() {
-  try {
-    if (process.env.NODE_ENV !== 'production') {
-      throw new Error("La aplicación solo puede ejecutarse en el entorno de producción.");
-    }
-    
+  try {    
     await connection();
     const port = process.env.PORT || 8080;
     const host = process.env.HOST || 'http://localhost';
