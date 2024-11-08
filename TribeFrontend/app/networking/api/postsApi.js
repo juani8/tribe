@@ -32,12 +32,17 @@ export const getUserPosts = async () => {
 };
 
 // Obtener publicaciones para la línea de tiempo (feed)
-export const getTimelinePosts = async () => {
+export const getTimelinePosts = async (offset = 0, limit = 10) => {
     try {
         const token = await getToken();
-        const response = await axios.get(`${BASE_URL}/posts/timeline?order=asc`, {
+        const response = await axios.get(`${BASE_URL}/posts/timeline`, {
             headers: {
                 'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
+                order: 'desc'
             }
         });
         console.log('getTimelinePosts', response.data);
@@ -47,7 +52,6 @@ export const getTimelinePosts = async () => {
         throw error;
     }
 };
-
 
 // Obtener una publicación específica por su ID
 export const getPostById = async (postId) => {

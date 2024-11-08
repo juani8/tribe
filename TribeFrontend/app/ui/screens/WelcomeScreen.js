@@ -11,8 +11,8 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 
-import { NavigateToLogin, NavigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
-import { NavigateToHome }  from 'helper/navigationHandlers/CoreNavigationHandlers';
+import { navigateToLogin, navigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
+import { navigateToHome }  from 'helper/navigationHandlers/CoreNavigationHandlers';
 
 import { bypassLogin, createTestUser } from 'networking/api/postsApi';
 
@@ -170,9 +170,9 @@ const FourthPart = ({ styles, theme, navigation }) => {
         </CustomTextNunito>
       </View>
       <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
-        <CustomButton title={I18n.t(TextKey.welcomeGotoSignup)} onPress={() => NavigateToSignup(navigation)}/>
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToLogin(navigation)}>{I18n.t(TextKey.welcomeGotoLogin)}</CustomHighlightedTextNunito>
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToHome(navigation)}>Home (atajo)</CustomHighlightedTextNunito>
+        <CustomButton title={I18n.t(TextKey.welcomeGotoSignup)} onPress={() => navigateToSignup(navigation)}/>
+        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => navigateToLogin(navigation)}>{I18n.t(TextKey.welcomeGotoLogin)}</CustomHighlightedTextNunito>
+        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => navigateToHome(navigation)}>Home (atajo)</CustomHighlightedTextNunito>
       </View>
     </View>
   );

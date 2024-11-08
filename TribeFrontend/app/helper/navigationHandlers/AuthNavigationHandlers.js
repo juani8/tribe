@@ -1,19 +1,19 @@
-export const NavigateToLogin = (navigation) => {
+export const navigateToLogin = (navigation) => {
   navigation.navigate('Login');
 }
 
-export const NavigateToSignup = (navigation) => {
+export const navigateToSignup = (navigation) => {
   navigation.navigate('Signup');
 }
 
-export const NavigateToPasswordRecovery = (navigation) => {
+export const navigateToPasswordRecovery = (navigation) => {
   navigation.navigate('RecoverPassword');
 }
 
-export const NavigateToVerifyIdentity = (navigation) => {
+export const navigateToVerifyIdentity = (navigation) => {
   navigation.navigate('VerifyIdentity');
 }
 
-export const NavigateToInitialConfiguration = (navigation) => {
+export const navigateToInitialConfiguration = (navigation) => {
   navigation.navigate('InitialConfiguration');
 }

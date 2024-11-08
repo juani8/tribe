@@ -6,7 +6,7 @@ import { BlurView } from '@react-native-community/blur';
 const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control the modal visibility
   const { theme } = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles(theme,dataLength);
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -50,9 +50,9 @@ const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
   );
 };
 
-const createStyles = (theme) => StyleSheet.create({
+const createStyles = (theme,dataLength) => StyleSheet.create({
   image: {
-    width: 250,
+    width: dataLength == 1 ? Dimensions.get('window').width-40 : 250,
     marginRight: 8,
     borderRadius: 20,
     height: 300,

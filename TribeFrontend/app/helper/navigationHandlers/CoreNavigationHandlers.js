@@ -1,30 +1,30 @@
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
-export const NavigateToHome = (navigation) => {
+export const navigateToHome = (navigation) => {
   navigation.navigate('Main');
 }
 
-export const NavigateToSearch = (navigation) => {
+export const navigateToSearch = (navigation) => {
   navigation.navigate('Search');
 }
 
-export const NavigateToUpload = (navigation) => {
+export const navigateToUpload = (navigation) => {
   navigation.navigate('Upload');
 } 
 
-export const NavigateToNotifications = (navigation) => {
+export const navigateToNotifications = (navigation) => {
   navigation.navigate('Notifications');
 } 
 
-export const NavigateToUserProfile = (navigation) => {
+export const navigateToUserProfile = (navigation) => {
   navigation.navigate('UserProfile');
 } 
 
-export const NavigateToWelcome = (navigation) => {
+export const navigateToWelcome = (navigation) => {
   navigation.navigate('Welcome');
 } 
 
-export const NavigateToSpecificPost = (navigation, post) => {
+export const navigateToSpecificPost = (navigation, post) => {
   navigation.navigate('PostDetail', { post });
 };

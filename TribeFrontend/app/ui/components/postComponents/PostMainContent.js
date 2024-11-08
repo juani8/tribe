@@ -4,7 +4,7 @@ import ContentCarousel from './ContentCarousel';
 import { formatDistanceToNow } from 'date-fns'; // Optional: Helps to format the timestamp.
 import { useTheme } from 'context/ThemeContext';
 import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from 'assets/images';
-import { NavigateToSpecificPost } from 'helper/navigationHandlers/CoreNavigationHandlers';
+import { navigateToSpecificPost } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import { useNavigation } from '@react-navigation/native';
 import { likePost, unlikePost, bookmarkPost, unbookmarkPost } from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
@@ -73,7 +73,7 @@ const PostMainContent = ({ post }) => {
         </View>
       </View>
 
-      <TouchableOpacity onPress={() => NavigateToSpecificPost(navigation, post)}>
+      <TouchableOpacity onPress={() => navigateToSpecificPost(navigation, post)}>
         {/* Post description */}
         <CustomTextNunito style={styles.description}>{post.description ?? ''}</CustomTextNunito>
         <View>
@@ -91,7 +91,7 @@ const PostMainContent = ({ post }) => {
             <Image source={isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{likeCount}</CustomTextNunito>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }} onPress={() => NavigateToSpecificPost(navigation, post)}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }} onPress={() => navigateToSpecificPost(navigation, post)}>
             <Image source={Chat} style={{ width: 24, height: 24 }} />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
           </TouchableOpacity>
