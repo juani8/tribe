@@ -37,7 +37,7 @@ const PostMainContent = ({ post }) => {
     }
   };
 
-  const handleBookmarkToggle = () => {
+  const handleBookmarkToggle = async () => {
     try {
       if (isBookmarked) {
         setIsBookmarked(false);
@@ -49,7 +49,6 @@ const PostMainContent = ({ post }) => {
     } catch (error) {
       console.error('Error toggling bookmark:', error);
     }
-  };
   };
   
   useEffect(() => {
