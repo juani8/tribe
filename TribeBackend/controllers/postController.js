@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Post = require('../models/Post');
+const User = require('../models/User');
 const Comment = require('../models/Comment');
 const Like = require('../models/Like');
 const { check, validationResult } = require('express-validator');
@@ -45,6 +46,7 @@ const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 };*/
 exports.getTimeline = async (req, res) => {
     const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+    const userId = req.user.id; 
 
     try {
         // Buscar los posts en la colección Post
@@ -53,18 +55,26 @@ exports.getTimeline = async (req, res) => {
             .limit(parseInt(limit))
             .select('-comments') 
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .populate('userId', 'nickName profileImage')
             .lean();
 
         // Calcular el número de comentarios para cada post
         const postSummary = await Promise.all(posts.map(async post => {
             const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id }).sort({ createdAt: -1 });
-
+            const isLiked = await Like.exists({ userId, postId: post._id });
+            const user = await User.findById(userId).select('favorites');
+            const isBookmarked = user.favorites.includes(post._id);
+            console.log('isBookmarked', isBookmarked);
+            console.log('isLiked', isLiked);
+ 
             return {
-                ...post,
-                totalComments,
-                lastComment: lastComment || null
-            };
+              ...post,
+              totalComments,
+              lastComment: lastComment || null,
+              isLiked: !!isLiked,
+              isBookmarked: !!isBookmarked
+          };
         }));
 
         res.status(200).json(postSummary);
@@ -312,6 +322,8 @@ exports.likePost = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
 
+    console.log('userId', userId);
+    console.log('postId', postId);
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({ message: 'postId inválido' });
     }

@@ -1,8 +1,8 @@
 require("dotenv").config();
-
+ 
 const connection = require("./db");
 const app = require("./app");
-
+ 
 async function init() {
   try {
     if (process.env.NODE_ENV !== 'production') {
@@ -22,9 +22,9 @@ async function init() {
     });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);
-    process.exit(1); 
+    process.exit(1);
   }
 }
-
+ 
 // Iniciar la aplicación
 init();

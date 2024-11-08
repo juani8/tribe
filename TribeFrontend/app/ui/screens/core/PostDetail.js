@@ -12,6 +12,7 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 import { createComment } from 'networking/api/postsApi';
+import PostMainContent from 'ui/components/postComponents/PostMainContent';
 
 const PostDetail = ({ route }) => {
   const { post } = route.params;
@@ -56,43 +57,7 @@ const PostDetail = ({ route }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Post content and other elements */}
-        <View style={styles.postHeader}>
-          <Image 
-            source={{ uri: post.profilePicture }}
-            style={{ width: 65, height: 65, borderRadius: 100 }}
-            resizeMode="stretch"
-          />
-          <View style={styles.header}>
-            <CustomTextNunito style={styles.username}>{post.nickname}</CustomTextNunito>
-            <CustomTextNunito style={styles.timeAgo}>
-              {formatDistanceToNow(new Date(post.createdAt))} ago
-            </CustomTextNunito>
-          </View>
-        </View>
-
-        <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
-        <ContentCarousel multimedia={post.multimedia} />
-
-        <View style={styles.metadata}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
-              <Image source={Chat} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
-              <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.location.city}</CustomTextNunito>
-          </View>
-        </View>
+        <PostMainContent post={post} />
 
         <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
         
@@ -141,7 +106,6 @@ const PostDetail = ({ route }) => {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingTop: 20,
     paddingVertical: 4,
     borderRadius: 8,
     marginBottom: 16,

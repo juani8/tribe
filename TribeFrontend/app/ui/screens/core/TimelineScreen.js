@@ -1,7 +1,7 @@
 // TimelineScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
-import PostTimeline from 'ui/components/postComponents/PostTimeline';
+import PostMainContent from 'ui/components/postComponents/PostMainContent';
 import { useTheme } from 'context/ThemeContext';
 import { getTimelinePosts, checkServerStatus } from 'networking/api/postsApi';
 import NetInfo from '@react-native-community/netinfo';
@@ -15,6 +15,7 @@ export default function TimelineScreen() {
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(true);  // New state to track if more posts are available
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [isConnected, setIsConnected] = useState(true);
@@ -28,14 +29,20 @@ export default function TimelineScreen() {
 
   // Function to fetch data with pagination
   const fetchData = async (nextPage = 1, refreshing = false) => {
+    if (!hasMorePosts && !refreshing) return;  // Stop fetching if no more posts are available
+
     const offset = (nextPage - 1) * pageSize;
 
     try {
       const newPosts = await getTimelinePosts(offset, pageSize);
       console.log(newPosts);
 
+      // If refreshing, replace data; otherwise, append new posts
       setData(prevData => (refreshing ? newPosts : [...prevData, ...newPosts]));
       setPage(nextPage);
+
+      // Update `hasMorePosts` based on response size
+      setHasMorePosts(newPosts.length === pageSize);
     } catch (error) {
       console.error('Error fetching timeline posts:', error);
     } finally {
@@ -46,7 +53,7 @@ export default function TimelineScreen() {
 
   // Fetch next page on reaching end
   const fetchNextPage = () => {
-    if (!isLoadingNextPage) {
+    if (!isLoadingNextPage && hasMorePosts) {
       setIsLoadingNextPage(true);
       fetchData(page + 1);
     }
@@ -55,6 +62,7 @@ export default function TimelineScreen() {
   // Pull to refresh
   const onRefresh = () => {
     setRefreshing(true);
+    setHasMorePosts(true); // Reset to allow re-fetching from the start
     fetchData(1, true);
   };
 
@@ -103,22 +111,30 @@ export default function TimelineScreen() {
       </View>
     );
   }
-
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
-        renderItem={({ item }) => <PostTimeline post={item} />}
+        renderItem={({ item }) => <PostMainContent post={item} />}
         keyExtractor={(item, index) => `${item.userId}-${index}`}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={fetchNextPage}
         onEndReachedThreshold={0.8}
         ListFooterComponent={
-          isLoadingNextPage && (
-            <View style={styles.loader}>
-              <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-          )
+          <>
+            {isLoadingNextPage && (
+              <View style={styles.loader}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
+            {!hasMorePosts && (
+              <>
+                <View style={styles.bottomSpacing} />
+                <CustomTextNunito style={{ textAlign: 'center', color: theme.colors.detailText }}>{I18n.t(TextKey.timelineNoMorePosts)}</CustomTextNunito>
+                <View style={styles.bottomSpacing} />
+              </>
+            )}
+          </>
         }
       />
     </View>
@@ -127,6 +143,7 @@ export default function TimelineScreen() {
 
 const createStyles = (theme) => StyleSheet.create({
   container: {
+    paddingHorizontal: 20,
     flex: 1,
     paddingTop: 10,
     backgroundColor: theme.colors.background,
@@ -134,5 +151,8 @@ const createStyles = (theme) => StyleSheet.create({
   loader: {
     padding: 16,
     alignItems: 'center',
+  },
+  bottomSpacing: {
+    height: 25, // Adjust the height as needed
   },
 });

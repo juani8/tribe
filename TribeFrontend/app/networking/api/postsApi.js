@@ -6,7 +6,13 @@ const BASE_URL = 'http://10.0.2.2:8080';
 // Crear una nueva publicación
 export const createPost = async (postData) => {
     try {
-        const response = await axios.post(`${BASE_URL}/posts`, postData);
+        const token = await getToken();
+        console.log('createPost', postData);
+        const response = await axios.post(`${BASE_URL}/posts`, postData, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error al crear la publicación:', error);
@@ -26,12 +32,17 @@ export const getUserPosts = async () => {
 };
 
 // Obtener publicaciones para la línea de tiempo (feed)
-export const getTimelinePosts = async () => {
+export const getTimelinePosts = async (offset = 0, limit = 10) => {
     try {
         const token = await getToken();
-        const response = await axios.get(`${BASE_URL}/timeline`, {
+        const response = await axios.get(`${BASE_URL}/posts/timeline`, {
             headers: {
                 'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
+                order: 'desc'
             }
         });
         console.log('getTimelinePosts', response.data);
@@ -41,7 +52,6 @@ export const getTimelinePosts = async () => {
         throw error;
     }
 };
-
 
 // Obtener una publicación específica por su ID
 export const getPostById = async (postId) => {
@@ -80,7 +90,15 @@ export const createComment = async (postId, commentData) => {
 // Dar me gusta a una publicación
 export const likePost = async (postId) => {
     try {
-        const response = await axios.post(`${BASE_URL}/posts/${postId}/likes`);
+        const token = await getToken();
+        if (!token) {
+            throw new Error('Token is undefined');
+        }
+        const response = await axios.post(`${BASE_URL}/posts/${postId}/likes`, {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error(`Error al dar me gusta a la publicación con ID ${postId}:`, error);
@@ -91,10 +109,56 @@ export const likePost = async (postId) => {
 // Quitar me gusta de una publicación
 export const unlikePost = async (postId) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/posts/${postId}/likes`);
+        const token = await getToken();
+        if (!token) {
+            throw new Error('Token is undefined');
+        }
+        const response = await axios.delete(`${BASE_URL}/posts/${postId}/likes`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
-        console.error(`Error al quitar me gusta de la publicación con ID ${postId}:`, error);
+        console.error(`Error al dar me gusta a la publicación con ID ${postId}:`, error);
+        throw error;
+    }
+};
+
+// Marcar una publicación como favorita
+export const bookmarkPost = async (postId) => {
+    try {
+        const token = await getToken();
+        if (!token) {
+            throw new Error('Token is undefined');
+        }
+        const response = await axios.post(`${BASE_URL}/posts/${postId}/bookmarks`, {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Error al marcar la publicación con ID ${postId} como favorita:`, error);
+        throw error;
+    }
+};
+
+// Quitar una publicación de las favoritas
+export const unbookmarkPost = async (postId) => {
+    try {
+        const token = await getToken();
+        if (!token) {
+            throw new Error('Token is undefined');
+        }
+        const response = await axios.delete(`${BASE_URL}/posts/${postId}/bookmarks`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Error al quitar la publicación con ID ${postId} de las favoritas:`, error);
         throw error;
     }
 };
@@ -114,14 +178,12 @@ export const bypassLogin = async () => {
     try {
         const response = await axios.post(`${BASE_URL}/auths/sessions/bypass`);
         const token = response.data.token;
-        console.log('Token:', token);
-    
-        // Store the token using Keychain
+            
+        // Store the token
         await storeToken(token);
     
         // Retrieve the token for use
         const storedToken = await getToken();
-        console.log('Retrieved token:', storedToken);
     } catch (error) {
         console.error('Error in bypassLogin:', error);
     }
