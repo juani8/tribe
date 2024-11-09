@@ -1,12 +1,12 @@
 const express = require('express');
-const auth = require('../middlewares/auth');
+//const auth = require('../middlewares/auth');
 const { getProfile, updateProfile, deleteProfile, getUsers, followUser, unfollowUser, getFollowers, getFollowing,
     getFavorites, saveFavorite, removeFavorite, changePassword, logout
 } = require('../controllers/userController');
 const router = express.Router();
 
 // Apply the auth middleware globally to all user routes
-router.use(auth);
+//router.use(auth);
 
 router.get('/me', getProfile);
 router.patch('/me', updateProfile);
