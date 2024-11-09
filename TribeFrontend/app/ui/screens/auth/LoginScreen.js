@@ -5,6 +5,7 @@ import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 // import { loginUser } from 'networking/api/authsApi'; // Descomentar cuando el backend esté disponible
 import { getToken } from 'helper/JWTHelper';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -105,8 +106,10 @@ const LoginScreen = ({ navigation }) => {
 
       <Text style={[styles.orText, { color: theme.colors.text }]}>{I18n.t(TextKey.gmailLogin)}</Text>
 
-      <TouchableOpacity style={styles.googleButton}>
-        <Text style={styles.googleButtonText}>Inicia sesión con Google</Text>
+      <TouchableOpacity style={styles.gmailButton}>
+        <CustomTextNunito style={styles.gmailButtonText}>
+          {I18n.t(TextKey.gmailButton)}
+        </CustomTextNunito>
       </TouchableOpacity>
     </View>
   );
@@ -131,7 +134,7 @@ const createStyles = (theme) => StyleSheet.create({
     color: theme.colors.text,
     marginBottom: 20,
     alignSelf: 'flex-start',
-    fontFamily: 'Nunito-Bold', // Aplicar negrita
+    fontFamily: 'Nunito-Bold',
   },
   loginMessage: {
     fontSize: 16,
@@ -188,21 +191,26 @@ const createStyles = (theme) => StyleSheet.create({
     marginTop: 10,
     alignSelf: 'center', 
     fontFamily: 'Nunito-Regular',
-},
-
-  googleButton: {
+  },
+  gmailButton: {
     marginTop: 10,
   },
-  googleButtonText: {
+  gmailButtonText: {
     color: theme.colors.primary,
     fontSize: 16,
     fontFamily: 'Nunito-Regular',
     textAlign: 'center',
   },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 5,
+    textAlign: 'center',
+    fontFamily: 'Nunito-Regular',
+  },
 });
 
 export default LoginScreen;
-
 
 
 

@@ -4,20 +4,22 @@ import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import LottieView from 'lottie-react-native';
 // import { verifyRegistrationToken } from 'networking/api/authsApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
-
+import Back from 'assets/images/icons/Back.png';
+import BackNight from 'assets/images/iconsNight/Back_night.png';
+ 
 const VerifyIdentityScreen = ({ navigation }) => {
-  const { theme } = useTheme();
+  const { theme, isDarkMode } = useTheme();
   const styles = createStyles(theme);
-
+ 
   const [token, setToken] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
+ 
   const handleVerifyToken = async () => {
     if (!token) {
       setErrorMessage('Por favor, ingresa el token de verificación.');
       return;
     }
-
+ 
     try {
       // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
       /*
@@ -29,7 +31,7 @@ const VerifyIdentityScreen = ({ navigation }) => {
         throw new Error('Token inválido o expirado.');
       }
       */
-
+ 
       // Simulación 
       Alert.alert('Verificación simulada', 'Tu cuenta ha sido verificada exitosamente.');
       navigation.navigate('InitialConfiguration');
@@ -38,36 +40,37 @@ const VerifyIdentityScreen = ({ navigation }) => {
       setErrorMessage('Token inválido o expirado. Por favor, inténtalo de nuevo.');
     }
   };
-
+ 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={theme.backIcon} style={styles.backIcon} />
+<View style={styles.container}>
+<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
-
+ 
+ 
       <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
-
+ 
       <CustomTextNunito style={styles.title} weight="Bold">
         Verifica tu identidad
-      </CustomTextNunito>
-
+</CustomTextNunito>
+ 
       <CustomTextNunito style={styles.paragraph} weight="Regular">
         Hemos enviado un correo electrónico para confirmar que realmente eres tú.
-      </CustomTextNunito>
-      <CustomTextNunito style={styles.paragraph} weight="Regular">
+</CustomTextNunito>
+<CustomTextNunito style={styles.paragraph} weight="Regular">
         Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.
-      </CustomTextNunito>
-      <CustomTextNunito style={styles.paragraph} weight="Regular">
+</CustomTextNunito>
+<CustomTextNunito style={styles.paragraph} weight="Regular">
         Si no visualizas el correo, verifica la carpeta de spam.
-      </CustomTextNunito>
-
+</CustomTextNunito>
+ 
       <LottieView
         source={require('assets/lottie/mailingLottie.json')}
         autoPlay
         loop
         style={styles.lottie}
       />
-
+ 
       <TextInput
         style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary }]}
         placeholder="Ingresa el token de verificación"
@@ -75,18 +78,18 @@ const VerifyIdentityScreen = ({ navigation }) => {
         value={token}
         onChangeText={setToken}
       />
-
+ 
       {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
-
+ 
       <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyToken}>
-        <CustomTextNunito style={styles.verifyButtonText} weight="Bold">
+<CustomTextNunito style={styles.verifyButtonText} weight="Bold">
           Verificar Token
-        </CustomTextNunito>
-      </TouchableOpacity>
-    </View>
+</CustomTextNunito>
+</TouchableOpacity>
+</View>
   );
 };
-
+ 
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
@@ -164,5 +167,5 @@ const createStyles = (theme) => StyleSheet.create({
     width: '100%',
   },
 });
-
+ 
 export default VerifyIdentityScreen;

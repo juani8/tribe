@@ -38,7 +38,9 @@ export default {
     passwordLabel: 'Contraseña',
     emailPlaceholder: 'Ingresa tu correo',
     passwordPlaceholder: 'Ingresa tu contraseña',
+    completeFields: 'Por favor, completa todos los campos.',
     gmailLogin: 'O',
+    gmailButton: 'Inicia sesion con google',
 
     // Signup Screen
     signupTitle: 'Crea tu cuenta',
@@ -61,6 +63,7 @@ export default {
     emailLabel: 'Correo',
     emailPlaceholder: 'Ingresa tu correo',
     verifyButton: 'Verificar',
+    completeFields: "Por favor, completa todos los campos.",
 
     // Initial configuration Screen
     initialConfigurationTitle: 'Configuración Inicial',
