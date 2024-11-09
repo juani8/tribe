@@ -9,6 +9,9 @@ router.get('/:postId/comments', postController.getCommentsByPostId);
 router.post('/:postId/comments', postController.createComment);
 router.post('/:postId/likes', postController.likePost);
 router.delete('/:postId/likes', postController.unlikePost);
-router.get('/:postId/likes/:userId', postController.checkLike);
+router.post('/:postId/bookmarks', postController.bookmarkPost);
+router.delete('/:postId/bookmarks', postController.unbookmarkPost);
+// router.get('/:postId/likes/:userId', postController.checkLike);
+// router.get('/:postId/bookmark/:userId', postController.checkBookmark);
 
 module.exports = router;

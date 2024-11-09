@@ -57,7 +57,7 @@ const PostDetail = ({ route }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.container}>
-        <PostMainContent post={post} />
+        <PostMainContent post={post} viewMore={false} />
 
         <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
         
@@ -80,8 +80,8 @@ const PostDetail = ({ route }) => {
                 <>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-                      <Image source={{uri: post.lastComment.profilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
-                      <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.nickname}</CustomTextNunito>
+                      <Image source={{uri: post.lastComment?.userId?.profileImage}} style={{ width: 24, height: 24, borderRadius: 100 }} />
+                      <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId?.nickName}</CustomTextNunito>
                     </View>
                     <CustomTextNunito style={styles.timeAgo}>
                       {formatDistanceToNow(new Date(post.createdAt))} ago

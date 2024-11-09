@@ -35,7 +35,6 @@ export default function TimelineScreen() {
 
     try {
       const newPosts = await getTimelinePosts(offset, pageSize);
-      console.log(newPosts);
 
       // If refreshing, replace data; otherwise, append new posts
       setData(prevData => (refreshing ? newPosts : [...prevData, ...newPosts]));
@@ -124,7 +123,7 @@ export default function TimelineScreen() {
           <>
             {isLoadingNextPage && (
               <View style={styles.loader}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color={theme.colors.primary} />
               </View>
             )}
             {!hasMorePosts && (

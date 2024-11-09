@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, TouchableOpacity, Modal, FlatList, StyleSheet, Image } from 'react-native';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
-import CustomTextNunito from './CustomTextNunito';
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
+import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 import { useTheme } from 'context/ThemeContext';
 import moment from 'moment';
 

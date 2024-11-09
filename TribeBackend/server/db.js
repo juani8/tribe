@@ -13,7 +13,8 @@ async function connection() {
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-    });    console.log('Conexión exitosa a MongoDB!');
+    });
+    console.log('Conexión exitosa a MongoDB!');
   } catch (error) {
     console.error('Error al conectar con MongoDB:', error);
     process.exit(1);

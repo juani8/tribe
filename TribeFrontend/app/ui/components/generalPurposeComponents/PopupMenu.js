@@ -15,7 +15,6 @@ import { BlurView } from '@react-native-community/blur';
 const PopupMenu = ({ visible, onClose, options, title }) => {
   const { theme, isDarkMode } = useTheme();
   
-
   return (
     <Modal
       visible={visible}
@@ -36,17 +35,19 @@ const PopupMenu = ({ visible, onClose, options, title }) => {
           >
               {/* Content Wrapper */}
               <View style={styles.contentWrapper}>
-                <CustomTextNunito
-                  weight={'Bold'}
-                  style={{
-                    textAlign: 'center',
-                    marginVertical: 10,
-                    color: theme.colors.options,
-                    fontSize: 20,
-                  }}
-                >
-                  {title}
-                </CustomTextNunito>
+                {title && (
+                  <CustomTextNunito
+                    weight={'Bold'}
+                    style={{
+                      textAlign: 'center',
+                      marginVertical: 10,
+                      color: theme.colors.options,
+                      fontSize: 20,
+                    }}
+                  >
+                    {title}
+                  </CustomTextNunito>
+                )}
 
                 <View>
                   <FlatList

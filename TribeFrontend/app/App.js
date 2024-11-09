@@ -26,6 +26,8 @@ import TextKey from 'assets/localization/TextKey';
 
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
 import { UiProvider } from 'context/UiContext';
+import { PostProvider } from 'context/PostContext';
+
 import CustomTextNutito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
@@ -181,7 +183,9 @@ export default function App() {
     return (
         <ThemeProvider>
             <UiProvider>
-                <AppContent />
+                <PostProvider>
+                    <AppContent />
+                </PostProvider>
             </UiProvider>
         </ThemeProvider>
     );

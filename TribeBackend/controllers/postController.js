@@ -5,6 +5,7 @@ const Comment = require('../models/Comment');
 const Like = require('../models/Like');
 const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
+const Bookmark = require('../models/Bookmark');
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -53,29 +54,25 @@ exports.getTimeline = async (req, res) => {
         const posts = await Post.find()
             .skip(parseInt(offset))
             .limit(parseInt(limit))
-            .select('-comments') 
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
             .populate('userId', 'nickName profileImage')
             .lean();
 
         // Calcular el número de comentarios para cada post
         const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ postId: post._id });
-            const lastComment = await Comment.findOne({ postId: post._id }).sort({ createdAt: -1 });
+            const totalComments = await Comment.countDocuments({ _id: { $in: post.comments } });
+            const lastComment = await Comment.find({ _id: { $in: post.comments } }).sort({ createdAt: -1 }).limit(1).populate('userId', 'nickName profileImage');
             const isLiked = await Like.exists({ userId, postId: post._id });
-            const user = await User.findById(userId).select('favorites');
-            const isBookmarked = user.favorites.includes(post._id);
-            console.log('isBookmarked', isBookmarked);
-            console.log('isLiked', isLiked);
+            const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
  
             return {
               ...post,
               totalComments,
-              lastComment: lastComment || null,
+              lastComment: lastComment[0] || null,
               isLiked: !!isLiked,
               isBookmarked: !!isBookmarked
           };
-        }));
+        })); 
 
         res.status(200).json(postSummary);
     } catch (error) {
@@ -380,7 +377,55 @@ exports.unlikePost = async (req, res) => {
     }
 };
 
-exports.checkLike = async (req, res) => {
+exports.bookmarkPost = async (req, res) => {
+    const { postId } = req.params;
+    const userId = req.user._id;
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
+
+    try {
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post no encontrado' });
+        }
+
+        const bookmark = new Bookmark({ postId, userId });
+        await bookmark.save();
+
+        res.status(200).json({ message: 'Post marcado como favorito' });
+    } catch (error) {
+        console.error("Error en bookmarkPost:", error);
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
+};
+
+// Eliminar un bookmark de un post
+exports.unbookmarkPost = async (req, res) => {
+    const { postId } = req.params;
+    const userId = req.user._id;
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
+
+    try {
+        const bookmark = await Bookmark.findOne({ postId, userId });
+        if (!bookmark) {
+            return res.status(404).json({ message: 'Bookmark no encontrado' });
+        }
+
+        await Bookmark.deleteOne({ _id: bookmark._id });
+
+        res.status(204).send();
+    } catch (error) {
+        console.error("Error en unbookmarkPost:", error);
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
+};
+
+/* exports.checkLike = async (req, res) => {
     const { postId, userId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
@@ -401,4 +446,27 @@ exports.checkLike = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: 'Error al verificar el like' });
     }
-};
+}; 
+
+exports.checkBookmark = async (req, res) => {
+    const { postId, userId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: 'postId inválido' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'userId inválido' });
+    }
+
+    try {
+        const bookmark = await Bookmark.findOne({ postId, userId });
+        if (bookmark) {
+            return res.json({ bookmarked: true });
+        } else {
+            return res.json({ bookmarked: false });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: 'Error al verificar el bookmark' });
+    }
+};*/

@@ -214,6 +214,12 @@ async function generateMockupUsers() {
     });
     console.log('Connected to MongoDB');
 
+    // Delete existing data in collections
+    await User.deleteMany({});
+    await Comment.deleteMany({});
+    await Post.deleteMany({});
+    console.log('Existing data deleted from collections');
+
 
     const insertedUsers = await User.insertMany(userData);
     console.log('Mockup user data inserted successfully');
