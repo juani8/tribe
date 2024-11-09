@@ -16,7 +16,7 @@ const SignupScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSignup = async () => {
+  const handleSignup = () => {
     if (!fantasyName || !email || !password || !confirmPassword) {
       setErrorMessage(I18n.t(TextKey.completeFields));
       return;

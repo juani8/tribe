@@ -3,93 +3,98 @@ import { View, TouchableOpacity, StyleSheet, Image, TextInput, Alert } from 'rea
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import LottieView from 'lottie-react-native';
-// import { verifyRegistrationToken } from 'networking/api/authsApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+// import { verifyRegistrationToken } from 'networking/api/authsApi'; // Uncomment to use with backend
 import Back from 'assets/images/icons/Back.png';
 import BackNight from 'assets/images/iconsNight/Back_night.png';
- 
+
 const VerifyIdentityScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
   const styles = createStyles(theme);
- 
+
   const [token, setToken] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
- 
+
   const handleVerifyToken = async () => {
     if (!token) {
-      setErrorMessage('Por favor, ingresa el token de verificación.');
+      setErrorMessage(I18n.t(TextKey.completeTokenFields));
       return;
     }
- 
+
     try {
-      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+      // Uncomment to use with backend
       /*
       const response = await verifyRegistrationToken(token);
       if (response.message === 'User verified successfully. You can now log in.') {
-        Alert.alert('Verificación exitosa', 'Tu cuenta ha sido verificada exitosamente.');
+        Alert.alert(I18n.t(TextKey.verifyIdentityTitle), 'Your account has been successfully verified.');
         navigation.navigate('InitialConfiguration');
       } else {
-        throw new Error('Token inválido o expirado.');
+        throw new Error(I18n.t(TextKey.invalidTokenError));
       }
       */
- 
-      // Simulación 
-      Alert.alert('Verificación simulada', 'Tu cuenta ha sido verificada exitosamente.');
+
+      // Simulation
+      Alert.alert(I18n.t(TextKey.verifyIdentityTitle), 'Your account has been successfully verified.');
       navigation.navigate('InitialConfiguration');
     } catch (error) {
-      console.error('Error verificando el token:', error);
-      setErrorMessage('Token inválido o expirado. Por favor, inténtalo de nuevo.');
+      console.error('Error verifying token:', error);
+      setErrorMessage(I18n.t(TextKey.invalidTokenError));
     }
   };
- 
+
   return (
-<View style={styles.container}>
-<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
- 
- 
+
       <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
- 
+
       <CustomTextNunito style={styles.title} weight="Bold">
-        Verifica tu identidad
-</CustomTextNunito>
- 
+        {I18n.t(TextKey.verifyIdentityTitle)}
+      </CustomTextNunito>
+
       <CustomTextNunito style={styles.paragraph} weight="Regular">
-        Hemos enviado un correo electrónico para confirmar que realmente eres tú.
-</CustomTextNunito>
-<CustomTextNunito style={styles.paragraph} weight="Regular">
-        Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.
-</CustomTextNunito>
-<CustomTextNunito style={styles.paragraph} weight="Regular">
-        Si no visualizas el correo, verifica la carpeta de spam.
-</CustomTextNunito>
- 
+        {I18n.t(TextKey.verifyIdentityInstruction)}
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
+        {I18n.t(TextKey.verifyIdentityCheckInbox)}
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
+        {I18n.t(TextKey.verifyIdentityCheckSpam)}
+      </CustomTextNunito>
+
       <LottieView
         source={require('assets/lottie/mailingLottie.json')}
         autoPlay
         loop
         style={styles.lottie}
       />
- 
+
       <TextInput
         style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary }]}
-        placeholder="Ingresa el token de verificación"
+        placeholder={I18n.t(TextKey.verifyTokenPlaceholder)}
         placeholderTextColor={theme.dark ? theme.colors.placeholder : '#A9A9A9'}
         value={token}
         onChangeText={setToken}
       />
- 
-      {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
- 
+
+      {errorMessage ? (
+        <CustomTextNunito style={styles.errorText} weight="Regular">
+          {errorMessage}
+        </CustomTextNunito>
+      ) : null}
+
       <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyToken}>
-<CustomTextNunito style={styles.verifyButtonText} weight="Bold">
-          Verificar Token
-</CustomTextNunito>
-</TouchableOpacity>
-</View>
+        <CustomTextNunito style={styles.verifyButtonText} weight="Bold">
+          {I18n.t(TextKey.verifyTokenButton)}
+        </CustomTextNunito>
+      </TouchableOpacity>
+    </View>
   );
 };
- 
+
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
@@ -116,7 +121,7 @@ const createStyles = (theme) => StyleSheet.create({
     tintColor: theme.colors.primary,
   },
   logo: {
-    width: 120, 
+    width: 120,
     height: 120,
     marginBottom: 20,
     alignSelf: 'flex-start',
@@ -167,5 +172,5 @@ const createStyles = (theme) => StyleSheet.create({
     width: '100%',
   },
 });
- 
+
 export default VerifyIdentityScreen;

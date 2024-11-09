@@ -3,8 +3,9 @@ import { View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Text,
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-// import { editUserProfile } from 'networking/api/usersApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
-;
+import TextKey from 'assets/localization/TextKey';
+import I18n from 'assets/localization/i18n';
+// import { editUserProfile } from 'networking/api/usersApi'; // Uncomment for backend functionality
 
 const InitialConfigurationScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -15,27 +16,24 @@ const InitialConfigurationScreen = ({ navigation }) => {
   const [gender, setGender] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-
   const handleContinue = async () => {
     if (!name || !surname || !gender) {
-      setErrorMessage('Por favor completa todos los campos');
+      setErrorMessage(I18n.t(TextKey.completeFieldsError));
       return;
     }
-  
+
     try {
-      // Limpiar el mensaje de error antes de hacer la llamada
       setErrorMessage('');
-  
-      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+
+      // Uncomment for backend functionality
       // const response = await editUserProfile({ name, lastName: surname, gender });
-  
-      // SIMULACION, DESPUES BORREN ESTO SI ACTIVAN LA DE ARRIBA
-      Alert.alert('Perfil actualizado', 'Tu perfil ha sido completado exitosamente.');
-      navigation.navigate('Main'); // Redirige a la pantalla principal
-  
+
+      // Simulated success
+      Alert.alert(I18n.t(TextKey.profileUpdated), I18n.t(TextKey.profileUpdateSuccess));
+      navigation.navigate('Main'); // Navigate to main screen
     } catch (error) {
-      console.error('Error al actualizar el perfil:', error);
-      setErrorMessage('Hubo un problema al actualizar tu perfil. Inténtalo nuevamente.');
+      console.error('Error updating profile:', error);
+      setErrorMessage('There was a problem updating your profile. Please try again.');
     }
   };
 
@@ -44,50 +42,50 @@ const InitialConfigurationScreen = ({ navigation }) => {
       <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
 
       <CustomTextNunito style={styles.title} weight="Bold">
-        Bienvenido a <CustomTextNunito style={styles.highlight} weight="Bold">Tribe</CustomTextNunito>
-      </CustomTextNunito>
+  {I18n.t(TextKey.initialConfigTitle)}
+</CustomTextNunito>
       <CustomTextNunito style={styles.subtitle} weight="Regular">
-        Comencemos completando tu perfil.
+        {I18n.t(TextKey.initialConfigSubtitle)}
       </CustomTextNunito>
 
-      <CustomTextNunito style={styles.label} weight="Regular">Nombre</CustomTextNunito>
+      <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.firstNameLabel)}</CustomTextNunito>
       <TextInput
         style={styles.input}
-        placeholder="Ingresa tu nombre"
+        placeholder={I18n.t('firstNameLabel')}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={name}
         onChangeText={setName}
       />
 
-      <CustomTextNunito style={styles.label} weight="Regular">Apellido</CustomTextNunito>
+      <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.lastNameLabel)}</CustomTextNunito>
       <TextInput
         style={styles.input}
-        placeholder="Ingresa tu apellido"
+        placeholder={I18n.t(TextKey.lastNameLabel)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={surname}
         onChangeText={setSurname}
       />
 
-      <CustomTextNunito style={styles.label} weight="Regular">Género</CustomTextNunito>
+      <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.genderLabel)}</CustomTextNunito>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={gender}
           style={styles.picker}
           onValueChange={(itemValue) => setGender(itemValue)}
         >
-          <Picker.Item label="Seleccionar" value="" />
-          <Picker.Item label="Masculino" value="masculino" />
-          <Picker.Item label="Femenino" value="femenino" />
-          <Picker.Item label="No binario" value="no_binario" />
-          <Picker.Item label="Otro" value="otro" />
-          <Picker.Item label="Prefiero no decir" value="prefiero_no_decir" />
+          <Picker.Item label={I18n.t(TextKey.selectGender)} value="" />
+          <Picker.Item label={I18n.t(TextKey.genderMale)} value="male" />
+          <Picker.Item label={I18n.t(TextKey.genderFemale)} value="female" />
+          <Picker.Item label={I18n.t(TextKey.genderNonBinary)} value="non_binary" />
+          <Picker.Item label={I18n.t(TextKey.genderOther)} value="other" />
+          <Picker.Item label={I18n.t(TextKey.genderPreferNotToSay)} value="prefer_not_to_say" />
         </Picker>
       </View>
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-        <CustomTextNunito style={styles.continueButtonText} weight="Bold">Continuar</CustomTextNunito>
+        <CustomTextNunito style={styles.continueButtonText} weight="Bold">{I18n.t(TextKey.continueButton)}</CustomTextNunito>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -176,6 +174,5 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default InitialConfigurationScreen;
-
 
 

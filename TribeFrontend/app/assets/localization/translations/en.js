@@ -40,6 +40,7 @@ export default {
     passwordLabel: 'Password',
     emailPlaceholder: 'Enter your email',
     passwordPlaceholder: 'Enter your password',
+    passwordsDontMatch: 'Passwords do not match.',
     completeFields: 'Please fill in all fields.',
     gmailLogin: 'Or',
     gmailButton: 'Sign up with Google',
@@ -67,9 +68,32 @@ export default {
     verifyButton: 'Verify',
     completeFields: "Please complete all fields",
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'Initial configuration Screen',
-    initialConfigurationButton: 'Continue',
+    // Verify Identity Screen
+    verifyIdentityTitle: 'Verify your identity',
+    verifyIdentityInstruction: 'We have sent an email to confirm your identity.',
+    verifyIdentityCheckInbox: 'Please check your inbox and click the link to continue.',
+    verifyIdentityCheckSpam: 'If you don’t see the email, check your spam folder.',
+    verifyTokenPlaceholder: 'Enter the verification token',
+    verifyTokenButton: 'Verify Token',
+    completeTokenFields: 'Please enter the verification token.',
+    invalidTokenError: 'Invalid or expired token. Please try again.',
+
+    // Initial Configuration Screen
+    initialConfigTitle: 'Welcome to Tribe',
+    initialConfigSubtitle: 'Let’s start by completing your profile.',
+    firstNameLabel: 'First Name',
+    lastNameLabel: 'Last Name',
+    genderLabel: 'Gender',
+    continueButton: 'Continue',
+    selectGender: 'Select',
+    genderMale: 'Male',
+    genderFemale: 'Female',
+    genderNonBinary: 'Non-binary',
+    genderOther: 'Other',
+    genderPreferNotToSay: 'Prefer not to say',
+    completeFieldsError: 'Please complete all fields.',
+    profileUpdated: 'Profile updated',
+    profileUpdateSuccess: 'Your profile has been successfully completed.',
 
     // Timeline Screen
     timelineTitle: 'Timeline Screen',
