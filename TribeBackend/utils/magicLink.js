@@ -9,7 +9,7 @@ exports.sendMagicLink = async (email, userId) => {
 
         // Create a transporter object using SMTP transport
         let transporter = nodemailer.createTransport({
-            host: 'smtp.mailtrap.io',  // Replace with your SMTP server
+            host: 'smtp.mailtrap.io',
             port: 2525,  // Replace with your SMTP server's port
             auth: {
                 user: '0c95a07e53bba9',  // Replace with your SMTP user
