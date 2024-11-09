@@ -188,13 +188,13 @@ export default function App() {
 }
 
 function AppContent() {
-    // Define your linking configuration
+    // Linking configuration
     const linking = {
-        prefixes: ['https://tribe.com'], // Your app's deep link prefix
+        prefixes: ['tribeapp://'], // App's deep link prefix
         config: {
             screens: {
-                RecoverPassword: 'reset-password?token=:token', // Define the deep link path
-                Login: 'login?token=:token',
+                RecoverPassword: 'reset-password?token=:token', // The deep link path
+                InitialConfiguration: 'initial-configuration?token=:token',
             },
         },
     };
