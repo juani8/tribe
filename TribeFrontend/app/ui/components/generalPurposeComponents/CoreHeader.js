@@ -35,23 +35,30 @@ const CoreHeader = () => {
     return (
         <View>
             <View style={[styles.headerContainer]}>
-                <View style={styles.itemsLeft}>
-                    <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
-                        <Image source={isDarkMode ? UserCircleLightNight : UserCircleLight} style={{ width: 50, height: 50 }} />
-                    </TouchableOpacity>
-                    <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}John</CustomTextNunito>
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    height: 90,
+                }}>
+                    <View style={styles.itemsLeft}>
+                        <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
+                            <Image source={isDarkMode ? UserCircleLightNight : UserCircleLight} style={{ width: 50, height: 50 }} />
+                        </TouchableOpacity>
+                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}John</CustomTextNunito>
+                    </View>
+                    <View style={styles.itemsRight}>
+                        <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>
+                            <Image source={isDarkMode ? BellFillNight : BellFill} style={{ width: 28, height: 28, marginRight: 12 }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openMenu}>
+                            <Image source={isDarkMode ? MenuNight : Menu} style={{ width: 28, height: 28 }} />
+                        </TouchableOpacity> 
+                    </View>
                 </View>
-                <View style={styles.itemsRight}>
-                    <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>
-                        <Image source={isDarkMode ? BellFillNight : BellFill} style={{ width: 28, height: 28, marginRight: 12 }} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={openMenu}>
-                        <Image source={isDarkMode ? MenuNight : Menu} style={{ width: 28, height: 28 }} />
-                    </TouchableOpacity> 
-                </View>
-            </View>
 
-            <Separator theme={theme} />
+                <Separator style={{marginHorizontal: -2}} theme={theme} />
+            </View>
 
             {isMenuVisible && (
                 <PopupMenu
@@ -67,12 +74,10 @@ const CoreHeader = () => {
 
 const createStyles = (theme) => StyleSheet.create({
     headerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+
         paddingHorizontal: 16,
         paddingVertical: 10,
-        height: 90,
+ 
         backgroundColor: theme.colors.background,
     },
     backButton: {
@@ -87,11 +92,6 @@ const createStyles = (theme) => StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    separator : {
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.primary,
-        marginHorizontal: 16,
-    }
 });
 
 export default CoreHeader;
