@@ -6,6 +6,7 @@ const Like = require('../models/Like');
 const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const Bookmark = require('../models/Bookmark');
+const { getMonthlyAds } = require('../utils/adsService');
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -81,6 +82,21 @@ exports.getTimeline = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor. Por favor, inténtalo de nuevo más tarde.' });
     }
 };
+
+/**
+ * Obtiene los anuncios desde la API externa y los devuelve en la respuesta.
+ * @param {Object} req - Objeto de solicitud de Express.
+ * @param {Object} res - Objeto de respuesta de Express.
+ * @returns {Promise<void>} - Responde con los anuncios obtenidos si la solicitud es exitosa.
+ */
+exports.fetchAds = async (req, res) => {
+    try {
+      const ads = await getMonthlyAds();
+      res.status(200).json(ads);
+    } catch (error) {
+      res.status(500).json({ message: 'Error al obtener los anuncios', error: error.message });
+    }
+  };
 
 /**
  * Crea un nuevo post.
@@ -378,6 +394,12 @@ exports.unlikePost = async (req, res) => {
     }
 };
 
+/**
+ * Marca un post como favorito para el usuario actual.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>}
+ */
 exports.bookmarkPost = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
@@ -402,7 +424,12 @@ exports.bookmarkPost = async (req, res) => {
     }
 };
 
-// Eliminar un bookmark de un post
+/**
+ * Elimina el marcador de favorito de un post para el usuario actual.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un código de estado 204 si se elimina el 'bookmark' correctamente.
+ */
 exports.unbookmarkPost = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
