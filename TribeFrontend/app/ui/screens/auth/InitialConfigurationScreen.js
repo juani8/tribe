@@ -1,40 +1,58 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Text, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Alert, ScrollView, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { storeToken } from 'helper/JWTHelper'; 
 import { Picker } from '@react-native-picker/picker';
-import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
-// import { editUserProfile } from 'networking/api/usersApi'; // Uncomment for backend functionality
+import TextKey from 'assets/localization/TextKey';
+import { useTheme } from 'context/ThemeContext';
 
 const InitialConfigurationScreen = ({ navigation }) => {
+  const route = useRoute();
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const { token } = route.params || {};  // Extrae el token de los parámetros de la ruta
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [gender, setGender] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleContinue = async () => {
-    if (!name || !surname || !gender) {
-      setErrorMessage(I18n.t(TextKey.completeFieldsError));
-      return;
+  useEffect(() => {
+    if (token) {
+      // Llama a la función para verificar el token
+      verifyToken(token);
+    } else {
+      Alert.alert('Error', 'Token no encontrado en el enlace.');
+      navigation.navigate('Login'); // Redirige al login si no hay token
     }
+  }, [token]);
 
+  const verifyToken = async (token) => {
     try {
-      setErrorMessage('');
+      console.log('Verificando token:', token);
 
-      // Uncomment for backend functionality
-      // const response = await editUserProfile({ name, lastName: surname, gender });
+      // Supongamos que haces la llamada al backend para verificar el token
+      // const response = await axios.post(`${BASE_URL}/auths/verifyMagicLink`, { token });
 
-      // Simulated success
-      Alert.alert(I18n.t(TextKey.profileUpdated), I18n.t(TextKey.profileUpdateSuccess));
-      navigation.navigate('Main'); // Navigate to main screen
+      // Si la verificación es exitosa, guarda el token en Keychain
+      await storeToken(token);
+
+      // Notifica al usuario que la verificación fue exitosa
+      Alert.alert('Verificación exitosa', 'Tu cuenta ha sido verificada y estás autenticado.');
+      navigation.navigate('Main'); // Navega a la pantalla principal o realiza el setup inicial
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setErrorMessage('There was a problem updating your profile. Please try again.');
+      console.error('Error verificando el token:', error);
+      Alert.alert('Error', 'Hubo un problema al verificar tu cuenta.');
+      navigation.navigate('Login'); // Redirige al login en caso de error
     }
+  };
+
+  const handleContinue = () => {
+    // proceso para completar la configuración inicial si es necesario
+    Alert.alert('Continuar', 'Se han guardado tus preferencias.');
+    navigation.navigate('Main');
   };
 
   return (
@@ -42,8 +60,8 @@ const InitialConfigurationScreen = ({ navigation }) => {
       <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
 
       <CustomTextNunito style={styles.title} weight="Bold">
-  {I18n.t(TextKey.initialConfigTitle)}
-</CustomTextNunito>
+        {I18n.t(TextKey.initialConfigTitle)}
+      </CustomTextNunito>
       <CustomTextNunito style={styles.subtitle} weight="Regular">
         {I18n.t(TextKey.initialConfigSubtitle)}
       </CustomTextNunito>
@@ -174,5 +192,7 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default InitialConfigurationScreen;
+
+
 
 

@@ -5,43 +5,12 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import LottieView from 'lottie-react-native';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
-// import { verifyRegistrationToken } from 'networking/api/authsApi'; // Uncomment to use with backend
 import Back from 'assets/images/icons/Back.png';
 import BackNight from 'assets/images/iconsNight/Back_night.png';
 
 const VerifyIdentityScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
   const styles = createStyles(theme);
-
-  const [token, setToken] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleVerifyToken = async () => {
-    if (!token) {
-      setErrorMessage(I18n.t(TextKey.completeTokenFields));
-      return;
-    }
-
-    try {
-      // Uncomment to use with backend
-      /*
-      const response = await verifyRegistrationToken(token);
-      if (response.message === 'User verified successfully. You can now log in.') {
-        Alert.alert(I18n.t(TextKey.verifyIdentityTitle), 'Your account has been successfully verified.');
-        navigation.navigate('InitialConfiguration');
-      } else {
-        throw new Error(I18n.t(TextKey.invalidTokenError));
-      }
-      */
-
-      // Simulation
-      Alert.alert(I18n.t(TextKey.verifyIdentityTitle), 'Your account has been successfully verified.');
-      navigation.navigate('InitialConfiguration');
-    } catch (error) {
-      console.error('Error verifying token:', error);
-      setErrorMessage(I18n.t(TextKey.invalidTokenError));
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -71,26 +40,6 @@ const VerifyIdentityScreen = ({ navigation }) => {
         loop
         style={styles.lottie}
       />
-
-      <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary }]}
-        placeholder={I18n.t(TextKey.verifyTokenPlaceholder)}
-        placeholderTextColor={theme.dark ? theme.colors.placeholder : '#A9A9A9'}
-        value={token}
-        onChangeText={setToken}
-      />
-
-      {errorMessage ? (
-        <CustomTextNunito style={styles.errorText} weight="Regular">
-          {errorMessage}
-        </CustomTextNunito>
-      ) : null}
-
-      <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyToken}>
-        <CustomTextNunito style={styles.verifyButtonText} weight="Bold">
-          {I18n.t(TextKey.verifyTokenButton)}
-        </CustomTextNunito>
-      </TouchableOpacity>
     </View>
   );
 };

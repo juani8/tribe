@@ -23,4 +23,4 @@ const getToken = async () => {
   }
 };
 
-export { storeToken, getToken };
+export { storeToken, getToken};

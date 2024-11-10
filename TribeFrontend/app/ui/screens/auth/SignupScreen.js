@@ -4,7 +4,7 @@ import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-// import { registerUser } from 'networking/api/authsApi'; // DESCOMENTAR PARA Q FUNCIONE CON EL BACK
+import { registerUser } from 'networking/api/authsApi'; // DESCOMENTADO PARA FUNCIONAR CON EL BACKEND
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -16,7 +16,7 @@ const SignupScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!fantasyName || !email || !password || !confirmPassword) {
       setErrorMessage(I18n.t(TextKey.completeFields));
       return;
@@ -26,18 +26,27 @@ const SignupScreen = ({ navigation }) => {
     }
 
     try {
-      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
-      /* 
+      // Simulación de respuesta sin backend
+        Alert.alert('Registro simulado', 'Se ha enviado un enlace de verificación a tu correo.');
+        navigation.navigate('VerifyIdentity');
+
+
+      // Llamada al backend para registrar al usuario y enviar el magic link
       const registrationData = { nickName: fantasyName, email, password };
       const response = await registerUser(registrationData);
-      */
 
-      // SIMULACION SIN BACK
-      Alert.alert('Registro simulado', 'Se ha enviado un enlace de verificación a tu correo.');
+      // Si la respuesta es exitosa, navega a VerifyIdentity
+      Alert.alert('Registro exitoso', 'Se ha enviado un enlace de verificación a tu correo.');
       navigation.navigate('VerifyIdentity');
     } catch (error) {
       console.error('Error registrando el usuario:', error);
-      setErrorMessage('Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
+
+      // Mostrar un mensaje de error apropiado según la respuesta del backend
+      if (error.response && error.response.status === 409) {
+        setErrorMessage('Este usuario ya está registrado.');
+      } else {
+        setErrorMessage('Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
+      }
     }
   };
 
