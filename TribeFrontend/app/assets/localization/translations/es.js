@@ -43,7 +43,10 @@ export default {
     emailPlaceholder: 'Ingresa tu correo',
     passwordPlaceholder: 'Ingresa tu contraseña',
     completeFields: 'Por favor, completa todos los campos.',
+    passwordsDontMatch: 'Las contraseñas no coinciden.',
+    completeFields: 'Por favor, completa todos los campos.',
     gmailLogin: 'O',
+    gmailButton: 'Inicia sesion con google',
     gmailButton: 'Inicia sesion con google',
 
     // Signup Screen
@@ -68,10 +71,34 @@ export default {
     emailPlaceholder: 'Ingresa tu correo',
     verifyButton: 'Verificar',
     completeFields: "Por favor, completa todos los campos.",
+    completeFields: "Por favor, completa todos los campos.",
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'Configuración Inicial',
-    initialConfigurationButton: 'Continuar',
+    // Verify Identity Screen
+    verifyIdentityTitle: 'Verifica tu identidad',
+    verifyIdentityInstruction: 'Hemos enviado un correo electrónico para confirmar que realmente eres tú.',
+    verifyIdentityCheckInbox: 'Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.',
+    verifyIdentityCheckSpam: 'Si no visualizas el correo, verifica la carpeta de spam.',
+    verifyTokenPlaceholder: 'Ingresa el token de verificación',
+    verifyTokenButton: 'Verificar Token',
+    completeTokenFields: 'Por favor, ingresa el token de verificación.',
+    invalidTokenError: 'Token inválido o expirado. Por favor, inténtalo de nuevo.',
+
+    // Initial Configuration Screen
+    initialConfigTitle: 'Bienvenido a Tribe',
+    initialConfigSubtitle: 'Comencemos completando tu perfil.',
+    firstNameLabel: 'Nombre',
+    lastNameLabel: 'Apellido',
+    genderLabel: 'Género',
+    continueButton: 'Continuar',
+    selectGender: 'Seleccionar',
+    genderMale: 'Masculino',
+    genderFemale: 'Femenino',
+    genderNonBinary: 'No binario',
+    genderOther: 'Otro',
+    genderPreferNotToSay: 'Prefiero no decir',
+    completeFieldsError: 'Por favor completa todos los campos.',
+    profileUpdated: 'Perfil actualizado',
+    profileUpdateSuccess: 'Tu perfil ha sido completado exitosamente.',
 
     // Timeline Screen
     timelineTitle: 'Pantalla de Línea de Tiempo',

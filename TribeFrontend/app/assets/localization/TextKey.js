@@ -66,7 +66,10 @@ const TextKey = {
     emailPlaceholder: 'emailPlaceholder', 
     passwordPlaceholder: 'passwordPlaceholder',
     completeFields: 'completeFields',
+    passwordsDontMatch: 'passwordsDontMatch',
+    completeFields: 'completeFields',
     gmailLogin: 'gmailLogin',
+    gmailButton: 'gmailButton',
     gmailButton: 'gmailButton',
 
     // Signup Screen
@@ -88,11 +91,36 @@ const TextKey = {
     emailLabel: 'emailLabel',
     emailPlaceholder: 'emailPlaceholder',
     verifyButton: 'verifyButton',
-    completeFields: 'completeFields',
+    completeFields: 'completeFields',    completeFields: 'completeFields',
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'initialConfigurationTitle',
-    initialConfigurationButton: 'initialConfigurationButton',
+    // Verify Identity Screen
+    verifyIdentityTitle: 'verifyIdentityTitle',
+    verifyIdentityInstruction: 'verifyIdentityInstruction',
+    verifyIdentityCheckInbox: 'verifyIdentityCheckInbox',
+    verifyIdentityCheckSpam: 'verifyIdentityCheckSpam',
+    verifyTokenPlaceholder: 'verifyTokenPlaceholder',
+    verifyTokenButton: 'verifyTokenButton',
+    completeTokenFields: 'completeTokenFields',
+    invalidTokenError: 'invalidTokenError',
+        
+
+    // Initial Configuration Screen
+    initialConfigTitle: 'initialConfigTitle',
+    initialConfigSubtitle: 'initialConfigSubtitle',
+    firstNameLabel: 'firstNameLabel',
+    lastNameLabel: 'lastNameLabel',
+    genderLabel: 'genderLabel',
+    continueButton: 'continueButton',
+    selectGender: 'selectGender',
+    genderMale: 'genderMale',
+    genderFemale: 'genderFemale',
+    genderNonBinary: 'genderNonBinary',
+    genderOther: 'genderOther',
+    genderPreferNotToSay: 'genderPreferNotToSay',
+    completeFieldsError: 'completeFieldsError',
+    profileUpdated: 'profileUpdated',
+    profileUpdateSuccess: 'profileUpdateSuccess',
+
 
     // Timeline Screen
     timelineTitle: 'timelineTitle',

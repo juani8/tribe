@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Image } from 'react-native';
-import { NavigationContainer, useRoute } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
-
 import CoreHeader from 'ui/components/generalPurposeComponents/CoreHeader';
 import ComplementaryHeader from 'ui/components/generalPurposeComponents/ComplementaryHeader';
 
@@ -34,6 +33,7 @@ import { checkToken } from 'networking/api/authsApi';
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
 import { AddSquareSelectedNight, HomeSelectedNight, SearchAltSelectedNight, AddSquareNight, HomeNight, SearchAltNight } from 'assets/images';
 
+import useMagicLinkListener from './hooks/useMagicLinkListener';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -60,7 +60,7 @@ function TabBar() {
                             label = I18n.t(TextKey.searchNavegation);
                             break;
                     }
-                    return <CustomTextNutito weight='Bold' style={{color: (isDarkMode ? focused ? theme.colors.secondary : theme.colors.background : !focused ? theme.colors.secondary : theme.colors.background)}}>{label}</CustomTextNutito>;
+                    return <CustomTextNunito weight='Bold' style={{color: (isDarkMode ? focused ? theme.colors.secondary : theme.colors.background : !focused ? theme.colors.secondary : theme.colors.background)}}>{label}</CustomTextNunito>;
                 },
                 tabBarIcon: ({ focused }) => {
                     let icon;
@@ -75,7 +75,7 @@ function TabBar() {
                             icon = focused ? (isDarkMode ? SearchAltSelectedNight : SearchAltSelected) : (isDarkMode ? SearchAltNight : SearchAlt);
                             break;
                     }
-                    return <Image source={icon} style={{  width: 24, height: 24, marginTop:8 }} />;
+                    return <Image source={icon} style={{ width: 24, height: 24, marginTop: 8 }} />;
                 },
                 tabBarActiveTintColor: theme.colors.background,
                 tabBarInactiveTintColor: 'gray',
@@ -121,34 +121,13 @@ function MainStack( {initialRoute} ) {
             }}
             initialRouteName={initialRoute}
         >
-            <Stack.Screen
-                name="Welcome"
-                component={WelcomeScreen}
-            />
-            <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-            />
-            <Stack.Screen
-                name="Signup"
-                component={SignupScreen}
-            />
-            <Stack.Screen
-                name="RecoverPassword"
-                component={RecoverPasswordScreen}
-            />
-            <Stack.Screen
-                name="VerifyIdentity"
-                component={VerifyIdentityScreen}
-            />
-            <Stack.Screen
-                name="InitialConfiguration"
-                component={InitialConfigurationScreen}
-            />
-            <Stack.Screen
-                name="Main"
-                component={TabBar}
-            />
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="RecoverPassword" component={RecoverPasswordScreen} />
+            <Stack.Screen name="VerifyIdentity" component={VerifyIdentityScreen} />
+            <Stack.Screen name="InitialConfiguration" component={InitialConfigurationScreen} />
+            <Stack.Screen name="Main" component={TabBar} />
             <Stack.Screen 
                 name="PostDetail" 
                 component={PostDetail} 
@@ -178,11 +157,16 @@ function MainStack( {initialRoute} ) {
 }
 
 function AppContent() {
+    useMagicLinkListener(); 
+
     // Linking configuration
     const linking = {
+        prefixes: ['tribeapp://'], // Prefijo del deep link
         prefixes: ['tribeapp://'], // App's deep link prefix
         config: {
             screens: {
+                RecoverPassword: 'reset-password?token=:token',
+                InitialConfiguration: 'initial-configuration?token=:token',
                 RecoverPassword: 'reset-password?token=:token', // The deep link path
                 InitialConfiguration: 'initial-configuration?token=:token',
             },

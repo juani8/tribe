@@ -1,41 +1,58 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Text, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Alert, ScrollView, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { storeToken } from 'helper/JWTHelper'; 
 import { Picker } from '@react-native-picker/picker';
-import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import { editUserProfile } from 'networking/api/usersApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+import { useTheme } from 'context/ThemeContext';
 
 const InitialConfigurationScreen = ({ navigation }) => {
+  const route = useRoute();
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const { token } = route.params || {};  // Extrae el token de los parámetros de la ruta
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [gender, setGender] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  useEffect(() => {
+    if (token) {
+      // Llama a la función para verificar el token
+      verifyToken(token);
+    } else {
+      Alert.alert('Error', 'Token no encontrado en el enlace.');
+      navigation.navigate('Login'); // Redirige al login si no hay token
+    }
+  }, [token]);
 
-  const handleContinue = async () => {
-    if (!name || !surname || !gender) {
-      setErrorMessage('Por favor completa todos los campos');
-      return;
-    }
-  
+  const verifyToken = async (token) => {
     try {
-      // Limpiar el mensaje de error antes de hacer la llamada
-      setErrorMessage('');
-  
-      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
-      const response = await editUserProfile({ name, lastName: surname, gender });
-  
-      // SIMULACION, DESPUES BORREN ESTO SI ACTIVAN LA DE ARRIBA
-/*       Alert.alert('Perfil actualizado', 'Tu perfil ha sido completado exitosamente.');
-      navigation.navigate('Main'); // Redirige a la pantalla principal */
-  
+      console.log('Verificando token:', token);
+
+      // Supongamos que haces la llamada al backend para verificar el token
+      // const response = await axios.post(`${BASE_URL}/auths/verifyMagicLink`, { token });
+
+      // Si la verificación es exitosa, guarda el token en Keychain
+      await storeToken(token);
+
+      // Notifica al usuario que la verificación fue exitosa
+      Alert.alert('Verificación exitosa', 'Tu cuenta ha sido verificada y estás autenticado.');
+      navigation.navigate('Main'); // Navega a la pantalla principal o realiza el setup inicial
     } catch (error) {
-      console.error('Error al actualizar el perfil:', error);
-      setErrorMessage('Hubo un problema al actualizar tu perfil. Inténtalo nuevamente.');
+      console.error('Error verificando el token:', error);
+      Alert.alert('Error', 'Hubo un problema al verificar tu cuenta.');
+      navigation.navigate('Login'); // Redirige al login en caso de error
     }
+  };
+
+  const handleContinue = () => {
+    // proceso para completar la configuración inicial si es necesario
+    Alert.alert('Continuar', 'Se han guardado tus preferencias.');
+    navigation.navigate('Main');
   };
 
   return (
@@ -43,50 +60,50 @@ const InitialConfigurationScreen = ({ navigation }) => {
       <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
 
       <CustomTextNunito style={styles.title} weight="Bold">
-        Bienvenido a <CustomTextNunito style={styles.highlight} weight="Bold">Tribe</CustomTextNunito>
+        {I18n.t(TextKey.initialConfigTitle)}
       </CustomTextNunito>
       <CustomTextNunito style={styles.subtitle} weight="Regular">
-        Comencemos completando tu perfil.
+        {I18n.t(TextKey.initialConfigSubtitle)}
       </CustomTextNunito>
 
-      <CustomTextNunito style={styles.label} weight="Regular">Nombre</CustomTextNunito>
+      <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.firstNameLabel)}</CustomTextNunito>
       <TextInput
         style={styles.input}
-        placeholder="Ingresa tu nombre"
+        placeholder={I18n.t('firstNameLabel')}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={name}
         onChangeText={setName}
       />
 
-      <CustomTextNunito style={styles.label} weight="Regular">Apellido</CustomTextNunito>
+      <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.lastNameLabel)}</CustomTextNunito>
       <TextInput
         style={styles.input}
-        placeholder="Ingresa tu apellido"
+        placeholder={I18n.t(TextKey.lastNameLabel)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={surname}
         onChangeText={setSurname}
       />
 
-      <CustomTextNunito style={styles.label} weight="Regular">Género</CustomTextNunito>
+      <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.genderLabel)}</CustomTextNunito>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={gender}
           style={styles.picker}
           onValueChange={(itemValue) => setGender(itemValue)}
         >
-          <Picker.Item label="Seleccionar" value="" />
-          <Picker.Item label="Masculino" value="masculino" />
-          <Picker.Item label="Femenino" value="femenino" />
-          <Picker.Item label="No binario" value="no_binario" />
-          <Picker.Item label="Otro" value="otro" />
-          <Picker.Item label="Prefiero no decir" value="prefiero_no_decir" />
+          <Picker.Item label={I18n.t(TextKey.selectGender)} value="" />
+          <Picker.Item label={I18n.t(TextKey.genderMale)} value="male" />
+          <Picker.Item label={I18n.t(TextKey.genderFemale)} value="female" />
+          <Picker.Item label={I18n.t(TextKey.genderNonBinary)} value="non_binary" />
+          <Picker.Item label={I18n.t(TextKey.genderOther)} value="other" />
+          <Picker.Item label={I18n.t(TextKey.genderPreferNotToSay)} value="prefer_not_to_say" />
         </Picker>
       </View>
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-        <CustomTextNunito style={styles.continueButtonText} weight="Bold">Continuar</CustomTextNunito>
+        <CustomTextNunito style={styles.continueButtonText} weight="Bold">{I18n.t(TextKey.continueButton)}</CustomTextNunito>
       </TouchableOpacity>
     </ScrollView>
   );

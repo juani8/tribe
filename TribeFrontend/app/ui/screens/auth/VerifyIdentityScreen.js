@@ -3,79 +3,44 @@ import { View, TouchableOpacity, StyleSheet, Image, TextInput, Alert } from 'rea
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import LottieView from 'lottie-react-native';
-import { verifyRegistrationToken } from 'networking/api/authsApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
 import Back from 'assets/images/icons/Back.png';
 import BackNight from 'assets/images/iconsNight/Back_night.png';
  
 const VerifyIdentityScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
   const styles = createStyles(theme);
- 
-  const [token, setToken] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
- 
-  const handleVerifyToken = async () => {
- 
-    try {
-      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
-        navigation.navigate('InitialConfiguration');
 
- 
-      // Simulación 
-/*       Alert.alert('Verificación simulada', 'Tu cuenta ha sido verificada exitosamente.');
-      navigation.navigate('InitialConfiguration'); */
-    } catch (error) {
-      console.error('Error verificando el token:', error);
-      setErrorMessage('Token inválido o expirado. Por favor, inténtalo de nuevo.');
-    }
-  };
- 
   return (
 <View style={styles.container}>
 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
- 
- 
+
       <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
- 
+
       <CustomTextNunito style={styles.title} weight="Bold">
-        Verifica tu identidad
-</CustomTextNunito>
- 
+        {I18n.t(TextKey.verifyIdentityTitle)}
+      </CustomTextNunito>
+
       <CustomTextNunito style={styles.paragraph} weight="Regular">
-        Hemos enviado un correo electrónico para confirmar que realmente eres tú.
-</CustomTextNunito>
-<CustomTextNunito style={styles.paragraph} weight="Regular">
-        Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.
-</CustomTextNunito>
-<CustomTextNunito style={styles.paragraph} weight="Regular">
-        Si no visualizas el correo, verifica la carpeta de spam.
-</CustomTextNunito>
- 
+        {I18n.t(TextKey.verifyIdentityInstruction)}
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
+        {I18n.t(TextKey.verifyIdentityCheckInbox)}
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
+        {I18n.t(TextKey.verifyIdentityCheckSpam)}
+      </CustomTextNunito>
+
       <LottieView
         source={require('assets/lottie/mailingLottie.json')}
         autoPlay
         loop
         style={styles.lottie}
       />
- 
-      <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary }]}
-        placeholder="Ingresa el token de verificación"
-        placeholderTextColor={theme.dark ? theme.colors.placeholder : '#A9A9A9'}
-        value={token}
-        onChangeText={setToken}
-      />
- 
-      {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
- 
-      <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyToken}>
-<CustomTextNunito style={styles.verifyButtonText} weight="Bold">
-          Verificar Token
-</CustomTextNunito>
-</TouchableOpacity>
-</View>
+    </View>
   );
 };
  
@@ -105,7 +70,7 @@ const createStyles = (theme) => StyleSheet.create({
     tintColor: theme.colors.primary,
   },
   logo: {
-    width: 120, 
+    width: 120,
     height: 120,
     marginBottom: 20,
     alignSelf: 'flex-start',

@@ -3,8 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } fro
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
-import { loginUser } from 'networking/api/authsApi'; // Descomentar cuando el backend esté disponible
-import { getToken } from 'helper/JWTHelper';
+import { loginUser } from 'networking/api/authsApi';
+import { getToken, storeToken } from 'helper/JWTHelper'; 
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 const LoginScreen = ({ navigation }) => {
@@ -15,11 +15,10 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Verificar si ya hay un token almacenado
   useEffect(() => {
     const checkToken = async () => {
       const token = await getToken();
-      if (!token) {
+      if (token) {
         navigation.navigate('Main'); // Redirigir si el usuario ya está autenticado
       }
     };
@@ -34,12 +33,12 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       const loginData = { email, password };
-
-      // Simulación de inicio de sesión en el backend
       const response = await loginUser(loginData);
-      console.log('Inicio de sesión exitoso:', response);
 
-      // Redirigimos al usuario a la pantalla de inicio después de un inicio de sesión exitoso
+      // Guarda el token usando Keychain
+      await storeToken(response.token);
+
+      // Redirige al usuario a la pantalla principal
       navigation.navigate('Main');
 
       // Simulación de éxito
@@ -47,8 +46,18 @@ const LoginScreen = ({ navigation }) => {
       navigation.navigate('Main'); */
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
-      setErrorMessage('Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo.');
-      Alert.alert('Error', 'Hubo un error al iniciar sesión. Verifique sus credenciales.');
+
+      if (error.response) {
+        if (error.response.status === 401) {
+          setErrorMessage('Credenciales inválidas. Inténtalo de nuevo.');
+        } else if (error.response.status === 403) {
+          setErrorMessage('Por favor verifica tu email antes de iniciar sesión.');
+        } else {
+          setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+        }
+      } else {
+        setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+      }
     }
   };
 
@@ -60,9 +69,7 @@ const LoginScreen = ({ navigation }) => {
       <Text style={styles.loginMessage}>{I18n.t(TextKey.loginMessage)}</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>
-          {I18n.t('emailLabel')}
-        </Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('emailLabel')}</Text>
         <TextInput
           style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
           placeholder={I18n.t('emailPlaceholder')}
@@ -74,9 +81,7 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>
-          {I18n.t('passwordLabel')}
-        </Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('passwordLabel')}</Text>
         <TextInput
           style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
           placeholder={I18n.t('passwordPlaceholder')}

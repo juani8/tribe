@@ -6,7 +6,7 @@ import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito'; 
-import { requestPasswordReset } from 'networking/api/authsApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+//import { requestPasswordReset } from 'networking/api/authsApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
 
 const RecoverPasswordScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();  
@@ -23,14 +23,14 @@ const RecoverPasswordScreen = ({ navigation }) => {
 
     try {
       // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
-      
+      /*
       const response = await requestPasswordReset(email);
       console.log('Solicitud de restablecimiento enviada:', response);
-      
+      */
 
-/*       // Simulación 
+      // Simulación 
       Alert.alert('Solicitud enviada', 'Se ha enviado un enlace de verificación a tu correo.');
-       */
+      
       // Redirige a la pantalla de verificación
       navigation.navigate('VerifyIdentity');
     } catch (error) {
