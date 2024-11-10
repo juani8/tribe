@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image } from 'react-native';
 import { NavigationContainer, useRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -25,10 +25,11 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
-import { UiProvider } from 'context/UiContext';
 import { PostProvider } from 'context/PostContext';
+import { UserProvider } from 'context/UserContext';
 
 import CustomTextNutito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import { checkToken } from 'networking/api/authsApi';
 
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
 import { AddSquareSelectedNight, HomeSelectedNight, SearchAltSelectedNight, AddSquareNight, HomeNight, SearchAltNight } from 'assets/images';
@@ -109,7 +110,7 @@ function TabBar() {
 }
 
 
-function MainStack() {
+function MainStack( {initialRoute} ) {
     const { theme } = useTheme();
 
     return (
@@ -118,6 +119,7 @@ function MainStack() {
                 headerShown: false,
                 cardStyle: { backgroundColor: theme.colors.background },
             }}
+            initialRouteName={initialRoute}
         >
             <Stack.Screen
                 name="Welcome"
@@ -175,37 +177,54 @@ function MainStack() {
     );
 }
 
-export default function App() {
-    useEffect(() => {
-        SplashScreen.hide();
-    }, []);
+function AppContent() {
+  // Define your linking configuration
+  const linking = {
+    prefixes: ['https://tribe.com'], // Your app's deep link prefix
+    config: {
+      screens: {
+        RecoverPassword: 'reset-password?token=:token', // Define the deep link path
+        Login: 'login?token=:token',
+      },
+    },
+  };
 
-    return (
-        <ThemeProvider>
-            <UiProvider>
-                <PostProvider>
-                    <AppContent />
-                </PostProvider>
-            </UiProvider>
-        </ThemeProvider>
-    );
+  const [initialRoute, setInitialRoute] = useState('Welcome');
+  const [isSessionChecked, setIsSessionChecked] = useState(false);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const token = await checkToken();
+      if (token) {
+        setInitialRoute('Main');
+      }
+      SplashScreen.hide();
+      setIsSessionChecked(true);
+    };
+    console.log(initialRoute);
+
+    checkSession();
+  }, []);
+
+  if (!isSessionChecked) {
+    return null; // or a loading spinner
+  }
+
+  return (
+    <NavigationContainer linking={linking}>
+      <MainStack initialRoute={initialRoute} />
+    </NavigationContainer>
+  );
 }
 
-function AppContent() {
-    // Define your linking configuration
-    const linking = {
-        prefixes: ['https://tribe.com'], // Your app's deep link prefix
-        config: {
-            screens: {
-                RecoverPassword: 'reset-password?token=:token', // Define the deep link path
-                Login: 'login?token=:token',
-            },
-        },
-    };
-
-    return (
-        <NavigationContainer linking={linking}>
-            <MainStack />
-        </NavigationContainer>
-    );
+export default function App() {
+  return (
+    <ThemeProvider>
+        <PostProvider>
+          <UserProvider>
+            <AppContent />
+          </UserProvider>
+        </PostProvider>
+    </ThemeProvider>
+  );
 }

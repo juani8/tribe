@@ -3,8 +3,9 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } fro
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
-import { loginUser } from 'networking/api/authsApi';
+import { loginUser } from 'networking/api/authsApi'; // Descomentar cuando el backend esté disponible
 import { getToken } from 'helper/JWTHelper';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -33,12 +34,17 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       const loginData = { email, password };
-      const response = await loginUser(loginData);
 
+      // Simulación de inicio de sesión en el backend
+      const response = await loginUser(loginData);
       console.log('Inicio de sesión exitoso:', response);
 
       // Redirigimos al usuario a la pantalla de inicio después de un inicio de sesión exitoso
       navigation.navigate('Main');
+
+      // Simulación de éxito
+/*       Alert.alert('Inicio de sesión simulado', 'Inicio de sesión exitoso.');
+      navigation.navigate('Main'); */
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
       setErrorMessage('Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo.');
@@ -98,8 +104,10 @@ const LoginScreen = ({ navigation }) => {
 
       <Text style={[styles.orText, { color: theme.colors.text }]}>{I18n.t(TextKey.gmailLogin)}</Text>
 
-      <TouchableOpacity style={styles.googleButton}>
-        <Text style={styles.googleButtonText}>Inicia sesión con Google</Text>
+      <TouchableOpacity style={styles.gmailButton}>
+        <CustomTextNunito style={styles.gmailButtonText}>
+          {I18n.t(TextKey.gmailButton)}
+        </CustomTextNunito>
       </TouchableOpacity>
     </View>
   );
@@ -124,6 +132,14 @@ const createStyles = (theme) => StyleSheet.create({
     color: theme.colors.text,
     marginBottom: 20,
     alignSelf: 'flex-start',
+    fontFamily: 'Nunito-Bold',
+  },
+  loginMessage: {
+    fontSize: 16,
+    color: theme.isDark ? '#FFF' : '#A9A9A9',
+    marginBottom: 20,
+    alignSelf: 'flex-start',
+    fontFamily: 'Nunito-Regular',
   },
   inputContainer: {
     width: '85%',
@@ -134,6 +150,7 @@ const createStyles = (theme) => StyleSheet.create({
     marginBottom: 5,
     color: theme.colors.text,
     alignSelf: 'flex-start',
+    fontFamily: 'Nunito-Regular',
   },
   input: {
     width: '100%',
@@ -156,16 +173,42 @@ const createStyles = (theme) => StyleSheet.create({
     fontFamily: 'Nunito-Bold',
     color: '#FFF',
   },
+  linksContainer: {
+    alignItems: 'flex-start',
+    width: '85%',
+    marginTop: 10,
+  },
+  linkText: {
+    fontSize: 14,
+    color: theme.colors.primary,
+    fontFamily: 'Nunito-Regular',
+  },
+  orText: {
+    fontSize: 16,
+    color: theme.isDark ? '#FFF' : '#A9A9A9',
+    marginTop: 10,
+    alignSelf: 'center', 
+    fontFamily: 'Nunito-Regular',
+  },
+  gmailButton: {
+    marginTop: 10,
+  },
+  gmailButtonText: {
+    color: theme.colors.primary,
+    fontSize: 16,
+    fontFamily: 'Nunito-Regular',
+    textAlign: 'center',
+  },
   errorText: {
     color: 'red',
     fontSize: 14,
-    marginTop: 10,
+    marginTop: 5,
     textAlign: 'center',
+    fontFamily: 'Nunito-Regular',
   },
 });
 
 export default LoginScreen;
-
 
 
 

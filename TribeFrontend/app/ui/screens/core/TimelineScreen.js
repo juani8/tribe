@@ -144,7 +144,6 @@ const createStyles = (theme) => StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     flex: 1,
-    paddingTop: 10,
     backgroundColor: theme.colors.background,
   },
   loader: {
@@ -152,6 +151,6 @@ const createStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   bottomSpacing: {
-    height: 25, // Adjust the height as needed
+    height: 25,
   },
 });

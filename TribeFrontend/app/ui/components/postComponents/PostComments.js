@@ -37,47 +37,31 @@ const PostComments = ({ visible, onClose, comments = [], title }) => {
   );
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        {visible && (
-          <Animated.View
-            entering={FadeInDown.duration(400)}
-            exiting={FadeOutUp.duration(500)}
-            style={styles.container}
-          >
-            <View style={styles.contentWrapper}>
-              <CustomTextNunito
-                weight="Bold"
-                style={{
-                  textAlign: 'center',
-                  marginVertical: 10,
-                  color: theme.colors.options,
-                  fontSize: 20,
-                }}
-              >
-                {title}
-              </CustomTextNunito>
-
-              {/* Comments List */}
-              <FlatList
-                data={comments}
-                keyExtractor={(item) => item._id}
-                renderItem={renderComment}
+    <FlatList
+      data={CoreMenuOptions}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          style={styles.optionContainer}
+          onPress={() => {
+            item.onPress();
+            onClose();
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {item.icon && (
+              <Image
+                source={item.icon}
+                style={{ width: 24, height: 24, resizeMode: 'contain', marginRight: 12 }}
               />
-            </View>
-          </Animated.View>
-        )}
-      </TouchableOpacity>
-    </Modal>
+            )}
+            <CustomTextNunito style={{ color: theme.colors.options, fontSize: 18 }}>
+              {item.label}
+            </CustomTextNunito>
+          </View>
+        </TouchableOpacity>
+      )}
+    />
   );
 };
 

@@ -35,13 +35,6 @@ const WelcomeScreen = ({ navigation }) => {
 
   const { currentPage: pageIndex } = sliderState;
 
-  useEffect(() => {
-    // createTestUser();
-    setTimeout(() => {
-      bypassLogin();
-    }, 1);
-  }, []); 
-
   return (
     <>
       <SafeAreaView style={{ flex: 1, marginTop: 20 }}>

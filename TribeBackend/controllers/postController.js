@@ -73,7 +73,7 @@ exports.getTimeline = async (req, res) => {
               isBookmarked: !!isBookmarked
           };
         })); 
-
+ 
         res.status(200).json(postSummary);
     } catch (error) {
         console.error("Error en getTimeline:", error);

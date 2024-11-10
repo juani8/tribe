@@ -189,7 +189,7 @@ exports.createTestUser = async (res) => {
         numberOfComments: 0,
         numberOfFavorites: 0,
       };
-  
+   
       const testUser = new User(testUserData);
       await testUser.save();
       console.log('Test user created successfully:', testUser);
@@ -197,5 +197,17 @@ exports.createTestUser = async (res) => {
     } catch (error) {
       console.error('Error creating test user:', error);
       process.exit(1);
+    }
+  };
+
+// Function to validate the token
+exports.validateToken = async (req, res) => {
+    const token = req.body.token;
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      res.status(200).json({ valid: true });
+    } catch (error) {
+      res.status(401).json({ valid: false, message: 'Token is invalid or expired' });
     }
   };

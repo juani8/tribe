@@ -61,7 +61,9 @@ const TextKey = {
     passwordLabel: 'passwordLabel', 
     emailPlaceholder: 'emailPlaceholder', 
     passwordPlaceholder: 'passwordPlaceholder',
+    completeFields: 'completeFields',
     gmailLogin: 'gmailLogin',
+    gmailButton: 'gmailButton',
 
     // Signup Screen
     signupTitle: 'signupTitle',
@@ -82,7 +84,7 @@ const TextKey = {
     emailLabel: 'emailLabel',
     emailPlaceholder: 'emailPlaceholder',
     verifyButton: 'verifyButton',
-
+    completeFields: 'completeFields',
 
     // Initial configuration Screen
     initialConfigurationTitle: 'initialConfigurationTitle',

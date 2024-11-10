@@ -40,7 +40,9 @@ export default {
     passwordLabel: 'Password',
     emailPlaceholder: 'Enter your email',
     passwordPlaceholder: 'Enter your password',
+    completeFields: 'Please fill in all fields.',
     gmailLogin: 'Or',
+    gmailButton: 'Sign up with Google',
 
     // Signup Screen
     signupTitle: 'Create your account',
@@ -61,8 +63,9 @@ export default {
     recoverPasswordTitle: 'Recover your password',
     recoverPasswordDescription: 'Enter the email you registered with, and we will send you a code to change your password.',
     emailLabel: 'Email',
-    mailPlaceholder: 'Enter your email',
+    emailPlaceholder: 'Enter your email',
     verifyButton: 'Verify',
+    completeFields: "Please complete all fields",
 
     // Initial configuration Screen
     initialConfigurationTitle: 'Initial configuration Screen',

@@ -4,7 +4,7 @@ import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import { registerUser } from 'networking/api/authsApi'; 
+import { registerUser } from 'networking/api/authsApi'; // DESCOMENTAR PARA Q FUNCIONE CON EL BACK
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -24,29 +24,25 @@ const SignupScreen = ({ navigation }) => {
       setErrorMessage(I18n.t(TextKey.passwordsDontMatch));
       return;
     }
-  
+
     try {
+      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
       const registrationData = { nickName: fantasyName, email, password };
       const response = await registerUser(registrationData);
-      
-      console.log('Registro exitoso:', response);
-      Alert.alert('Registro exitoso', 'Se ha enviado un enlace de verificación a tu correo.');
-      
-      // Limpiar los campos
-      setFantasyName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      
-      navigation.navigate('Login');
+
+      // SIMULACION SIN BACK
+/*       Alert.alert('Registro simulado', 'Se ha enviado un enlace de verificación a tu correo.');
+       */
+      navigation.navigate('VerifyIdentity');
     } catch (error) {
       console.error('Error registrando el usuario:', error);
-  
-      // Manejo específico de errores (opcional)
+      setErrorMessage('Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
+
+      // Check for specific error code 409: User already registered
       if (error.response && error.response.status === 409) {
-        setErrorMessage('Este correo ya está registrado.');
+        Alert.alert('Error', 'Usuario ya registrado.');
       } else {
-        setErrorMessage('Hubo un error al registrar el usuario. Por favor, inténtalo de nuevo.');
+        Alert.alert('Error', 'Error en el registro. Por favor, inténtelo de nuevo.');
       }
     }
   };
@@ -170,3 +166,5 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default SignupScreen;
+
+

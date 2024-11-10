@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { BellFill, Menu, UserCircleLight } from 'assets/images';
 import { BellFillNight, MenuNight, UserCircleLightNight } from 'assets/images';
@@ -8,27 +8,20 @@ import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
+import CoreMenuOptionsList from 'ui/components/generalPurposeComponents/CoreMenuOptionsList';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
-import { useUiContext } from 'context/UiContext';
-
 const CoreHeader = () => {
     const { theme, isDarkMode } = useTheme();
-    const { showMenu, hideMenu, isMenuVisible, menuOptions, menuTitle } = useUiContext();
-    const navigation = useNavigation();
+    const [isMenuVisible, setMenuVisible] = useState(false);
 
-    const openMenu = () => {
-      showMenu(options = [
-        { icon: Lamp, label: I18n.t(TextKey.settingsOptionTheme), onPress: () => console.log('Option A Selected') },
-        { icon: Aa, label: I18n.t(TextKey.settingsOptionLanguage), onPress: () => console.log('Option B Selected') },
-        { icon: SettingFill, label: I18n.t(TextKey.settingsOptionAccountOptions), onPress: () => console.log('Option B Selected') },
-        { icon: ChartPin, label: I18n.t(TextKey.settingsOptionMetrics), onPress: () => console.log('Option B Selected') },
-        { icon: SignInSquare, label: I18n.t(TextKey.settingsOptionLogout), onPress: () => navigateToWelcome(navigation) },
-      ], title = I18n.t(TextKey.settingsTitle));
-    };
+    // Handlers for menu visibility
+    const openMenu = () => setMenuVisible(true);
+    const closeMenu = () => setMenuVisible(false);
+  
 
     const styles = createStyles(theme);
 
@@ -60,15 +53,16 @@ const CoreHeader = () => {
                 <Separator style={{marginHorizontal: -2}} theme={theme} />
             </View>
 
-            {isMenuVisible && (
-                <PopupMenu
-                    visible={isMenuVisible}
-                    onClose={hideMenu}
-                    options={menuOptions}
-                    title={menuTitle}
-                />
-            )}
+            <PopupMenu
+                visible={isMenuVisible}
+                onClose={closeMenu}
+                title="Settings"
+            >
+                <CoreMenuOptionsList onClose={closeMenu} />
+            </PopupMenu>
         </View>
+
+
     );
 };
 
