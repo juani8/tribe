@@ -3,6 +3,7 @@ const router = express.Router();
 const postController = require('../controllers/postController');
 
 router.get('/timeline', postController.getTimeline);
+router.get('/ads', postController.fetchAds);
 router.post('/', postController.createPost);
 router.get('/:postId', postController.getPostById);
 router.get('/:postId/comments', postController.getCommentsByPostId);

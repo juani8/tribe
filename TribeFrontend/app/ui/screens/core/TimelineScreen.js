@@ -2,8 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
 import PostMainContent from 'ui/components/postComponents/PostMainContent';
+// Agregado por mrosariopresedo para la integración de los anuncios.
+import AdComponent from 'ui/components/postComponents/AdComponent';
 import { useTheme } from 'context/ThemeContext';
-import { getTimelinePosts, checkServerStatus } from 'networking/api/postsApi';
+// Modificado por mrosariopresedo para la integración de los anuncios.
+import { getTimelinePosts, checkServerStatus, getAds } from 'networking/api/postsApi';
 import NetInfo from '@react-native-community/netinfo';
 import LottieView from 'lottie-react-native';
 import I18n from 'assets/localization/i18n';
@@ -12,6 +15,8 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 
 export default function TimelineScreen() {
   const [data, setData] = useState([]);
+  // Agregado por mrosariopresedo para la integración de los anuncios.
+  const [ads, setAds] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,6 +55,17 @@ export default function TimelineScreen() {
     }
   };
 
+  // Fetch ads
+  // Agregado por mrosariopresedo para la integración de los anuncios.
+  const fetchAdsData = async () => {
+    try {
+      const adsData = await getAds();
+      setAds(adsData);
+    } catch (error) {
+      console.error('Error fetching ads:', error);
+    }
+  };
+
   // Fetch next page on reaching end
   const fetchNextPage = () => {
     if (!isLoadingNextPage && hasMorePosts) {
@@ -67,6 +83,8 @@ export default function TimelineScreen() {
 
   useEffect(() => {
     fetchData();
+    // Agregado por mrosariopresedo para la integración de los anuncios.
+    fetchAdsData();
     checkServerStatus();
   }, []);
 
@@ -110,11 +128,25 @@ export default function TimelineScreen() {
       </View>
     );
   }
+
+  // Agregado por mrosariopresedo para la integración de los anuncios.
+  const combinedData = [];
+  let adIndex = 0;
+
+  data.forEach((post, index) => {
+    combinedData.push(post);
+    if ((index + 1) % 3 === 0 && adIndex < ads.length) {
+      combinedData.push(ads[adIndex]);
+      adIndex++;
+    }
+  });
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
-        renderItem={({ item }) => <PostMainContent post={item} />}
+        // Modificado por mrosariopresedo para la integración de los anuncios.
+        data={combinedData}
+        renderItem={({ item }) => item.commerce ? <AdComponent ad={item} /> : <PostMainContent post={item} />}
         keyExtractor={(item, index) => `${item.userId}-${index}`}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={fetchNextPage}
