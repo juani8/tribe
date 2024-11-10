@@ -36,14 +36,14 @@ exports.sendMagicLink = async (email, userId) => {
         const info = await transporter.sendMail({
             from: 'no.reply.tribe.app@gmail.com',
             to: email,
-            subject: 'Welcome to Tribe! Confirm Your Email',
+            subject: '¡Bienvenido/a a Tribe! Confirma tu correo electrónico',
             html: `
-                <p>Hi there!</p>
-                <p>Welcome to Tribe! To complete your registration, please click the link below to verify your email and join the community:</p>
-                <!-- <p><a href="${magicLink}">Complete your registration</a></p> -->
+                <p>¡Hola, te damos la bienvenida!</p>
+                <p>Para completar tu registro, haz clic en el siguiente enlace para verificar tu correo electrónico y unirte a la comunidad:</p>
+                <!-- <p><a href="${magicLink}">Completa tu registro</a></p> -->
                 <p><a href="${magicLink}">${magicLink}</a></p>
-                <p>If you did not request this registration, you can safely ignore this message.</p>
-                <p>Best regards,<br>The Tribe Team</p>
+                <p>Si no solicitaste este registro, puedes ignorar este mensaje sin problema.</p>
+                <p>Saludos,<br>El equipo de Tribe</p>
             `
         });
         console.log('Magic link sent to:', email, 'Message ID:', info.messageId);
