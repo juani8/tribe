@@ -32,18 +32,36 @@ exports.sendMagicLink = async (email, userId) => {
             });
         }
 
-        // Send the magic link email
         const info = await transporter.sendMail({
             from: 'no.reply.tribe.app@gmail.com',
             to: email,
             subject: '¡Bienvenido/a a Tribe! Confirma tu correo electrónico',
             html: `
-                <p>¡Hola, te damos la bienvenida!</p>
-                <p>Para completar tu registro, haz clic en el siguiente enlace para verificar tu correo electrónico y unirte a la comunidad:</p>
-                <!-- <p><a href="${magicLink}">Completa tu registro</a></p> -->
-                <p><a href="${magicLink}">${magicLink}</a></p>
-                <p>Si no solicitaste este registro, puedes ignorar este mensaje sin problema.</p>
-                <p>Saludos,<br>El equipo de Tribe</p>
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Confirmación de Correo Electrónico</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9;">
+                    <table style="width: 100%; padding: 20px;">
+                        <tr>
+                            <td style="text-align: center;">
+                                <h1 style="color: #2C3E50;">¡Hola, te damos la bienvenida a Tribe!</h1>
+                                <p style="font-size: 16px; color: #7f8c8d;">Para completar tu registro, haz clic en el siguiente enlace para verificar tu correo electrónico y unirte a la comunidad:</p>
+                                <p>
+                                    <p><a href="${magicLink}">${magicLink}</a></p>
+                                    <!--<a href="${magicLink}" class="button">Completa tu registro</a>-->
+                                </p>
+                                <p style="font-size: 16px; color: #7f8c8d;">Si no solicitaste este registro, puedes ignorar este mensaje sin problema.</p>
+                                <br>
+                                <p style="font-size: 16px; color: #7f8c8d;">Saludos,<br>El equipo de Tribe</p>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
             `
         });
         console.log('Magic link sent to:', email, 'Message ID:', info.messageId);
