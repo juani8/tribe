@@ -1,10 +1,10 @@
 require("dotenv").config();
-
+ 
 const connection = require("./db");
 const app = require("./app");
-
+ 
 async function init() {
-  try {
+  try {    
     await connection();
     const port = process.env.PORT || 8080;
     const host = process.env.HOST || 'http://localhost';
@@ -18,9 +18,9 @@ async function init() {
     });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);
-    process.exit(1); 
+    process.exit(1);
   }
 }
-
+ 
 // Iniciar la aplicación
 init();

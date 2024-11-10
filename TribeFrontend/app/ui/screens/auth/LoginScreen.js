@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
+import { loginUser } from 'networking/api/authsApi';
+import { getToken } from 'helper/JWTHelper';
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -12,26 +14,43 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = () => {
+  // Verificar si ya hay un token almacenado
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await getToken();
+      if (!token) {
+        navigation.navigate('Main'); // Redirigir si el usuario ya está autenticado
+      }
+    };
+    checkToken();
+  }, []);
+
+  const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMessage(I18n.t(TextKey.loginMessage)); // Usamos I18n.t para traducir los mensajes
-    } else {
-      setErrorMessage('');
+      setErrorMessage(I18n.t(TextKey.loginMessage));
+      return;
+    }
+
+    try {
+      const loginData = { email, password };
+      const response = await loginUser(loginData);
+
+      console.log('Inicio de sesión exitoso:', response);
+
+      // Redirigimos al usuario a la pantalla de inicio después de un inicio de sesión exitoso
+      navigation.navigate('Main');
+    } catch (error) {
+      console.error('Error en el inicio de sesión:', error);
+      setErrorMessage('Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo.');
+      Alert.alert('Error', 'Hubo un error al iniciar sesión. Verifique sus credenciales.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Image
-        source={theme.logo}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+      <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
 
-      <Text style={styles.welcomeText}>
-        {I18n.t(TextKey.loginTitle)}
-      </Text>
-
+      <Text style={styles.welcomeText}>{I18n.t(TextKey.loginTitle)}</Text>
       <Text style={styles.loginMessage}>{I18n.t(TextKey.loginMessage)}</Text>
 
       <View style={styles.inputContainer}>
@@ -70,14 +89,10 @@ const LoginScreen = ({ navigation }) => {
 
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
-          <Text style={[styles.linkText, { color: theme.colors.primary }]}>
-            {I18n.t(TextKey.goToRecoverPassword)}
-          </Text>
+          <Text style={[styles.linkText, { color: theme.colors.primary }]}>{I18n.t(TextKey.goToRecoverPassword)}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')}>
-          <Text style={[styles.linkText, { color: theme.colors.primary, marginTop: 5 }]}>
-            {I18n.t(TextKey.goToSignup)}
-          </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <Text style={[styles.linkText, { color: theme.colors.primary, marginTop: 5 }]}>{I18n.t(TextKey.goToSignup)}</Text>
         </TouchableOpacity>
       </View>
 
@@ -106,15 +121,9 @@ const createStyles = (theme) => StyleSheet.create({
   },
   welcomeText: {
     fontSize: 24,
-    fontWeight: 'bold',
     color: theme.colors.text,
     marginBottom: 20,
     alignSelf: 'flex-start',
-  },
-  loginMessage: {
-    fontSize: 16,
-    marginBottom: 15,
-    color: theme.colors.text,
   },
   inputContainer: {
     width: '85%',
@@ -143,40 +152,21 @@ const createStyles = (theme) => StyleSheet.create({
     marginBottom: 20,
   },
   loginButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontFamily: 'Nunito-Bold',
+    color: '#FFF',
   },
-  linksContainer: {
-    alignItems: 'flex-start',
-    width: '85%',
-    marginBottom: 10,
-  },
-  linkText: {
+  errorText: {
+    color: 'red',
     fontSize: 14,
-  },
-  orText: {
-    marginBottom: 15,
-    color: theme.colors.text,
-  },
-  googleButton: {
-    width: '85%',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    borderColor: '#d3d3d3',
-    borderWidth: 1,
-    marginTop: 15,
-    backgroundColor: '#FFFFFF',
-  },
-  googleButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 
 export default LoginScreen;
+
+
 
 
 

@@ -7,8 +7,8 @@ import TextKey from 'assets/localization/TextKey';
 
 const requestLocationPermission = async () => {
     try {
-        const accessFineLocation = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        const accessCoarseLocation = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
             {
                 title: I18n.t(TextKey.locationPermissionAlertTitle),
                 message: I18n.t(TextKey.locationPermissionAlertMessage),
@@ -16,11 +16,11 @@ const requestLocationPermission = async () => {
             }
         );
         
-        if (accessFineLocation === PermissionsAndroid.RESULTS.GRANTED) {
+        if (accessCoarseLocation === PermissionsAndroid.RESULTS.GRANTED) {
             return true;
-        } else if (accessFineLocation === PermissionsAndroid.RESULTS.DENIED) {
+        } else if (accessCoarseLocation === PermissionsAndroid.RESULTS.DENIED) {
             return false; 
-        } else if (accessFineLocation === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        } else if (accessCoarseLocation === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
             Alert.alert(
                 I18n.t(TextKey.locationPermissionAlertTitle),
                 I18n.t(TextKey.locationPermissionAlertDeniedMessage),

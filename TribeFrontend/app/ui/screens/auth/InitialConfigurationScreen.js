@@ -1,7 +1,7 @@
 import { View, Text, Button } from 'react-native';
 import React from 'react';
 
-import {NavigateToHome} from 'helper/navigationHandlers/CoreNavigationHandlers';
+import {navigateToHome} from 'helper/navigationHandlers/CoreNavigationHandlers';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -13,7 +13,7 @@ const InitialConfigurationScreen = ({navigation}) => {
   return (
     <View>
       <CustomTextNunito>{I18n.t(TextKey.initialConfigurationTitle)}</CustomTextNunito>
-      <CustomButton title={I18n.t(TextKey.initialConfigurationButton)} onPress={() => NavigateToHome(navigation)} />
+      <CustomButton title={I18n.t(TextKey.initialConfigurationButton)} onPress={() => navigateToHome(navigation)} />
     </View>
   );
 }

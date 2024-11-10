@@ -72,6 +72,7 @@ export default {
     timelineTitle: 'Timeline Screen',
     timelineMessage: 'This is the Timeline Screen',
     timelineSeePostDetail: 'See more',
+    timelineNoMorePosts: 'You reached the end of the timeline. No more posts to show.',
 
     // Timeline Screen (no connection)
     noConnectionTitle: 'Connection Lost!',

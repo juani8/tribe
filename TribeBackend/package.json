@@ -4,8 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "nodemon server/index.js",
-    "test": "jest"
+    "dev": "nodemon server/index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +18,7 @@
     "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.9.0",
+    "mongodb": "^6.10.0",
     "mongoose": "^8.7.2",
     "nodemailer": "^6.9.15"
   },
