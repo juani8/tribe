@@ -2,23 +2,31 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Clipboard, Alert } from 'react-native';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import { useTheme } from 'context/ThemeContext';
 
 const AdComponent = ({ ad }) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const copyToClipboard = (url) => {
     Clipboard.setString(url);
     Alert.alert('Link copiado', 'El link del anuncio ha sido copiado al portapapeles.');
   };
+  console.log('ad: ', ad);
+  console.log('ad.imagePath: ', ad.imagePath);
+  console.log('ad.imagePath[0]: ', ad.imagePath[0]);
+  console.log('ad.imagePath.portraite: ', ad.imagePath.portraite);
 
   return (
     <View style={styles.container}>
       <View style={styles.postHeader}>
         <CustomTextNunito style={styles.username}>{ad.commerce}</CustomTextNunito>
       </View>
-      {ad.image && <Image source={{ uri: ad.image }} style={styles.image} />}
+      <CustomTextNunito weight={'Bold'} style={{ color: theme.colors.ads }}>Patrocinado</CustomTextNunito>
+      {ad.imagePath[0]?.landscape && <Image source={{ uri: ad.imagePath[0].landscape }} style={styles.image} />}
       {ad.video && <Video source={{ uri: ad.video }} style={styles.video} />}
       <CustomTextNunito style={styles.description}>{ad.description}</CustomTextNunito>
       <TouchableOpacity onPress={() => copyToClipboard(ad.url)}>
-        <CustomTextNunito style={styles.link}>Copiar link del anuncio</CustomTextNunito>
+        <CustomTextNunito weight={'SemiBold'} style={{ color: theme.colors.ads }}>Copiar link del anuncio</CustomTextNunito>
       </TouchableOpacity>
     </View>
   );
@@ -29,8 +37,6 @@ const createStyles = (theme) => StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
     marginTop: 16,
-    borderWidth: 1,
-    borderColor: '#ccc',
     margin: 10,
     padding: 10,
   },

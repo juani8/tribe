@@ -11,4 +11,5 @@ export default {
   options: '#F9F5EF',
   backgroundSecondary: '#EFEFEF',
   placeholder: '#A9A9A9', 
+  ads: '#FEA700',
 }

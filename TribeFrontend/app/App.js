@@ -178,16 +178,16 @@ function MainStack( {initialRoute} ) {
 }
 
 function AppContent() {
-  // Define your linking configuration
-  const linking = {
-    prefixes: ['https://tribe.com'], // Your app's deep link prefix
-    config: {
-      screens: {
-        RecoverPassword: 'reset-password?token=:token', // Define the deep link path
-        Login: 'login?token=:token',
-      },
-    },
-  };
+    // Linking configuration
+    const linking = {
+        prefixes: ['tribeapp://'], // App's deep link prefix
+        config: {
+            screens: {
+                RecoverPassword: 'reset-password?token=:token', // The deep link path
+                InitialConfiguration: 'initial-configuration?token=:token',
+            },
+        },
+    };
 
   const [initialRoute, setInitialRoute] = useState('Welcome');
   const [isSessionChecked, setIsSessionChecked] = useState(false);
