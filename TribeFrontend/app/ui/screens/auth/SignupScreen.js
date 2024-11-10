@@ -27,7 +27,6 @@ const SignupScreen = ({ navigation }) => {
 
     try {
       // Simulación de respuesta sin backend
-        Alert.alert('Registro simulado', 'Se ha enviado un enlace de verificación a tu correo.');
         navigation.navigate('VerifyIdentity');
 
 
@@ -59,7 +58,7 @@ const SignupScreen = ({ navigation }) => {
       </CustomTextNunito>
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterName)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={fantasyName}
@@ -67,7 +66,7 @@ const SignupScreen = ({ navigation }) => {
       />
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterEmail)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         keyboardType="email-address"
@@ -76,7 +75,7 @@ const SignupScreen = ({ navigation }) => {
       />
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterPassword)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
@@ -85,7 +84,7 @@ const SignupScreen = ({ navigation }) => {
       />
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterConfirmPassword)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
@@ -139,7 +138,6 @@ const createStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    backgroundColor: theme.colors.backgroundSecondary,
   },
   signupButton: {
     width: '100%',

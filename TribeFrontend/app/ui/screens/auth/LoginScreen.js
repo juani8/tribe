@@ -14,17 +14,7 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await getToken();
-      if (token) {
-        navigation.navigate('Main'); // Redirigir si el usuario ya está autenticado
-      }
-    };
-    checkToken();
-  }, []);
-
+  
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage(I18n.t(TextKey.loginMessage));
@@ -71,7 +61,7 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('emailLabel')}</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+          style={[styles.input, { color: theme.colors.text }]}
           placeholder={I18n.t('emailPlaceholder')}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           keyboardType="email-address"
@@ -83,7 +73,7 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('passwordLabel')}</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+          style={[styles.input, { color: theme.colors.text }]}
           placeholder={I18n.t('passwordPlaceholder')}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           secureTextEntry

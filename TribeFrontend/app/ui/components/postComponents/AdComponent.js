@@ -11,16 +11,20 @@ const AdComponent = ({ ad }) => {
     Clipboard.setString(url);
     Alert.alert('Link copiado', 'El link del anuncio ha sido copiado al portapapeles.');
   };
-  console.log('ad: ', ad);
-  console.log('ad.imagePath: ', ad.imagePath);
-  console.log('ad.imagePath[0]: ', ad.imagePath[0]);
-  console.log('ad.imagePath.portraite: ', ad.imagePath.portraite);
 
   return (
     <View style={styles.container}>
       <View style={styles.postHeader}>
-        <CustomTextNunito style={styles.username}>{ad.commerce}</CustomTextNunito>
+        <Image
+          source={ad.imagePath[0].landscape ? { uri: ad.imagePath[0].landscape } : theme.UserCircleLight}
+          style={{ width: 65, height: 65, borderRadius: 100 }}
+          resizeMode="stretch"
+        />
+        <View style={styles.header}>
+          <CustomTextNunito style={styles.username}>{ad.commerce}</CustomTextNunito>
+        </View>
       </View>
+
       <CustomTextNunito weight={'Bold'} style={{ color: theme.colors.ads }}>Patrocinado</CustomTextNunito>
       {ad.imagePath[0]?.landscape && <Image source={{ uri: ad.imagePath[0].landscape }} style={styles.image} />}
       {ad.video && <Video source={{ uri: ad.video }} style={styles.video} />}
@@ -37,18 +41,30 @@ const createStyles = (theme) => StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
     marginTop: 16,
-    margin: 10,
-    padding: 10,
   },
   postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
   },
+  header: {
+    flexDirection: 'column',
+    marginLeft: 16,
+    justifyContent: 'center',
+  },
   username: {
     fontSize: 18,
     color: theme.colors.text,
-    fontWeight: 'bold',
+  },
+  description: {
+    marginTop: 8,
+    fontSize: 12,
+    color: theme.colors.text,
+  },
+  postHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
   },
   image: {
     width: '100%',

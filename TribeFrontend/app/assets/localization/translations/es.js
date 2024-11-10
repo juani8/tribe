@@ -60,7 +60,7 @@ export default {
     confirmPassword: 'Confirmar contraseña',
     enterConfirmPassword: 'Confirma tu contraseña',
     createUserButton: 'Crear usuario',
-    logIn: 'Incia sesion',
+    logIn: 'Inicia sesion',
     completeFields: 'Por favor, completa todos los campos.',
     passwordsDontMatch: 'Las contraseñas no coinciden.',
 
