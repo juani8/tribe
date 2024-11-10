@@ -6,7 +6,7 @@ const { sendMagicLink } = require('../utils/magicLink');
 // Registration
 exports.register = async (req, res) => {
     try {
-        //console.log('Register route hit')
+        console.log('Register route hit')
         const { nickName, email, password } = req.body;
         console.log('Email provided for lookup:', email);
         const userExists = await User.findOne({ email });
@@ -41,8 +41,8 @@ exports.verifyMagicLink = async (req, res) => {
         if (process.env.NODE_ENV === 'development' || !process.env.FRONTEND_URL) {
             return res.status(200).json({ message: 'User verified successfully. You can now log in.' });
         } else {
-            // Otherwise, redirect to the frontend login page
-            const deepLinkUrl = `https://tribe.com/login?token=${token}`;
+            // Otherwise, redirect to the frontend initial configuration page
+            const deepLinkUrl = `tribeapp://initial-configuration?token=${token}`;
             return res.redirect(302, deepLinkUrl);
         }
     } catch (err) {
