@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback, Alert, TouchableOpacity } from 'react-native';
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
 import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill, Send } from 'assets/images';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
-import GetPostById from 'helper/PostHelper';
-import { getCityFromCoordinates } from 'networking/services/OSMApiService';
+import {GetPostById} from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
+import { createComment } from 'networking/api/postsApi';
+import PostMainContent from 'ui/components/postComponents/PostMainContent';
 
 const PostDetail = ({ route }) => {
-  const { postId } = route.params;
+  const { post } = route.params;
   const [commentText, setCommentText] = useState('');
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
-
-  // State to hold the city name
-  const [cityName, setCityName] = useState('');
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
@@ -37,95 +35,68 @@ const PostDetail = ({ route }) => {
     };
   }, []);
 
-  const post = GetPostById(postId);
 
-  useEffect(() => {
-    // Fetch city name based on post location coordinates
-    const fetchCityName = async () => {
-      if (post.location?.latitude && post.location?.longitude) {
-        const city = await getCityFromCoordinates(post.location.latitude, post.location.longitude);
-        setCityName(city);
+  const handleCreateComment = async () => {
+    if (commentText.trim().length > 0) {
+      try {
+        const commentData = { text: commentText };
+        const newComment = await createComment(post.postId, commentData);
+        console.log('Comment created:', newComment);
+        // Reset the comment text
+        setCommentText('');
+      } catch (error) {
+        console.error('Error creating comment:', error);
+        Alert.alert('There was an error creating your comment. Please try again.');
       }
-    };
-    
-    fetchCityName();
-  }, [post.location]);
+    } else {
+      Alert.alert('Please enter a comment before submitting.');
+    }
+  };
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Post content and other elements */}
-        <View style={styles.postHeader}>
-          <Image 
-            source={{ uri: post.userProfilePicture }}
-            style={{ width: 65, height: 65, borderRadius: 100 }}
-            resizeMode="stretch"
-          />
-          <View style={styles.header}>
-            <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
-            <CustomTextNunito style={styles.timeAgo}>
-              {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-            </CustomTextNunito>
-          </View>
-        </View>
-
-        <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
-        <ContentCarousel multimedia={post.multimedia} />
-
-        <View style={styles.metadata}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
-              <Image source={Chat} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
-              <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{cityName}</CustomTextNunito>
-          </View>
-        </View>
+        <PostMainContent post={post} />
 
         <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
         
         {/* Comment section */}
         <View>
-          {post.lastComment && (
-            <View style={styles.commentSection}>
-              <View style={{marginBottom:10}}>
-                <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
-                  {I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})
-                </CustomTextNunito>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View style={{width: '92%'}}>
-                    <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
+          <View style={styles.commentSection}>
+            <View style={{marginBottom:10}}>
+              <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
+                {I18n.t(TextKey.commentsTitle)} ({post.totalComments})
+              </CustomTextNunito>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{width: '92%'}}>
+                  <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
+                </View>
+                <TouchableOpacity>
+                  <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} onPress={handleCreateComment} />
+                </TouchableOpacity>
+              </View>
+              {post.totalComments > 0 ? (
+                <>
+                  <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
+                      <Image source={{uri: post.lastComment.profilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
+                      <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.nickname}</CustomTextNunito>
+                    </View>
+                    <CustomTextNunito style={styles.timeAgo}>
+                      {formatDistanceToNow(new Date(post.createdAt))} ago
+                    </CustomTextNunito>
                   </View>
+                  <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
                   <View>
-                    <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
+                    <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
                   </View>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-                    <Image source={{uri: post.lastComment.userProfilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
-                    <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId}</CustomTextNunito>
-                  </View>
-                  <CustomTextNunito style={styles.timeAgo}>
-                    {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-                  </CustomTextNunito>
-                </View>
-                <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
-              </View>
-              <View>
-                <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
-              </View>
+                </>
+              ) : (
+                <CustomTextNunito>{post.lastComment}</CustomTextNunito>
+              )}
             </View>
-          )}
+          </View>
         </View>
       </ScrollView>
     </TouchableWithoutFeedback>
@@ -135,7 +106,6 @@ const PostDetail = ({ route }) => {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingTop: 20,
     paddingVertical: 4,
     borderRadius: 8,
     marginBottom: 16,

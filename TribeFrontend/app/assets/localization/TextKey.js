@@ -92,6 +92,7 @@ const TextKey = {
     timelineTitle: 'timelineTitle',
     timelineMessage: 'timelineMessage',
     timelineSeePostDetail: 'timelineSeePostDetail',
+    timelineNoMorePosts: 'timelineNoMorePosts',
 
     // Timeline Screen (no connection)
     noConnectionTitle: 'noConnectionTitle',

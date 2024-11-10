@@ -5,6 +5,9 @@ import { requestCameraPermission } from 'helper/permissionHandlers/CameraPermiss
 import { requestExternalStoragePermission } from 'helper/permissionHandlers/StoragePermission';
 import { requestMicrophonePermission } from 'helper/permissionHandlers/MicrophonePermission';
 
+import { getLocation } from 'helper/LocationHelper';
+import { createPost } from 'networking/api/postsApi';
+
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
@@ -42,7 +45,7 @@ const openCamera = async (selectedMedia, setSelectedMedia) => {
             I18n.t(TextKey.multimediaHelperChooseMediaTypeTitle),
             I18n.t(TextKey.multimediaHelperChooseMediaTypeMessage),
             [
-                { text: I18n.t(TextKey.multimediaHelperChooseMediaVideoPhoto), onPress: () => captureMedia('photo', selectedMedia, setSelectedMedia) },
+                { text: I18n.t(TextKey.multimediaHelperChooseMediaPhoto), onPress: () => captureMedia('photo', selectedMedia, setSelectedMedia) },
                 { text: I18n.t(TextKey.multimediaHelperChooseMediaVideo), onPress: () => captureMedia('video', selectedMedia, setSelectedMedia) },
                 { text: I18n.t(TextKey.multimediaHelperChooseMediaCancel), style: 'cancel' }
             ]
@@ -90,4 +93,35 @@ const handleLocationToggle = async (checkboxSelection, setCheckboxSelection) => 
     }
 };
 
-export { selectFromGallery, openCamera, handleLocationToggle };
+const handleCreatePost = async ({ selectedMedia, setSelectedMedia, commentText, setCommentText, checkboxSelection, setCheckboxSelection }) => {
+    // Check if there is any media selected
+    if (selectedMedia.length === 0) {
+        return;
+    } else {
+        // Create the post with the selected media
+        try {
+            const postMedia = selectedMedia;
+            const postComment = (commentText.trim().length > 0) ? commentText : null;
+            const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: null, longitude: null };
+            
+            const postData = { 
+                multimedia: postMedia, 
+                description: postComment, 
+                latitude: latitude, 
+                longitude: longitude 
+            };
+
+            // Send the post data to the backend
+            await createPost(postData);
+
+            // Reset the states
+            setSelectedMedia([]);
+            setCommentText('');
+            setCheckboxSelection(false);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+};
+
+export { selectFromGallery, openCamera, handleLocationToggle, handleCreatePost };

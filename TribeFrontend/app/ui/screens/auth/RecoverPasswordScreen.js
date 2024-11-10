@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import Back from 'assets/images/icons/Back.png';
+import BackNight from 'assets/images/iconsNight/Back_night.png';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito'; 
-import { requestPasswordReset } from 'api/authsApi'; 
-import { Back, BackNight } from 'assets/images';  
+import { requestPasswordReset } from 'networking/api/authsApi'; 
 
 const RecoverPasswordScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();  
@@ -14,7 +15,6 @@ const RecoverPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  
   const handleVerify = async () => {
     if (!email) {
       setErrorMessage(I18n.t(TextKey.completeFields)); 
@@ -22,11 +22,11 @@ const RecoverPasswordScreen = ({ navigation }) => {
     }
 
     try {
-      // llamamos a la API para solicitar restablecer la contraseña
-      const response = await requestPasswordReset(email);
+      // Llamamos a la API para solicitar restablecer la contraseña
+      const response = await requestPasswordReset( email ); // Enviamos el email como objeto al backend
       console.log('Solicitud de restablecimiento enviada:', response);
 
-      // si la solicitud es exitosa, redirigimos a la pantalla de verificación
+      // Si la solicitud es exitosa, redirigimos a la pantalla de verificación
       navigation.navigate('VerifyIdentity');
     } catch (error) {
       console.error('Error solicitando el restablecimiento de contraseña:', error);
@@ -79,7 +79,6 @@ const RecoverPasswordScreen = ({ navigation }) => {
     </View>
   );
 };
-
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,

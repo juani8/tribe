@@ -70,6 +70,7 @@ export default {
     timelineTitle: 'Pantalla de Línea de Tiempo',
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
     timelineSeePostDetail: 'Ver mas',
+    timelineNoMorePosts: 'Has llegado al fin de la linea de tiempo. No hay más publicaciones para mostrar.',
 
     // Timeline Screen (no conection)
     noConectionTitle: '¡Conexión perdida!',
