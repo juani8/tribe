@@ -3,7 +3,7 @@ import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import ContentCarousel from './ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
-import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill } from 'assets/images';
+import { Favorite, Bookmark, Chat, PinAltFill } from 'assets/images';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
@@ -28,7 +28,7 @@ const PostMainContent = ({ post, viewMore = true }) => {
       {/* User info */}
       <View style={styles.postHeader}>
         <Image
-          source={{ uri: post.userId.profileImage }}
+          source={post.userId.profileImage ? { uri: post.userId.profileImage } : theme.UserCircleLight}
           style={{ width: 65, height: 65, borderRadius: 100 }}
           resizeMode="stretch"
         />
@@ -56,7 +56,7 @@ const PostMainContent = ({ post, viewMore = true }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => handleFavoriteToggle(isLiked, likeCount, post._id)}>
             <Image 
-              source={isLiked ? FavoriteFill : Favorite} 
+              source={isLiked ? theme.FavoriteFill : Favorite} 
               style={{ width: 24, height: 24 }} 
             />
             <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>
@@ -69,7 +69,7 @@ const PostMainContent = ({ post, viewMore = true }) => {
           </TouchableOpacity>
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }} onPress={() => handleBookmarkToggle(isBookmarked, post._id)}>
             <Image 
-              source={isBookmarked ? BookmarkFill : Bookmark} 
+              source={isBookmarked ? theme.BookmarkFill : Bookmark} 
               style={{ width: 24, height: 24 }} 
             />
           </TouchableOpacity>

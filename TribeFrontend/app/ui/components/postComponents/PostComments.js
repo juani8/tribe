@@ -1,73 +1,80 @@
-import React from 'react';
-import { View, TouchableOpacity, Modal, FlatList, StyleSheet, Image } from 'react-native';
-import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
-import I18n from 'assets/localization/i18n';
-import TextKey from 'assets/localization/TextKey';
-import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
-import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
-import { useTheme } from 'context/ThemeContext';
+// PostComments.js
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, Image, ActivityIndicator, StyleSheet } from 'react-native';
 import moment from 'moment';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import { useTheme } from 'context/ThemeContext';
+import { getCommentsForPost } from 'networking/api/postsApi';
 
-const PostComments = ({ visible, onClose, comments = [], title }) => {
+const PostComments = ({ postId }) => {
   const { theme } = useTheme();
+  const [comments, setComments] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
 
-  const renderComment = ({ item }) => (
-    <View style={styles.commentContainer}>
-      {/* Profile Image */}
-      <Image source={{ uri: item.userId.profileImage }} style={styles.profileImage} />
+  const pageSize = 10; // Adjust as needed
 
-      <View style={styles.commentContent}>
-        {/* Username and Date */}
-        <View style={styles.header}>
-          <CustomTextNunito weight="SemiBold" style={styles.nickName}>
-            {item.userId.nickName}
-          </CustomTextNunito>
-          <CustomTextNunito style={styles.commentDate}>
-            {moment(item.createdAt).fromNow()}
-          </CustomTextNunito>
-        </View>
+  const fetchComments = async (nextPage = 1) => {
+    if (!hasMoreComments) return;
 
-        {/* Comment Text */}
-        <CustomTextNunito style={styles.commentText}>
-          {item.comment}
-        </CustomTextNunito>
-      </View>
-    </View>
-  );
+    try {
+      const offset = (nextPage - 1) * pageSize;
+      const newComments = await getCommentsForPost(postId, offset, pageSize);
+
+      setComments(prevComments => (nextPage === 1 ? newComments : [...prevComments, ...newComments]));
+      setPage(nextPage);
+      setHasMoreComments(newComments.length === pageSize); // Check if more comments are available
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    } finally {
+      setIsLoadingNextPage(false);
+    }
+  };
+
+  const fetchNextPage = () => {
+    if (!isLoadingNextPage && hasMoreComments) {
+      setIsLoadingNextPage(true);
+      fetchComments(page + 1);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [postId]);
 
   return (
     <FlatList
-      data={CoreMenuOptions}
+      data={comments}
       keyExtractor={(item, index) => index.toString()}
       renderItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.optionContainer}
-          onPress={() => {
-            item.onPress();
-            onClose();
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {item.icon && (
-              <Image
-                source={item.icon}
-                style={{ width: 24, height: 24, resizeMode: 'contain', marginRight: 12 }}
-              />
-            )}
-            <CustomTextNunito style={{ color: theme.colors.options, fontSize: 18 }}>
-              {item.label}
-            </CustomTextNunito>
+        <View style={styles.commentContainer}>
+          <Image source={item.userId.profileImage ? { uri: item.userId.profileImage } : theme.UserCircleLight} style={styles.profileImage} />
+          <View style={styles.commentContent}>
+            <View style={styles.header}>
+              <CustomTextNunito weight="SemiBold" style={styles.nickName}>
+                {item.userId.nickName}
+              </CustomTextNunito>
+              <CustomTextNunito style={styles.commentDate}>
+                {moment(item.createdAt).fromNow()}
+              </CustomTextNunito>
+            </View>
+            <CustomTextNunito style={styles.commentText}>{item.comment}</CustomTextNunito>
           </View>
-        </TouchableOpacity>
+        </View>
       )}
+      onEndReached={fetchNextPage}
+      onEndReachedThreshold={0.8}
+      ListFooterComponent={isLoadingNextPage && (
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      )}
+      contentContainerStyle={styles.contentWrapper}
     />
   );
 };
- 
+
 const styles = StyleSheet.create({
   overlay: {
-    flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
@@ -87,6 +94,7 @@ const styles = StyleSheet.create({
   commentContainer: {
     flexDirection: 'row',
     paddingVertical: 12,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },

@@ -4,6 +4,13 @@ import colorsLightMode from 'assets/constants/colorsLightMode';
 import colorsDarkMode from 'assets/constants/colorsDarkMode';
 import { LogoDarkMode, LogoLightMode } from '../assets/images';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { FavoriteFill, FavoriteFillNight, 
+  BookmarkFill, BookmarkFillNight, 
+  UserCircleLight, UserCircleLightNight,
+  MenuNight, Menu,
+  BellFillNight, BellFill
+
+} from 'assets/images';
 
 const ThemeContext = createContext();
 
@@ -29,7 +36,12 @@ export const ThemeProvider = ({ children }) => {
   
   const theme = useMemo(() => ({
     colors: isCurrentlyDarkMode ? colorsDarkMode : colorsLightMode,
-    logo: isCurrentlyDarkMode ? LogoDarkMode : LogoLightMode
+    logo: isCurrentlyDarkMode ? LogoDarkMode : LogoLightMode,
+    FavoriteFill: isCurrentlyDarkMode ? FavoriteFillNight : FavoriteFill,
+    BookmarkFill: isCurrentlyDarkMode ? BookmarkFillNight : BookmarkFill,
+    UserCircleLight: isCurrentlyDarkMode ? UserCircleLightNight : UserCircleLight,
+    Menu: isCurrentlyDarkMode ? MenuNight : Menu,
+    BellFill: isCurrentlyDarkMode ? BellFillNight : BellFill,
   }), [isCurrentlyDarkMode]);
 
   const toggleSystemThemeUsage = () => {

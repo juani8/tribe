@@ -3,14 +3,13 @@ import {
   View,
   TouchableOpacity,
   Modal,
-  FlatList,
   StyleSheet,
-  Image,
+  Dimensions,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
-import { BlurView } from '@react-native-community/blur';
 
 const PopupMenu = ({ visible, onClose, options, title, children }) => {
   const { theme, isDarkMode } = useTheme();
@@ -28,11 +27,12 @@ const PopupMenu = ({ visible, onClose, options, title, children }) => {
         onPress={onClose}
       >
         {visible && (
-          <Animated.View
-            entering={FadeInDown.duration(400)}
-            exiting={FadeOutUp.duration(500)}
-            style={styles.container}
-          >
+          <TouchableWithoutFeedback>
+            <Animated.View
+              entering={FadeInDown.duration(400)}
+              exiting={FadeOutUp.duration(500)}
+              style={styles.container}
+            >
               {/* Content Wrapper */}
               <View style={styles.contentWrapper}>
                 {title && (
@@ -52,7 +52,8 @@ const PopupMenu = ({ visible, onClose, options, title, children }) => {
                   </>
                 )}
               </View>
-          </Animated.View>
+            </Animated.View>
+          </TouchableWithoutFeedback>
         )}
       </TouchableOpacity>
     </Modal>
@@ -60,7 +61,10 @@ const PopupMenu = ({ visible, onClose, options, title, children }) => {
 };
 
 const styles = StyleSheet.create({
-  overlay: {
+  contentWrapper: {
+    maxHeight: Dimensions.get('window').height * 0.6,
+  },
+  overlay: { 
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.2)', // 20% opacity overlay for the background

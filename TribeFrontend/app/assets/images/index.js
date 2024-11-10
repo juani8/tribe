@@ -46,7 +46,7 @@ export { default as BookmarkFillNight } from './iconsNight/Bookmark_fill_night.p
 export { default as FavoriteFillNight } from './iconsNight/Favorite_fill_night.png';
 export { default as MenuNight } from './iconsNight/Menu_night.png';
 export { default as SearchNight } from './iconsNight/Search_night.png';
-export { default as UserCircleLightNight } from './iconsNight/User_cicrle_light_night.png';
+export { default as UserCircleLightNight } from './iconsNight/User_circle_light_night.png';
 export { default as AddSquareSelectedNight } from './iconsNight/Add_square_night.png';
 export { default as HomeSelectedNight } from './iconsNight/Home_night.png';
 export { default as SearchAltSelectedNight } from './iconsNight/Search_alt_night.png';

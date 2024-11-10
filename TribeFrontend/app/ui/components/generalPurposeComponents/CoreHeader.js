@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { BellFill, Menu, UserCircleLight } from 'assets/images';
-import { BellFillNight, MenuNight, UserCircleLightNight } from 'assets/images';
 import { Lamp, Aa, SettingFill, ChartPin, SignInSquare } from 'assets/images';
 import { navigateToNotifications, navigateToUserProfile, navigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import CustomTextNunito from './CustomTextNunito';
@@ -36,16 +34,16 @@ const CoreHeader = () => {
                 }}>
                     <View style={styles.itemsLeft}>
                         <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
-                            <Image source={isDarkMode ? UserCircleLightNight : UserCircleLight} style={{ width: 50, height: 50 }} />
+                            <Image source={theme.UserCircleLight} style={{ width: 50, height: 50 }} />
                         </TouchableOpacity>
                         <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}John</CustomTextNunito>
                     </View>
                     <View style={styles.itemsRight}>
                         <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>
-                            <Image source={isDarkMode ? BellFillNight : BellFill} style={{ width: 28, height: 28, marginRight: 12 }} />
+                            <Image source={theme.BellFill} style={{ width: 28, height: 28, marginRight: 12 }} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={openMenu}>
-                            <Image source={isDarkMode ? MenuNight : Menu} style={{ width: 28, height: 28 }} />
+                            <Image source={theme.Menu} style={{ width: 28, height: 28 }} />
                         </TouchableOpacity> 
                     </View>
                 </View>
@@ -56,7 +54,7 @@ const CoreHeader = () => {
             <PopupMenu
                 visible={isMenuVisible}
                 onClose={closeMenu}
-                title="Settings"
+                title={I18n.t(TextKey.settingsTitle)}
             >
                 <CoreMenuOptionsList onClose={closeMenu} />
             </PopupMenu>

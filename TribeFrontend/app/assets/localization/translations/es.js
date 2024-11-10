@@ -14,6 +14,10 @@ export default {
     userProfileNavegation: 'Perfil de Usuario',
     postDetailNavegation: 'Detalle de Publicación',
 
+    // PopUp
+    settingsTitle: 'Configuración',
+    commentsViewTitle: 'Comentarios',
+
     // Options
     changeLanguage: 'Cambiar Idioma',
 

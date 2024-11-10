@@ -14,6 +14,10 @@ const TextKey = {
     userProfileNavegation: 'userProfileNavegation',
     postDetailNavegation: 'postDetailNavegation',
 
+    // PopUp
+    settingsTitle: 'settingsTitle',
+    commentsViewTitle: 'commentsViewTitle',
+
     // Options
     changeLanguage: 'changeLanguage',
 
