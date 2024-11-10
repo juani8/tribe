@@ -1,14 +1,18 @@
 import React from 'react';
 import { View, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
 import { Lamp, Aa, SettingFill, ChartPin, SignInSquare } from 'assets/images';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
+import { logoutUser } from 'networking/api/usersApi';
+import { navigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 
 const CoreMenuOptionsList = ({ onClose }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const navigation = useNavigation();
 
   const CoreMenuOptions = [
     {
@@ -34,7 +38,7 @@ const CoreMenuOptionsList = ({ onClose }) => {
     {
       icon: SignInSquare,
       label: I18n.t(TextKey.settingsOptionLogout),
-      onPress: () => console.log('Logout selected'),
+      onPress: () => {logoutUser(), navigateToWelcome(navigation)},
     },
   ];
 

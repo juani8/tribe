@@ -165,7 +165,6 @@ const FourthPart = ({ styles, theme, navigation }) => {
       <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
         <CustomButton title={I18n.t(TextKey.welcomeGotoSignup)} onPress={() => navigateToSignup(navigation)}/>
         <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => navigateToLogin(navigation)}>{I18n.t(TextKey.welcomeGotoLogin)}</CustomHighlightedTextNunito>
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => navigateToHome(navigation)}>Home (atajo)</CustomHighlightedTextNunito>
       </View>
     </View>
   );

@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const Post = require('../models/Post');
+const jwt = require('jsonwebtoken');
 
 /**
  * Obtiene el perfil del usuario autenticado.
@@ -255,12 +256,21 @@ exports.changePassword = async (req, res) => {
     res.status(200).json({ message: 'Password changed successfully.' });
 };
 
-/**
- * Cierra la sesión del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un código de estado 204 al cerrar sesión correctamente.
- */
+// Logout
 exports.logout = async (req, res) => {
-    res.status(204).send();
+    try {
+        // Generar un token con una validez mínima (por ejemplo, 1 segundo)
+        const token = jwt.sign(
+            { userId: req.user.id }, // Asumiendo que el ID del usuario está disponible en req.user
+            process.env.JWT_SECRET, // Se debe usar la misma clave secreta utilizada al crear el token
+            { expiresIn: '1s' } // Duración mínima del token (1 segundo)
+        );
+
+        // Enviar el token en la respuesta
+        res.status(200).json({ token });
+
+    } catch (error) {
+        console.error('Error during logout:', error);
+        res.status(500).json({ error: 'Hubo un error al procesar el logout' });
+    }
 };

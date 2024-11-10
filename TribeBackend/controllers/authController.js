@@ -202,12 +202,12 @@ exports.createTestUser = async (res) => {
 
 // Function to validate the token
 exports.validateToken = async (req, res) => {
-    const token = req.body.token;
-  
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      res.status(200).json({ valid: true });
-    } catch (error) {
-      res.status(401).json({ valid: false, message: 'Token is invalid or expired' });
-    }
-  };
+  const token = req.body.token;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false, message: 'Token is invalid or expired' });
+  }
+};

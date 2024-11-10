@@ -34,7 +34,7 @@ export const loginUser = async (loginData) => {
   } catch (error) {
     console.error('Error iniciando sesión de usuario:', error);
     throw error;
-  }
+  } 
 };
 
 // Solicitar restablecimiento de contraseña

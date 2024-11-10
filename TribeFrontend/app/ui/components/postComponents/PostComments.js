@@ -64,7 +64,7 @@ const PostComments = ({ visible, onClose, comments = [], title }) => {
     />
   );
 };
-
+ 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,

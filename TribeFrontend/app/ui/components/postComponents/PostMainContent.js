@@ -13,7 +13,7 @@ import { navigateToSpecificPost } from 'helper/navigationHandlers/CoreNavigation
 import { useNavigation } from '@react-navigation/native';
 import { usePostContext } from 'context/PostContext';
 
-const PostMainContent = ({ post }) => {
+const PostMainContent = ({ post, viewMore = true }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation();
@@ -43,9 +43,9 @@ const PostMainContent = ({ post }) => {
       <TouchableOpacity onPress={() => navigateToSpecificPost(navigation, post)}>
         {/* Post description */}
         <CustomTextNunito style={styles.description}>{post.description ?? ''}</CustomTextNunito>
-        <View>
+        {viewMore && <View>
           <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.timelineSeePostDetail)}</CustomHighlightedTextNunito>
-        </View>
+        </View>}
       </TouchableOpacity>
 
       {/* Post multimedia */}
