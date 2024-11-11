@@ -155,7 +155,10 @@ const TextKey = {
     commentsTitle: 'commentsTitle',
     commentsViewMore: 'commentsViewMore',
     commentsWriteCommentPlaceholder: 'commentsWriteCommentPlaceholder',
-    commentsMaxCharactersReached: 'commentsMaxCharactersReached',
+    commentsMaxCharactersReached: 'commentsMaxCharactersReached', 
+    sponsored: 'sponsored',
+    copyAdvertisement: 'copyAdvertisement',
+    redirectAdvertisement: 'redirectAdvertisement',
 
     // Header
     headerTitle: 'headerTitle',

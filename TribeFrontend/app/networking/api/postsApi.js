@@ -42,7 +42,7 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
             params: {
                 offset,
                 limit,
-                order: 'desc'
+                order: 'asc'
             }
         });
         console.log('getTimelinePosts', response.data);
@@ -76,7 +76,7 @@ export const getCommentsForPost = async (postId, offset = 0, limit = 10) => {
             params: {
                 offset,
                 limit,
-                order: 'desc'
+                order: 'asc'
             }
         });
         return response.data;

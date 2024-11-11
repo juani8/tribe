@@ -130,13 +130,16 @@ export default {
     // Search Screen
     searchTitle: 'Search Screen',
     searchMessage: 'Please enter your search query',
-    
+
     // Post Detail Screen
     commentsTitle: 'Comments',
-    commentsViewMore: 'See all comments',
+    commentsViewMore: 'View all comments',
     commentsWriteCommentPlaceholder: 'Write a comment...',
-    commentsMaxCharactersReached: 'Max limit reached!',
-
+    commentsMaxCharactersReached: 'Maximum character limit reached!',
+    sponsored: 'Sponsored',
+    copyAdvertisement: 'Copy advertisement\'s link',
+    redirectAdvertisement: 'Tap the post to go to the advertiser\'s website.',
+    
     // Header
     headerTitle: "Discover what's new, ",
 

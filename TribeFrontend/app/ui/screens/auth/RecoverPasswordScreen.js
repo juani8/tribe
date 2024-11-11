@@ -64,7 +64,7 @@ const RecoverPasswordScreen = ({ navigation }) => {
           {I18n.t(TextKey.emailLabel)}
         </CustomTextNunito>
         <TextInput
-          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary || theme.colors.background }]}
+          style={[styles.input]}
           placeholder={I18n.t(TextKey.emailPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#a9a9a9'}
           keyboardType="email-address"

@@ -38,6 +38,7 @@ export { default as AddSquareSelected } from './icons/Add_square.png';
 export { default as HomeSelected } from './icons/Home.png';
 export { default as SearchAltSelected } from './icons/Search_alt.png';
 export { default as Send } from './icons/Send.png';
+export { default as Copy } from './icons/Copy.png';
 
 //icons night
 export { default as BackNight } from './iconsNight/Back_night.png';

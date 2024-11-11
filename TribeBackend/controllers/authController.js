@@ -15,10 +15,12 @@ exports.register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ nickName, email, password: hashedPassword });
-        user.isVerified = false;
+        // Esto, cuando haya verificación, debería ser user.isVerified = false;
+        user.isVerified = true;
         await user.save();
-        await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
-        res.status(200).json({ message: 'Registration successful. Magic Link sent.' });
+        // await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).json({ token, message: 'Registration successful.' });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ message: 'Internal server error.' });
@@ -132,57 +134,6 @@ exports.changePasswordWithMagicLink = async (req, res) => {
         res.status(400).json({ message: 'Invalid or expired token.' });
     }
 };
-
-exports.bypassLogin = async (req, res) => {
-    try {
-        const user = await User.findOne({ email: 'testuser@a.com' });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
-        }
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token });
-    } catch (error) {
-        console.error('Error in bypassLogin:', error); // Log the error for debugging
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-}; 
-
-exports.createTestUser = async (res) => {
-    try {  
-        const userExists = await User.findOne({ email: 'testuser@a.com' });
-        console.log('User exists:', userExists);
-        if (userExists) return res.status(409).json({ message: 'User already registered.' });
-
-      const testUserData = {
-        name: 'Test',
-        lastName: 'User',
-        nickName: 'testuser',
-        email: 'testuser@a.com',
-        password: await bcrypt.hash('123', 10),
-        isVerified: true,
-        profileImage: null,
-        coverImage: null,
-        description: 'no me borren xd',
-        gamificationLevel: null,
-        following: [],
-        followers: [],
-        favorites: [],
-        numberOfFollowers: 0,
-        numberOfFollowing: 0,
-        numberOfComments: 0,
-        numberOfFavorites: 0,
-      };
-   
-      const testUser = new User(testUserData);
-      await testUser.save();
-      console.log('Test user created successfully:', testUser);
- 
-    } catch (error) {
-      console.error('Error creating test user:', error);
-      process.exit(1);
-    }
-  };
 
 // Function to validate the token
 exports.validateToken = async (req, res) => {

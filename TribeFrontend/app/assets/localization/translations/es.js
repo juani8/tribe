@@ -129,11 +129,14 @@ export default {
     searchTitle: 'Pantalla de Búsqueda',
     searchMessage: 'Por favor, ingrese su consulta de búsqueda',
 
-    // Post Detail Screen
+    // Pantalla de Detalle de Publicación
     commentsTitle: 'Comentarios',
     commentsViewMore: 'Ver todos los comentarios',
     commentsWriteCommentPlaceholder: 'Escribe un comentario...',
-    commentsMaxCharactersReached: '¡Límite máximo de caracteres alcanzado!',
+    commentsMaxCharactersReached: '¡Límite máximo alcanzado!',
+    sponsored: 'Patrocinado',
+    copyAdvertisement: 'Copiar enlace del anuncio',
+    redirectAdvertisement: 'Toca la publicación para ir a la página web del anunciante.',
 
     // Button Messages
     loginButton: 'Iniciar sesión',

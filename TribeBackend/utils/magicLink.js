@@ -23,12 +23,15 @@ exports.sendMagicLink = async (email, userId) => {
             });
         } else {
             // If in production, use Gmail or another real email service
-            transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: 'no.reply.tribe.app@gmail.com',
-                    pass: process.env.GMAIL_APP_PASSWORD
-                }
+            transporter = nodemailer.createTransport({     
+                service: 'gmail', // o tu servicio de correo
+                auth: {         
+                    user: 'no.reply.tribe.app@gmail.com',         
+                    pass: process.env.GMAIL_APP_PASSWORD,     
+                },    
+                tls: {         
+                    rejectUnauthorized: false // Ignora errores de certificado 
+                } 
             });
         }
 

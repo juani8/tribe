@@ -5,6 +5,7 @@ import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import { registerUser } from 'networking/api/authsApi'; // DESCOMENTADO PARA FUNCIONAR CON EL BACKEND
+import { storeToken } from 'helper/JWTHelper';
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -26,17 +27,16 @@ const SignupScreen = ({ navigation }) => {
     }
 
     try {
-      // Simulación de respuesta sin backend
-        navigation.navigate('VerifyIdentity');
-
-
       // Llamada al backend para registrar al usuario y enviar el magic link
       const registrationData = { nickName: fantasyName, email, password };
       const response = await registerUser(registrationData);
+      console.log('Respuesta del registro:', response);
+      {response.token && await storeToken(response.token)};
 
+      navigation.navigate('InitialConfiguration');
       // Si la respuesta es exitosa, navega a VerifyIdentity
-      Alert.alert('Registro exitoso', 'Se ha enviado un enlace de verificación a tu correo.');
-      navigation.navigate('VerifyIdentity');
+      // Alert.alert('Registro exitoso', 'Se ha enviado un enlace de verificación a tu correo.');
+      // navigation.navigate('VerifyIdentity');
     } catch (error) {
       console.error('Error registrando el usuario:', error);
 

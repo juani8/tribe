@@ -153,7 +153,6 @@ const createStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
-    backgroundColor: theme.colors.backgroundSecondary,
   },
   loginButton: {
     width: '85%',
