@@ -55,27 +55,26 @@ exports.getTimeline = async (req, res) => {
         const posts = await Post.find()
             .skip(parseInt(offset))
             .limit(parseInt(limit))
-            .select('-comments') 
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
             .populate('userId', 'nickName profileImage')
             .lean();
 
         // Calcular el número de comentarios para cada post
         const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ postId: post._id });
-            const lastComment = await Comment.findOne({ postId: post._id }).sort({ createdAt: -1 });
+            const totalComments = await Comment.countDocuments({ _id: { $in: post.comments } });
+            const lastComment = await Comment.find({ _id: { $in: post.comments } }).sort({ createdAt: -1 }).limit(1).populate('userId', 'nickName profileImage');
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
  
             return {
               ...post,
               totalComments,
-              lastComment: lastComment || null,
+              lastComment: lastComment[0] || null,
               isLiked: !!isLiked,
               isBookmarked: !!isBookmarked
           };
-        }));
-
+        })); 
+ 
         res.status(200).json(postSummary);
     } catch (error) {
         console.error("Error en getTimeline:", error);
@@ -284,6 +283,10 @@ exports.getCommentsByPostId = async (req, res) => {
 exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
+
+    console.log('postId', postId);
+    console.log('content', content);
+    console.log('req.body', req.body);
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

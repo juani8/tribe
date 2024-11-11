@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import Back from 'assets/images/icons/Back.png';
 import BackNight from 'assets/images/iconsNight/Back_night.png';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito'; 
-import { requestPasswordReset } from 'networking/api/authsApi'; 
+//import { requestPasswordReset } from 'networking/api/authsApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
 
 const RecoverPasswordScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();  
@@ -22,11 +22,16 @@ const RecoverPasswordScreen = ({ navigation }) => {
     }
 
     try {
-      // Llamamos a la API para solicitar restablecer la contraseña
-      const response = await requestPasswordReset( email ); // Enviamos el email como objeto al backend
+      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+      /*
+      const response = await requestPasswordReset(email);
       console.log('Solicitud de restablecimiento enviada:', response);
+      */
 
-      // Si la solicitud es exitosa, redirigimos a la pantalla de verificación
+      // Simulación 
+      Alert.alert('Solicitud enviada', 'Se ha enviado un enlace de verificación a tu correo.');
+      
+      // Redirige a la pantalla de verificación
       navigation.navigate('VerifyIdentity');
     } catch (error) {
       console.error('Error solicitando el restablecimiento de contraseña:', error);
@@ -59,7 +64,7 @@ const RecoverPasswordScreen = ({ navigation }) => {
           {I18n.t(TextKey.emailLabel)}
         </CustomTextNunito>
         <TextInput
-          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary || theme.colors.background }]}
+          style={[styles.input]}
           placeholder={I18n.t(TextKey.emailPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#a9a9a9'}
           keyboardType="email-address"
@@ -79,6 +84,7 @@ const RecoverPasswordScreen = ({ navigation }) => {
     </View>
   );
 };
+
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
