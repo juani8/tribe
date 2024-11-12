@@ -6,7 +6,7 @@ import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito'; 
-//import { requestPasswordReset } from 'networking/api/authsApi'; // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+import { requestPasswordReset } from 'networking/api/authsApi'; 
 
 const RecoverPasswordScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();  
@@ -17,27 +17,27 @@ const RecoverPasswordScreen = ({ navigation }) => {
 
   const handleVerify = async () => {
     if (!email) {
-      setErrorMessage(I18n.t(TextKey.completeFields)); 
-      return;
+        setErrorMessage(I18n.t(TextKey.completeFields)); 
+        return;
     }
 
     try {
-      
-      /*
-      const response = await requestPasswordReset(email);
-      console.log('Solicitud de restablecimiento enviada:', response);
-      */
+       // Simulación del backend
+       //console.log('Simulando solicitud de restablecimiento de contraseña para:', email);
+       //setErrorMessage(''); // Limpia cualquier error previo
 
-      // Simulación 
-      Alert.alert('Solicitud enviada', 'Se ha enviado un enlace de verificación a tu correo.');
-      
-      // Redirige a la pantalla de verificación
-      navigation.navigate('VerifyIdentity');
+        // Llama al backend para solicitar la recuperación de contraseña - DES
+        const response = await requestPasswordReset(email);
+        console.log('Solicitud de restablecimiento enviada:', response);
+        
+        // Mostrar mensaje de éxito y redirigir
+        Alert.alert(I18n.t(TextKey.passwordResetSuccessTitle), I18n.t(TextKey.passwordResetSuccessMessage));
+        navigation.navigate('VerifyIdentity'); 
     } catch (error) {
-      console.error('Error solicitando el restablecimiento de contraseña:', error);
-      setErrorMessage('Hubo un error al procesar la solicitud. Por favor, inténtalo de nuevo.');
+        console.error('Error solicitando el restablecimiento de contraseña:', error);
+        setErrorMessage(I18n.t(TextKey.passwordResetErrorMessage));
     }
-  };
+};
 
   return (
     <View style={styles.container}>

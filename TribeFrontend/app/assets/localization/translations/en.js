@@ -67,13 +67,15 @@ export default {
     passwordsDontMatch: 'Passwords do not match.',
 
     // Password recovery Screen
-    recoverPasswordTitle: 'Recover your password',
-    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a link to change your password.',
+    recoverPasswordTitle: 'Recover Your Password',
+    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a link to reset your password.',
     emailLabel: 'Email',
-    eemailPlaceholder: 'Enter your email',
-    verifyButton: 'Verify',
-    completeFields: "Please complete all fields",
-    completeFields: "Please complete all fields",
+    emailPlaceholder: 'Enter your email',
+    completeFields: 'Please fill in all fields.',
+    verifyButton: 'Send Verification',
+    passwordResetSuccessTitle: 'Request Sent',
+    passwordResetSuccessMessage: 'A verification link has been sent to your email.',
+    passwordResetErrorMessage: 'There was an error processing the request. Please try again.',
 
     // Verify Identity Screen
     verifyIdentityTitle: 'Verify your identity',

@@ -66,12 +66,14 @@ export default {
 
     // Password recovery Screen
     recoverPasswordTitle: 'Recupera tu contraseña',
-    recoverPasswordDescription: 'Ingresa el email con el que te registraste, te enviaremos un enlace para cambiar tu contraseña.',
-    emailLabel: 'Correo',
-    emailPlaceholder: 'Ingresa tu correo',
-    verifyButton: 'Verificar',
-    completeFields: "Por favor, completa todos los campos.",
-    completeFields: "Por favor, completa todos los campos.",
+    recoverPasswordDescription: 'Ingresa el correo electrónico con el que te registraste, y te enviaremos un enlace para restablecer tu contraseña.',
+    emailLabel: 'Correo electrónico',
+    emailPlaceholder: 'Ingresa tu correo electrónico',
+    verifyButton: 'Enviar enlace',
+    completeFields: 'Por favor, completa todos los campos.',
+    passwordResetSuccessTitle: 'Solicitud enviada',
+    passwordResetSuccessMessage: 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo.',
+    passwordResetErrorMessage: 'Hubo un error al procesar la solicitud. Inténtalo de nuevo.',
 
     // Verify Identity Screen
     verifyIdentityTitle: 'Verifica tu identidad',
