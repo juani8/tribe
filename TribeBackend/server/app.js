@@ -13,7 +13,10 @@ app.use((req, res, next) => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://triberedmedia.netlify.app', // Replace with your Netlify URL
+  methods: ['PATCH', 'POST'], // Allow these methods
+}));
 app.use(express.json());
 
 // Rutas

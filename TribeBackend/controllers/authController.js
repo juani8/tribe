@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { sendMagicLink } = require('../utils/magicLink');
+const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
 
 // Registration
 exports.register = async (req, res) => {
@@ -81,7 +81,7 @@ exports.requestPasswordReset = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: 'User not found.' });
 
-        await sendMagicLink(user.email, user._id); // Send password reset magic link
+        await sendRecoveryLink(user.email, user._id); // Send password reset link
         res.status(200).json({ message: 'Magic link sent.' });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error.' });
@@ -102,8 +102,8 @@ exports.verifyPasswordResetMagicLink = (req, res) => {
             // Return a JSON response for Postman
             return res.status(200).json({ message: 'Password reset link verified. You can now reset your password.', token });
         } else {
-            // Otherwise, redirect to the frontend password reset page
-            const deepLinkUrl = `https://tribe.com/reset-password?token=${token}`;
+            // Otherwise, redirect to the frontend login page
+            const deepLinkUrl = `https://tribe.com/login?token=${token}`;
             return res.redirect(302, deepLinkUrl);
         }
     } catch (err) {
@@ -114,21 +114,49 @@ exports.verifyPasswordResetMagicLink = (req, res) => {
 // Change password (after magic link verification)
 // This is the function that will handle requests made to PATCH /auths/sessions/passwords.
 // It verifies the token sent with the request and updates the password.
-exports.changePasswordWithMagicLink = async (req, res) => {
+exports.resetPasswordWithToken = async (req, res) => {
     const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+        return res.status(400).json({ message: 'Token and new password are required.' });
+    }
+
     try {
+        // Verificar el token JWT
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log('Decoded token:', decoded); // Log the decoded token
 
+        console.log('Decoded token:', decoded); // Registro del token decodificado
+
+        // Buscar al usuario usando el ID obtenido del token
         const user = await User.findById(decoded.id);
-        console.log('Looking for user with ID:', decoded.id); // Log the user ID being searched
-        if (!user) return res.status(404).json({ message: 'User not found.' });
 
-        user.password = await bcrypt.hash(newPassword, 10);
+        if (!user) {
+            console.log(`User with ID ${decoded.id} not found.`); // Registro si no se encuentra el usuario
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Validar si la nueva contraseña cumple con los criterios
+        if (newPassword.length < 8) {
+            return res.status(400).json({
+                message: 'Password must be at least 8 characters long.'
+            });
+        }
+
+        // Hashear la nueva contraseña
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+
+        // Guardar la nueva contraseña en la base de datos
         await user.save();
-        res.status(200).json({ message: 'Password changed successfully.' });
+
+        console.log(`Password successfully reset for user ID: ${decoded.id}`); // Registro de éxito
+        res.status(200).json({ message: 'Password has been reset successfully.' });
+
     } catch (err) {
-        console.error('Error in changePasswordWithMagicLink:', err); // Log any errors
+        console.error('Error in resetPasswordWithToken:', err); // Registro de errores
+        if (err.name === 'TokenExpiredError') {
+            return res.status(400).json({ message: 'Token has expired.' });
+        }
         res.status(400).json({ message: 'Invalid or expired token.' });
     }
 };
