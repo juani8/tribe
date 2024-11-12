@@ -29,11 +29,12 @@ export const verifyRegistrationToken = async (token) => {
 export const loginUser = async (loginData) => {
   try {
     const response = await axios.post(`${BASE_URL}/auths/sessions`, loginData);
+    await storeToken(response.data.token);
     return response.data;
   } catch (error) {
     console.error('Error iniciando sesión de usuario:', error);
     throw error;
-  }
+  } 
 };
 
 // Solicitar restablecimiento de contraseña
@@ -66,5 +67,20 @@ export const verifyPasswordToken = async (token) => {
   } catch (error) {
     console.error('Error verificando token de restablecimiento de contraseña:', error);
     throw error;
+  }
+};
+
+// Validar token
+export const checkToken = async () => {
+  try {
+      const token = await getToken();
+      if (token) {
+          const response = await axios.post(`${BASE_URL}/auths/validate-token`, { token });
+          return response.data.valid;
+      } else {
+          return false;
+      }
+  } catch (error) {
+      return false;
   }
 };

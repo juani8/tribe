@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image } from 'react-native';
-import { NavigationContainer, useRoute } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
-
 import CoreHeader from 'ui/components/generalPurposeComponents/CoreHeader';
 import ComplementaryHeader from 'ui/components/generalPurposeComponents/ComplementaryHeader';
-
 import WelcomeScreen from 'ui/screens/WelcomeScreen';
 import TimelineScreen from 'ui/screens/core/TimelineScreen';
 import UploadScreen from 'ui/screens/core/UploadScreen';
@@ -20,30 +18,26 @@ import InitialConfigurationScreen from 'ui/screens/auth/InitialConfigurationScre
 import NotificationsScreen from 'ui/screens/core/NotificationsScreen';
 import UserProfileScreen from 'ui/screens/user/UserProfileScreen';
 import PostDetail from 'ui/screens/core/PostDetail';
-
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
-
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
-import { UiProvider } from 'context/UiContext';
+import { PostProvider } from 'context/PostContext';
+import { UserProvider } from 'context/UserContext';
 import CustomTextNutito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-
+import { checkToken } from 'networking/api/authsApi';
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
 import { AddSquareSelectedNight, HomeSelectedNight, SearchAltSelectedNight, AddSquareNight, HomeNight, SearchAltNight } from 'assets/images';
-
+import useMagicLinkListener from 'hooks/useMagicLinkListener';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabBar() {
     const { theme, isDarkMode } = useTheme();
-
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
-                tabBarStyle: {
-                    backgroundColor: theme.colors.primary,
-                },
+                tabBarStyle: { backgroundColor: theme.colors.primary },
                 tabBarLabel: ({ focused }) => {
                     let label;
                     switch (route.name) {
@@ -78,130 +72,79 @@ function TabBar() {
                 tabBarInactiveTintColor: 'gray',
             })}
         >
-            <Tab.Screen
-                name="Home"
-                component={TimelineScreen}
-                options={{
-                    headerShown: true,
-                    header: () => <CoreHeader />,
-                }}
-            />
-            <Tab.Screen
-                name="Upload"
-                component={UploadScreen}
-                options={{
-                    headerShown: true,
-                    header: () => <ComplementaryHeader title={I18n.t(TextKey.uploadNavegation)} />,
-                }}
-            />
-            <Tab.Screen
-                name="Search"
-                component={SearchScreen}
-                options={{
-                    headerShown: true,
-                    header: () => <ComplementaryHeader title={I18n.t(TextKey.searchNavegation)} />,
-                }}
-            />
+            <Tab.Screen name="Home" component={TimelineScreen} options={{ headerShown: true, header: () => <CoreHeader /> }} />
+            <Tab.Screen name="Upload" component={UploadScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.uploadNavegation)} /> }} />
+            <Tab.Screen name="Search" component={SearchScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.searchNavegation)} /> }} />
         </Tab.Navigator>
     );
 }
 
-
-function MainStack() {
+function MainStack({ initialRoute }) {
     const { theme } = useTheme();
-
+    useMagicLinkListener();
     return (
-        <Stack.Navigator
-            screenOptions={{
-                headerShown: false,
-                cardStyle: { backgroundColor: theme.colors.background },
-            }}
-        >
-            <Stack.Screen
-                name="Welcome"
-                component={WelcomeScreen}
-            />
-            <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-            />
-            <Stack.Screen
-                name="Signup"
-                component={SignupScreen}
-            />
-            <Stack.Screen
-                name="RecoverPassword"
-                component={RecoverPasswordScreen}
-            />
-            <Stack.Screen
-                name="VerifyIdentity"
-                component={VerifyIdentityScreen}
-            />
-            <Stack.Screen
-                name="InitialConfiguration"
-                component={InitialConfigurationScreen}
-            />
-            <Stack.Screen
-                name="Main"
-                component={TabBar}
-            />
-            <Stack.Screen 
-                name="PostDetail" 
-                component={PostDetail} 
-                options={{
-                    headerShown: true,
-                    header: () => <ComplementaryHeader title={I18n.t(TextKey.postDetailNavegation)} />,
-                }}
-            />
-            <Stack.Screen
-                name="Notifications"
-                component={NotificationsScreen}
-                options={{
-                    headerShown: true,
-                    header: () => <ComplementaryHeader title={I18n.t(TextKey.notificationsNavegation)} />,
-                }}
-            />
-            <Stack.Screen
-                name="UserProfile"
-                component={UserProfileScreen}
-                options={{
-                    headerShown: true,
-                    header: () => <ComplementaryHeader title={I18n.t(TextKey.userProfileNavegation)} />,
-                }}
-            />
+        <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: theme.colors.background } }} initialRouteName={initialRoute}>
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="RecoverPassword" component={RecoverPasswordScreen} />
+            <Stack.Screen name="VerifyIdentity" component={VerifyIdentityScreen} />
+            <Stack.Screen name="InitialConfiguration" component={InitialConfigurationScreen} />
+            <Stack.Screen name="Main" component={TabBar} />
+            <Stack.Screen name="PostDetail" component={PostDetail} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.postDetailNavegation)} /> }} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.notificationsNavegation)} /> }} />
+            <Stack.Screen name="UserProfile" component={UserProfileScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.userProfileNavegation)} /> }} />
         </Stack.Navigator>
     );
 }
 
-export default function App() {
-    useEffect(() => {
-        SplashScreen.hide();
-    }, []);
-
-    return (
-        <ThemeProvider>
-            <UiProvider>
-                <AppContent />
-            </UiProvider>
-        </ThemeProvider>
-    );
-}
-
 function AppContent() {
-    // Define your linking configuration
     const linking = {
-        prefixes: ['https://tribe.com'], // Your app's deep link prefix
+        prefixes: ['tribeapp://'], // Deep link prefix
         config: {
             screens: {
-                RecoverPassword: 'reset-password?token=:token', // Define the deep link path
-                Login: 'login?token=:token',
-            },
-        },
-    };
+                RecoverPassword: {
+                    path: 'reset-password',
+                    parse: {
+                        token: (token) => `${token}`,
+                    },
+                },
+                InitialConfiguration: 'register?token=:token',
+            }
+        }
+    }
+
+
+    const [initialRoute, setInitialRoute] = useState('Welcome');
+    const [isSessionChecked, setIsSessionChecked] = useState(false);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const token = await checkToken();
+            if (token) setInitialRoute('Main');
+            SplashScreen.hide();
+            setIsSessionChecked(true);
+        };
+        checkSession();
+    }, []);
+
+    if (!isSessionChecked) return null;
 
     return (
         <NavigationContainer linking={linking}>
-            <MainStack />
+            <MainStack initialRoute={initialRoute} />
         </NavigationContainer>
+    );
+}
+
+export default function App() {
+    return (
+        <ThemeProvider>
+            <PostProvider>
+                <UserProvider>
+                    <AppContent />
+                </UserProvider>
+            </PostProvider>
+        </ThemeProvider>
     );
 }

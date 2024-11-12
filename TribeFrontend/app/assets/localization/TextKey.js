@@ -14,6 +14,10 @@ const TextKey = {
     userProfileNavegation: 'userProfileNavegation',
     postDetailNavegation: 'postDetailNavegation',
 
+    // PopUp
+    settingsTitle: 'settingsTitle',
+    commentsViewTitle: 'commentsViewTitle',
+
     // Options
     changeLanguage: 'changeLanguage',
 
@@ -61,7 +65,12 @@ const TextKey = {
     passwordLabel: 'passwordLabel', 
     emailPlaceholder: 'emailPlaceholder', 
     passwordPlaceholder: 'passwordPlaceholder',
+    completeFields: 'completeFields',
+    passwordsDontMatch: 'passwordsDontMatch',
+    completeFields: 'completeFields',
     gmailLogin: 'gmailLogin',
+    gmailButton: 'gmailButton',
+    gmailButton: 'gmailButton',
 
     // Signup Screen
     signupTitle: 'signupTitle',
@@ -82,11 +91,36 @@ const TextKey = {
     emailLabel: 'emailLabel',
     emailPlaceholder: 'emailPlaceholder',
     verifyButton: 'verifyButton',
+    completeFields: 'completeFields',    completeFields: 'completeFields',
 
+    // Verify Identity Screen
+    verifyIdentityTitle: 'verifyIdentityTitle',
+    verifyIdentityInstruction: 'verifyIdentityInstruction',
+    verifyIdentityCheckInbox: 'verifyIdentityCheckInbox',
+    verifyIdentityCheckSpam: 'verifyIdentityCheckSpam',
+    verifyTokenPlaceholder: 'verifyTokenPlaceholder',
+    verifyTokenButton: 'verifyTokenButton',
+    completeTokenFields: 'completeTokenFields',
+    invalidTokenError: 'invalidTokenError',
+        
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'initialConfigurationTitle',
-    initialConfigurationButton: 'initialConfigurationButton',
+    // Initial Configuration Screen
+    initialConfigTitle: 'initialConfigTitle',
+    initialConfigSubtitle: 'initialConfigSubtitle',
+    firstNameLabel: 'firstNameLabel',
+    lastNameLabel: 'lastNameLabel',
+    genderLabel: 'genderLabel',
+    continueButton: 'continueButton',
+    selectGender: 'selectGender',
+    genderMale: 'genderMale',
+    genderFemale: 'genderFemale',
+    genderNonBinary: 'genderNonBinary',
+    genderOther: 'genderOther',
+    genderPreferNotToSay: 'genderPreferNotToSay',
+    completeFieldsError: 'completeFieldsError',
+    profileUpdated: 'profileUpdated',
+    profileUpdateSuccess: 'profileUpdateSuccess',
+
 
     // Timeline Screen
     timelineTitle: 'timelineTitle',
@@ -121,7 +155,10 @@ const TextKey = {
     commentsTitle: 'commentsTitle',
     commentsViewMore: 'commentsViewMore',
     commentsWriteCommentPlaceholder: 'commentsWriteCommentPlaceholder',
-    commentsMaxCharactersReached: 'commentsMaxCharactersReached',
+    commentsMaxCharactersReached: 'commentsMaxCharactersReached', 
+    sponsored: 'sponsored',
+    copyAdvertisement: 'copyAdvertisement',
+    redirectAdvertisement: 'redirectAdvertisement',
 
     // Header
     headerTitle: 'headerTitle',

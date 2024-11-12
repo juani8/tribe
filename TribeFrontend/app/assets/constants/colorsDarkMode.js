@@ -9,4 +9,7 @@ export default {
   background: '#161622',
   disabled: '#BDBDBD',
   options: '#F9F5EF',
+  backgroundSecondary: '#EFEFEF',
+  placeholder: '#A9A9A9', 
+  ads: '#FEA700',
 }

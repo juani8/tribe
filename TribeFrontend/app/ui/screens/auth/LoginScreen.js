@@ -4,7 +4,8 @@ import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import { loginUser } from 'networking/api/authsApi';
-import { getToken } from 'helper/JWTHelper';
+import { getToken, storeToken } from 'helper/JWTHelper'; 
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -13,18 +14,7 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  // Verificar si ya hay un token almacenado
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await getToken();
-      if (!token) {
-        navigation.navigate('Main'); // Redirigir si el usuario ya está autenticado
-      }
-    };
-    checkToken();
-  }, []);
-
+  
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage(I18n.t(TextKey.loginMessage));
@@ -35,14 +25,29 @@ const LoginScreen = ({ navigation }) => {
       const loginData = { email, password };
       const response = await loginUser(loginData);
 
-      console.log('Inicio de sesión exitoso:', response);
+      // Guarda el token usando Keychain
+      await storeToken(response.token);
 
-      // Redirigimos al usuario a la pantalla de inicio después de un inicio de sesión exitoso
+      // Redirige al usuario a la pantalla principal
       navigation.navigate('Main');
+
+      // Simulación de éxito
+/*       Alert.alert('Inicio de sesión simulado', 'Inicio de sesión exitoso.');
+      navigation.navigate('Main'); */
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
-      setErrorMessage('Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo.');
-      Alert.alert('Error', 'Hubo un error al iniciar sesión. Verifique sus credenciales.');
+
+      if (error.response) {
+        if (error.response.status === 401) {
+          setErrorMessage('Credenciales inválidas. Inténtalo de nuevo.');
+        } else if (error.response.status === 403) {
+          setErrorMessage('Por favor verifica tu email antes de iniciar sesión.');
+        } else {
+          setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+        }
+      } else {
+        setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+      }
     }
   };
 
@@ -54,11 +59,9 @@ const LoginScreen = ({ navigation }) => {
       <Text style={styles.loginMessage}>{I18n.t(TextKey.loginMessage)}</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>
-          {I18n.t('emailLabel')}
-        </Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('emailLabel')}</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+          style={[styles.input, { color: theme.colors.text }]}
           placeholder={I18n.t('emailPlaceholder')}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           keyboardType="email-address"
@@ -68,11 +71,9 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>
-          {I18n.t('passwordLabel')}
-        </Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('passwordLabel')}</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+          style={[styles.input, { color: theme.colors.text }]}
           placeholder={I18n.t('passwordPlaceholder')}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           secureTextEntry
@@ -98,8 +99,10 @@ const LoginScreen = ({ navigation }) => {
 
       <Text style={[styles.orText, { color: theme.colors.text }]}>{I18n.t(TextKey.gmailLogin)}</Text>
 
-      <TouchableOpacity style={styles.googleButton}>
-        <Text style={styles.googleButtonText}>Inicia sesión con Google</Text>
+      <TouchableOpacity style={styles.gmailButton}>
+        <CustomTextNunito style={styles.gmailButtonText}>
+          {I18n.t(TextKey.gmailButton)}
+        </CustomTextNunito>
       </TouchableOpacity>
     </View>
   );
@@ -124,6 +127,14 @@ const createStyles = (theme) => StyleSheet.create({
     color: theme.colors.text,
     marginBottom: 20,
     alignSelf: 'flex-start',
+    fontFamily: 'Nunito-Bold',
+  },
+  loginMessage: {
+    fontSize: 16,
+    color: theme.isDark ? '#FFF' : '#A9A9A9',
+    marginBottom: 20,
+    alignSelf: 'flex-start',
+    fontFamily: 'Nunito-Regular',
   },
   inputContainer: {
     width: '85%',
@@ -134,6 +145,7 @@ const createStyles = (theme) => StyleSheet.create({
     marginBottom: 5,
     color: theme.colors.text,
     alignSelf: 'flex-start',
+    fontFamily: 'Nunito-Regular',
   },
   input: {
     width: '100%',
@@ -141,7 +153,6 @@ const createStyles = (theme) => StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
-    backgroundColor: theme.colors.backgroundSecondary,
   },
   loginButton: {
     width: '85%',
@@ -156,16 +167,42 @@ const createStyles = (theme) => StyleSheet.create({
     fontFamily: 'Nunito-Bold',
     color: '#FFF',
   },
+  linksContainer: {
+    alignItems: 'flex-start',
+    width: '85%',
+    marginTop: 10,
+  },
+  linkText: {
+    fontSize: 14,
+    color: theme.colors.primary,
+    fontFamily: 'Nunito-Regular',
+  },
+  orText: {
+    fontSize: 16,
+    color: theme.isDark ? '#FFF' : '#A9A9A9',
+    marginTop: 10,
+    alignSelf: 'center', 
+    fontFamily: 'Nunito-Regular',
+  },
+  gmailButton: {
+    marginTop: 10,
+  },
+  gmailButtonText: {
+    color: theme.colors.primary,
+    fontSize: 16,
+    fontFamily: 'Nunito-Regular',
+    textAlign: 'center',
+  },
   errorText: {
     color: 'red',
     fontSize: 14,
-    marginTop: 10,
+    marginTop: 5,
     textAlign: 'center',
+    fontFamily: 'Nunito-Regular',
   },
 });
 
 export default LoginScreen;
-
 
 
 

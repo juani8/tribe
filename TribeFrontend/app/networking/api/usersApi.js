@@ -138,8 +138,14 @@ export const changeUserPassword = async (passwordData) => {
 // Cerrar sesión del usuario actual
 export const logoutUser = async () => {
   try {
-    const response = await axios.post(`${BASE_URL}/users/me/logout`);
-    return response.data;
+    const token = await getToken();
+    const response = await axios.post(`${BASE_URL}/users/me/logout`, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    await storeToken(response.data.token);
+    return response.status;
   } catch (error) {
     console.error('Error cerrando sesión del usuario:', error);
     throw error;
