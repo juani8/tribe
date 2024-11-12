@@ -14,7 +14,6 @@ import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import { navigateToLogin, navigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
 import { navigateToHome }  from 'helper/navigationHandlers/CoreNavigationHandlers';
 
-import { bypassLogin, createTestUser } from 'networking/api/postsApi';
 
 const WelcomeScreen = ({ navigation }) => {
   const [sliderState, setSliderState] = useState({ currentPage: 0 });
