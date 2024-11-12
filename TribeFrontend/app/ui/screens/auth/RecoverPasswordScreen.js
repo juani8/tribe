@@ -22,7 +22,7 @@ const RecoverPasswordScreen = ({ navigation }) => {
     }
 
     try {
-      // DESCOMENTEN ESTO PARA Q FUNCIONE CON EL BACK
+      
       /*
       const response = await requestPasswordReset(email);
       console.log('Solicitud de restablecimiento enviada:', response);

@@ -68,7 +68,7 @@ export default {
 
     // Password recovery Screen
     recoverPasswordTitle: 'Recover your password',
-    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a code to change your password.',
+    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a link to change your password.',
     emailLabel: 'Email',
     eemailPlaceholder: 'Enter your email',
     verifyButton: 'Verify',
@@ -80,10 +80,6 @@ export default {
     verifyIdentityInstruction: 'We have sent an email to confirm your identity.',
     verifyIdentityCheckInbox: 'Please check your inbox and click the link to continue.',
     verifyIdentityCheckSpam: 'If you don’t see the email, check your spam folder.',
-    verifyTokenPlaceholder: 'Enter the verification token',
-    verifyTokenButton: 'Verify Token',
-    completeTokenFields: 'Please enter the verification token.',
-    invalidTokenError: 'Invalid or expired token. Please try again.',
 
     // Initial Configuration Screen
     initialConfigTitle: 'Welcome to Tribe',
