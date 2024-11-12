@@ -92,17 +92,25 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        // Modificado para la generación de apk en modo release
+        release {
+            storeFile file("tribe-key.keystore")
+            storePassword "tribekeystoresuperpassword" 
+            keyAlias "tribe" 
+            keyPassword "tribekeystoresuperpassword"
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
+        // Modificado para la generación de apk en modo release
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
+            minifyEnabled true // O false si quieres desactivar la minificación en release
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 }
