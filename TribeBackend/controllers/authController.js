@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
         const user = new User({ nickName, email, password: hashedPassword });
         user.isVerified = false;
         await user.save();
-        await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
+        //await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
         res.status(200).json({ message: 'Registration successful. Magic Link sent.' });
     } catch (error) {
         console.error('Registration error:', error);
