@@ -50,11 +50,6 @@ const createStyles = (theme) => StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    separator : {
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.primary,
-        marginHorizontal: 16,
-    }
 });
 
 export default ComplementaryHeader;

@@ -234,6 +234,10 @@ exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
 
+    console.log('postId', postId);
+    console.log('content', content);
+    console.log('req.body', req.body);
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });

@@ -203,8 +203,7 @@ Go to [Mailtrap](https://mailtrap.io/) and create an account (free plans are ava
 
 #### 2. Set Up an Inbox
 
-- After logging in, you’ll see an option to create a **new inbox** (called a "mailbox" in Mailtrap).
-- Click **"Add Mailbox"** and give it a name (e.g., `Tribe Auth Emails`).
+ 
 
 #### 3. Get SMTP Credentials:
 

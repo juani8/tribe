@@ -16,6 +16,10 @@ export default {
     userProfileNavegation: 'User Profile',
     postDetailNavegation: 'Post Detail',
 
+    // PopUp
+    settingsTitle: 'Settings',
+    commentsViewTitle: 'Comments',
+
     // Options
     changeLanguage: 'Change Language',
 
@@ -40,7 +44,12 @@ export default {
     passwordLabel: 'Password',
     emailPlaceholder: 'Enter your email',
     passwordPlaceholder: 'Enter your password',
+    completeFields: 'Please fill in all fields.',
+    passwordsDontMatch: 'Passwords do not match.',
+    completeFields: 'Please fill in all fields.',
     gmailLogin: 'Or',
+    gmailButton: 'Sign up with Google',
+    gmailButton: 'Sign up with Google',
 
     // Signup Screen
     signupTitle: 'Create your account',
@@ -61,12 +70,37 @@ export default {
     recoverPasswordTitle: 'Recover your password',
     recoverPasswordDescription: 'Enter the email you registered with, and we will send you a code to change your password.',
     emailLabel: 'Email',
-    mailPlaceholder: 'Enter your email',
+    eemailPlaceholder: 'Enter your email',
     verifyButton: 'Verify',
+    completeFields: "Please complete all fields",
+    completeFields: "Please complete all fields",
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'Initial configuration Screen',
-    initialConfigurationButton: 'Continue',
+    // Verify Identity Screen
+    verifyIdentityTitle: 'Verify your identity',
+    verifyIdentityInstruction: 'We have sent an email to confirm your identity.',
+    verifyIdentityCheckInbox: 'Please check your inbox and click the link to continue.',
+    verifyIdentityCheckSpam: 'If you don’t see the email, check your spam folder.',
+    verifyTokenPlaceholder: 'Enter the verification token',
+    verifyTokenButton: 'Verify Token',
+    completeTokenFields: 'Please enter the verification token.',
+    invalidTokenError: 'Invalid or expired token. Please try again.',
+
+    // Initial Configuration Screen
+    initialConfigTitle: 'Welcome to Tribe',
+    initialConfigSubtitle: 'Let’s start by completing your profile.',
+    firstNameLabel: 'First Name',
+    lastNameLabel: 'Last Name',
+    genderLabel: 'Gender',
+    continueButton: 'Continue',
+    selectGender: 'Select',
+    genderMale: 'Male',
+    genderFemale: 'Female',
+    genderNonBinary: 'Non-binary',
+    genderOther: 'Other',
+    genderPreferNotToSay: 'Prefer not to say',
+    completeFieldsError: 'Please complete all fields.',
+    profileUpdated: 'Profile updated',
+    profileUpdateSuccess: 'Your profile has been successfully completed.',
 
     // Timeline Screen
     timelineTitle: 'Timeline Screen',
@@ -96,13 +130,16 @@ export default {
     // Search Screen
     searchTitle: 'Search Screen',
     searchMessage: 'Please enter your search query',
-    
+
     // Post Detail Screen
     commentsTitle: 'Comments',
-    commentsViewMore: 'See all comments',
+    commentsViewMore: 'View all comments',
     commentsWriteCommentPlaceholder: 'Write a comment...',
-    commentsMaxCharactersReached: 'Max limit reached!',
-
+    commentsMaxCharactersReached: 'Maximum character limit reached!',
+    sponsored: 'Sponsored',
+    copyAdvertisement: 'Copy advertisement\'s link',
+    redirectAdvertisement: 'Tap the post to go to the advertiser\'s website.',
+    
     // Header
     headerTitle: "Discover what's new, ",
 

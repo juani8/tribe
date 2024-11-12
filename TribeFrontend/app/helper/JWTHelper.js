@@ -23,4 +23,17 @@ const getToken = async () => {
   }
 };
 
-export { storeToken, getToken };
+const checkToken = async () => {
+    try {
+        const credentials = await Keychain.getGenericPassword();
+        if (credentials) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking the token:', error);
+    }
+};
+
+export { storeToken, getToken, checkToken };

@@ -3,7 +3,7 @@ import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
-import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill, Send } from 'assets/images';
+import { Send } from 'assets/images';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import {GetPostById} from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
@@ -13,6 +13,8 @@ import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/
 import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 import { createComment } from 'networking/api/postsApi';
 import PostMainContent from 'ui/components/postComponents/PostMainContent';
+import PostComments from 'ui/components/postComponents/PostComments';
+import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 
 const PostDetail = ({ route }) => {
   const { post } = route.params;
@@ -20,6 +22,12 @@ const PostDetail = ({ route }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+
+  const [isCommentViewVisible, setCommentViewVisible] = useState(false);
+
+  // Handlers for menu visibility
+  const openCommentView = () => setCommentViewVisible(true);
+  const closeCommentView = () => setCommentViewVisible(false);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
@@ -39,14 +47,15 @@ const PostDetail = ({ route }) => {
   const handleCreateComment = async () => {
     if (commentText.trim().length > 0) {
       try {
-        const commentData = { text: commentText };
-        const newComment = await createComment(post.postId, commentData);
+        const commentData = { content: commentText };
+        console.log('Creating comment:', post);
+        const newComment = await createComment(post._id, commentData);
         console.log('Comment created:', newComment);
         // Reset the comment text
         setCommentText('');
       } catch (error) {
         console.error('Error creating comment:', error);
-        Alert.alert('There was an error creating your comment. Please try again.');
+        Alert.alert('There was an error creating your comment.', 'Please try again.');
       }
     } else {
       Alert.alert('Please enter a comment before submitting.');
@@ -55,9 +64,10 @@ const PostDetail = ({ route }) => {
 
 
   return (
+    <>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.container}>
-        <PostMainContent post={post} />
+        <PostMainContent post={post} viewMore={false} />
 
         <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
         
@@ -72,25 +82,26 @@ const PostDetail = ({ route }) => {
                 <View style={{width: '92%'}}>
                   <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
                 </View>
-                <TouchableOpacity>
-                  <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} onPress={handleCreateComment} />
+                <TouchableOpacity onPress={handleCreateComment}>
+                  <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
                 </TouchableOpacity>
               </View>
               {post.totalComments > 0 ? (
                 <>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-                      <Image source={{uri: post.lastComment.profilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
-                      <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.nickname}</CustomTextNunito>
+                      <Image source={post.lastComment?.userId?.profileImage ? { uri: post.lastComment.userId.profileImage } : theme.UserCircleLight} 
+                      style={{ width: 24, height: 24, borderRadius: 100 }} />
+                      <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId?.nickName}</CustomTextNunito>
                     </View>
                     <CustomTextNunito style={styles.timeAgo}>
-                      {formatDistanceToNow(new Date(post.createdAt))} ago
+                      {formatDistanceToNow(new Date(post.lastComment?.createdAt))} ago
                     </CustomTextNunito>
                   </View>
                   <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
-                  <View>
+                  <TouchableOpacity style={{marginTop:6}} onPress={openCommentView}>
                     <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
-                  </View>
+                  </TouchableOpacity>
                 </>
               ) : (
                 <CustomTextNunito>{post.lastComment}</CustomTextNunito>
@@ -99,7 +110,16 @@ const PostDetail = ({ route }) => {
           </View>
         </View>
       </ScrollView>
-    </TouchableWithoutFeedback>
+
+  </TouchableWithoutFeedback>
+        <PopupMenu
+        visible={isCommentViewVisible}
+        onClose={closeCommentView}
+        title={I18n.t(TextKey.commentsViewTitle)}
+    >
+      <PostComments onClose={closeCommentView} postId={post._id} />
+    </PopupMenu>
+    </>
   );
 };
 
