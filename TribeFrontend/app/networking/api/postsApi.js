@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
 
-const BASE_URL = 'http://10.0.2.2:8080';
+const BASE_URL = process.env.NODE_ENV === 'Production' ? 'https://tribe-redmedia.azurewebsites.net' : 'http://10.0.2.2:8080';
 
 // Crear una nueva publicación
 export const createPost = async (postData) => {
