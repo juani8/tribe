@@ -28,10 +28,15 @@ const PostSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    comments: [{
+    lastComment: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-    }]
+        ref: 'Comment',
+        default: null
+    },
+    totalComments: {
+        type: Number,
+        default: 0
+    }
 }, {
     timestamps: true // Añade createdAt y updatedAt automáticamente
 });

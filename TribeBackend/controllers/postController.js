@@ -57,24 +57,26 @@ exports.getTimeline = async (req, res) => {
             .limit(parseInt(limit))
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
             .populate('userId', 'nickName profileImage')
+            .populate({
+                path: 'lastComment',
+                populate: {
+                    path: 'userId',
+                    select: 'nickName profileImage'
+                }
+            })
             .lean();
 
-        // Calcular el número de comentarios para cada post
         const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ _id: { $in: post.comments } });
-            const lastComment = await Comment.find({ _id: { $in: post.comments } }).sort({ createdAt: -1 }).limit(1).populate('userId', 'nickName profileImage');
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
  
             return {
               ...post,
-              totalComments,
-              lastComment: lastComment[0] || null,
               isLiked: !!isLiked,
               isBookmarked: !!isBookmarked
           };
-        })); 
- 
+        }));
+
         res.status(200).json(postSummary);
     } catch (error) {
         console.error("Error en getTimeline:", error);
@@ -95,7 +97,7 @@ exports.fetchAds = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: 'Error al obtener los anuncios', error: error.message });
     }
-  };
+};
 
 /**
  * Crea un nuevo post.
@@ -103,47 +105,6 @@ exports.fetchAds = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-/**exports.createPost = async (req, res) => {
-    const { description, multimedia, latitude, longitude } = req.body;
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
-    }
-
-    if (!multimedia) {
-        return res.status(400).json({ error: 400, message: 'El contenido multimedia es obligatorio.' });
-    }
-
-    try {
-        // Obtener el nombre de la ciudad usando las coordenadas
-        const city = await getCityFromCoordinates(latitude, longitude);
-
-        const newPost = new Post({
-            userId: req.user.id,
-            description,
-            multimedia,
-            location: {
-                latitude, 
-                longitude, 
-                city
-            }
-        });
-
-        const savedPost = await newPost.save();
-
-        res.status(201).send({ data: savedPost, message: 'Post creado exitosamente' });
-    } catch (error) {
-        console.error("Error en createPost:", error);
-        
-        if (error.message.includes('Coordenadas inválidas')) {
-            return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
-        }
-        
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
-    }
-};*/
-
 exports.createPost = [
     // Validación de los campos
     check('multimedia').notEmpty().withMessage('El contenido multimedia es obligatorio.'),
@@ -206,22 +167,22 @@ exports.getPostById = async (req, res) => {
     }
 
     try {
-        const post = await Post.findById(postId).lean();
+        const post = await Post.findById(postId)
+            .populate('userId', 'nickName profileImage')
+            .populate({
+                path: 'lastComment',
+                populate: {
+                    path: 'userId',
+                    select: 'nickName profileImage'
+                }
+            })
+            .lean();
         
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
-        const totalComments = await Comment.countDocuments({ postId });
-        const lastComment = await Comment.findOne({ postId }).sort({ createdAt: -1 }).populate('userId');
-
-        const response = {
-            ...post,
-            totalComments,
-            lastComment: lastComment || 'Aún no hay comentarios'
-        };
-
-        res.status(200).json(response);
+        res.status(200).json(post);
     } catch (error) {
         console.error("Error en getPostById:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -249,22 +210,11 @@ exports.getCommentsByPostId = async (req, res) => {
     }
 
     try {
-        const post = await Post.findById(postId).populate({
-            path: 'comments',
-            options: {
-                sort: { createdAt: -1 },
-                skip: parseInt(offset),
-                limit: parseInt(limit)
-            },
-            // Llena el campo userId en cada comentario con los datos del usuario, seleccionando solo nickName y profileImage.
-            populate: { path: 'userId', select: 'nickName profileImage' }
-        });
-
-        if (!post) {
-            return res.status(404).json({ message: 'Post no encontrado' });
-        }
-
-        const comments = post.comments;
+        const comments = await Comment.find({ postId })
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .sort({ createdAt: -1 })
+            .populate('userId', 'nickName profileImage');
 
         res.status(200).json(comments);
     } catch (error) {
@@ -283,10 +233,6 @@ exports.getCommentsByPostId = async (req, res) => {
 exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
-
-    console.log('postId', postId);
-    console.log('content', content);
-    console.log('req.body', req.body);
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -319,7 +265,8 @@ exports.createComment = async (req, res) => {
         }
 
         // Solo actualiza el post si el comentario se creó correctamente
-        post.comments.push(savedComment._id);
+        post.lastComment = savedComment._id;
+        post.totalComments += 1;
         await post.save();
 
         res.status(201).json(savedComment);
