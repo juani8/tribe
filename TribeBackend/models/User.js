@@ -13,7 +13,6 @@ const UserSchema = new mongoose.Schema({
     gamificationLevel: String,
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     numberOfFollowers: { type: Number, default: 0 },
     numberOfFollowing: { type: Number, default: 0 },
     numberOfComments: { type: Number, default: 0 },
