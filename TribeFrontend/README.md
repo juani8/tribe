@@ -15,7 +15,7 @@
 
 1. **Crear la aplicación**:
       ```bash
-      npx react-native init TribeFrontend
+      npx react-native init tribeapp
       ```
 
 ## Ejecución de la aplicación
@@ -45,7 +45,7 @@
 1. **Error [...]A problem occurred configuring project ':react-native-screens'. > [CXX1101] NDK[...]**:
     - Ve a Android Studio > SDK Manager >  Languages & Frameworks > Android SDK > SDK Tools > NDK (Side to Side), seleccionar el ultimo NDK e instalarlo.
     - Copiar el número de versión del NDK recientemente instalado
-    - Ir a TribeFrontend > android > build.gradle y cambiar el valor de la variable buildscript.ext.ndkVersion por la versión recientemente copiada
+    - Ir a tribeapp > android > build.gradle y cambiar el valor de la variable buildscript.ext.ndkVersion por la versión recientemente copiada
 
 2. **Metro bundler no se despliega al ejecutar la app**
     - Abrir una terminal paralela y ejecutar el comando:
@@ -65,7 +65,7 @@
 
 1. Sigue las instrucciones para configurar el entorno de desarrollo en la [documentación oficial de React Native](https://reactnative.dev/docs/set-up-your-environment).
 
-2. Asegurate de tener (o crear) el archivo TribeFrontend > android > local.propierties. El mismo contrendra el path al SDK de Java. Un ejemplo de como podría verse esto es el siguiente:
+2. Asegurate de tener (o crear) el archivo tribeapp > android > local.propierties. El mismo contrendra el path al SDK de Java. Un ejemplo de como podría verse esto es el siguiente:
     ```bash
     sdk.dir=<ingresar_path_local_hasta_AppData>/AppData/Local/Android/Sdk
     ```

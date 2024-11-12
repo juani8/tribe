@@ -38,15 +38,15 @@ export default function UploadScreen({ navigation }) {
                     latitude: latitude, 
                     longitude: longitude 
                 };
-
+                
                 // Send the post data to the backend
                 await createPost(postData);
 
+                navigateToHome(navigation);
                 // Reset the states
                 setSelectedMedia([]);
                 setCommentText('');
                 setCheckboxSelection(false);
-                navigateToHome(navigation);
             } catch (error) {
                 console.error(error);
             }

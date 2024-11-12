@@ -1,4 +1,4 @@
-package com.tribefrontend
+package com.tribeapp
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import java.util.Locale
 
 class MainActivity : ReactActivity() {
 
-    override fun getMainComponentName(): String = "TribeFrontend"
+    override fun getMainComponentName(): String = "tribeapp"
 
     override fun createReactActivityDelegate(): ReactActivityDelegate =
         DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)

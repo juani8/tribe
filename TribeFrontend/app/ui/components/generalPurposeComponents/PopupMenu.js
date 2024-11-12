@@ -3,19 +3,17 @@ import {
   View,
   TouchableOpacity,
   Modal,
-  FlatList,
   StyleSheet,
-  Image,
+  Dimensions,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
-import { BlurView } from '@react-native-community/blur';
 
-const PopupMenu = ({ visible, onClose, options, title }) => {
+const PopupMenu = ({ visible, onClose, options, title, children }) => {
   const { theme, isDarkMode } = useTheme();
   
-
   return (
     <Modal
       visible={visible}
@@ -29,54 +27,33 @@ const PopupMenu = ({ visible, onClose, options, title }) => {
         onPress={onClose}
       >
         {visible && (
-          <Animated.View
-            entering={FadeInDown.duration(400)}
-            exiting={FadeOutUp.duration(500)}
-            style={styles.container}
-          >
+          <TouchableWithoutFeedback>
+            <Animated.View
+              entering={FadeInDown.duration(400)}
+              exiting={FadeOutUp.duration(500)}
+              style={styles.container}
+            >
               {/* Content Wrapper */}
               <View style={styles.contentWrapper}>
-                <CustomTextNunito
-                  weight={'Bold'}
-                  style={{
-                    textAlign: 'center',
-                    marginVertical: 10,
-                    color: theme.colors.options,
-                    fontSize: 20,
-                  }}
-                >
-                  {title}
-                </CustomTextNunito>
-
-                <View>
-                  <FlatList
-                    data={options}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={styles.optionContainer}
-                        onPress={() => {
-                          item.onPress();
-                          onClose(); // Close after selecting an option
-                        }}
-                      >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        {item.icon && <Image source={item.icon} style={{ width: 24, height: 24, resizeMode: 'contain', marginLeft: 6, marginRight: 12 }} />}
-                          <CustomTextNunito
-                            style={{
-                              color: theme.colors.options,
-                              fontSize: 18,
-                            }}
-                          >
-                            {item.label}
-                          </CustomTextNunito>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                  />
-                </View>
+                {title && (
+                  <>
+                    <CustomTextNunito
+                      weight={'Bold'}
+                      style={{
+                        textAlign: 'center',
+                        marginVertical: 10,
+                        color: theme.colors.options,
+                        fontSize: 20,
+                      }}
+                    >
+                      {title}
+                    </CustomTextNunito>
+                    {children}
+                  </>
+                )}
               </View>
-          </Animated.View>
+            </Animated.View>
+          </TouchableWithoutFeedback>
         )}
       </TouchableOpacity>
     </Modal>
@@ -84,7 +61,10 @@ const PopupMenu = ({ visible, onClose, options, title }) => {
 };
 
 const styles = StyleSheet.create({
-  overlay: {
+  contentWrapper: {
+    maxHeight: Dimensions.get('window').height * 0.6,
+  },
+  overlay: { 
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.2)', // 20% opacity overlay for the background
@@ -101,6 +81,7 @@ const styles = StyleSheet.create({
     bottom: 0, // Start at the bottom of the screen
   },
   optionContainer: {
+    flexDirection: 'row',
     paddingVertical: 15,
     paddingHorizontal: 20,
   },

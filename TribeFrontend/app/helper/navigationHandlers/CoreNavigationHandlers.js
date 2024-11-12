@@ -2,7 +2,7 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 export const navigateToHome = (navigation) => {
-  navigation.navigate('Main');
+  navigation.navigate('Home');
 }
 
 export const navigateToSearch = (navigation) => {

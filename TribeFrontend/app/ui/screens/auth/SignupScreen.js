@@ -4,7 +4,8 @@ import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import { registerUser } from 'networking/api/authsApi'; 
+import { registerUser } from 'networking/api/authsApi'; // DESCOMENTADO PARA FUNCIONAR CON EL BACKEND
+import { storeToken } from 'helper/JWTHelper';
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -24,29 +25,26 @@ const SignupScreen = ({ navigation }) => {
       setErrorMessage(I18n.t(TextKey.passwordsDontMatch));
       return;
     }
-  
+
     try {
+      // Llamada al backend para registrar al usuario y enviar el magic link
       const registrationData = { nickName: fantasyName, email, password };
       const response = await registerUser(registrationData);
-      
-      console.log('Registro exitoso:', response);
-      Alert.alert('Registro exitoso', 'Se ha enviado un enlace de verificación a tu correo.');
-      
-      // Limpiar los campos
-      setFantasyName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      
-      navigation.navigate('Login');
+      console.log('Respuesta del registro:', response);
+      {response.token && await storeToken(response.token)};
+
+      navigation.navigate('InitialConfiguration');
+      // Si la respuesta es exitosa, navega a VerifyIdentity
+      // Alert.alert('Registro exitoso', 'Se ha enviado un enlace de verificación a tu correo.');
+      // navigation.navigate('VerifyIdentity');
     } catch (error) {
       console.error('Error registrando el usuario:', error);
-  
-      // Manejo específico de errores (opcional)
+
+      // Mostrar un mensaje de error apropiado según la respuesta del backend
       if (error.response && error.response.status === 409) {
-        setErrorMessage('Este correo ya está registrado.');
+        setErrorMessage('Este usuario ya está registrado.');
       } else {
-        setErrorMessage('Hubo un error al registrar el usuario. Por favor, inténtalo de nuevo.');
+        setErrorMessage('Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
       }
     }
   };
@@ -60,7 +58,7 @@ const SignupScreen = ({ navigation }) => {
       </CustomTextNunito>
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterName)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={fantasyName}
@@ -68,7 +66,7 @@ const SignupScreen = ({ navigation }) => {
       />
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterEmail)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         keyboardType="email-address"
@@ -77,7 +75,7 @@ const SignupScreen = ({ navigation }) => {
       />
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterPassword)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
@@ -86,7 +84,7 @@ const SignupScreen = ({ navigation }) => {
       />
 
       <TextInput
-        style={[styles.input, { backgroundColor: theme.colors.backgroundSecondary, color: theme.colors.text }]}
+        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterConfirmPassword)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
@@ -140,7 +138,6 @@ const createStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    backgroundColor: theme.colors.backgroundSecondary,
   },
   signupButton: {
     width: '100%',
@@ -170,3 +167,5 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default SignupScreen;
+
+
