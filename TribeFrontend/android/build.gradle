@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        applicationId = "com.tribefrontend"
+        applicationId = "com.tribeapp"
         buildToolsVersion = "34.0.0"
         minSdkVersion = 23
         compileSdkVersion = 34

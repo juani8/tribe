@@ -6,18 +6,21 @@ const { sendMagicLink } = require('../utils/magicLink');
 // Registration
 exports.register = async (req, res) => {
     try {
-        //console.log('Register route hit')
+        console.log('Register route hit')
         const { nickName, email, password } = req.body;
+        console.log('Email provided for lookup:', email);
         const userExists = await User.findOne({ email });
         console.log('User exists:', userExists);
         if (userExists) return res.status(409).json({ message: 'User already registered.' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ nickName, email, password: hashedPassword });
-        user.isVerified = false;
+        // Esto, cuando haya verificación, debería ser user.isVerified = false;
+        user.isVerified = true;
         await user.save();
-        await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
-        res.status(200).json({ message: 'Registration successful. Magic Link sent.' });
+        // await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).json({ token, message: 'Registration successful.' });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ message: 'Internal server error.' });
@@ -40,8 +43,8 @@ exports.verifyMagicLink = async (req, res) => {
         if (process.env.NODE_ENV === 'development' || !process.env.FRONTEND_URL) {
             return res.status(200).json({ message: 'User verified successfully. You can now log in.' });
         } else {
-            // Otherwise, redirect to the frontend login page
-            const deepLinkUrl = `https://tribe.com/login?token=${token}`;
+            // Otherwise, redirect to the frontend initial configuration page
+            const deepLinkUrl = `tribeapp://initial-configuration?token=${token}`;
             return res.redirect(302, deepLinkUrl);
         }
     } catch (err) {
@@ -53,39 +56,23 @@ exports.verifyMagicLink = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        //console.log('Login attempt with email:', email);
 
         const user = await User.findOne({ email });
-
-        if (!user) {
-            //console.log('Invalid credentials: user not found');
-            return res.status(401).json({ message: 'Invalid credentials.' });
-        }
-
-        //console.log('User found:', user);
+        if (!user) return res.status(401).json({ message: 'Invalid credentials.' });
 
         if (!user.isVerified) {
-            //console.log('User not verified:', user.email);
             return res.status(403).json({ message: 'Please verify your email before logging in.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        //console.log('Password match:', isMatch);
-
-        if (!isMatch) {
-            //console.log('Invalid credentials: password does not match');
-            return res.status(401).json({ message: 'Invalid credentials.' });
-        }
+        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        //console.log('Generated token:', token);
-
         res.status(200).json({ token, user });
     } catch (error) {
-        console.error('Internal server error:', error);
         res.status(500).json({ message: 'Internal server error.' });
     }
-}; 
+};
 
 // Request password reset (send magic link)
 // This is the function that will handle requests made to /auths/sessions/passwords to request a password reset
@@ -94,7 +81,6 @@ exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        console.log('User found:', user); // Log the user found
         if (!user) return res.status(404).json({ message: 'User not found.' });
 
         await sendMagicLink(user.email, user._id); // Send password reset magic link
@@ -149,53 +135,14 @@ exports.changePasswordWithMagicLink = async (req, res) => {
     }
 };
 
-exports.bypassLogin = async (req, res) => {
-    try {
-        const user = await User.findOne({ email: 'testuser@a.com' });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
-        }
+// Function to validate the token
+exports.validateToken = async (req, res) => {
+  const token = req.body.token;
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token });
-    } catch (error) {
-        console.error('Error in bypassLogin:', error); // Log the error for debugging
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-}; 
-
-exports.createTestUser = async (res) => {
-    try {  
-        const userExists = await User.findOne({ email: 'testuser@a.com' });
-        console.log('User exists:', userExists);
-        if (userExists) return res.status(409).json({ message: 'User already registered.' });
-
-      const testUserData = {
-        name: 'Test',
-        lastName: 'User',
-        nickName: 'testuser',
-        email: 'testuser@a.com',
-        password: await bcrypt.hash('123', 10),
-        isVerified: true,
-        profileImage: null,
-        coverImage: null,
-        description: 'no me borren xd',
-        gamificationLevel: null,
-        following: [],
-        followers: [],
-        favorites: [],
-        numberOfFollowers: 0,
-        numberOfFollowing: 0,
-        numberOfComments: 0,
-        numberOfFavorites: 0,
-      };
-  
-      const testUser = new User(testUserData);
-      await testUser.save();
-      console.log('Test user created successfully:', testUser);
- 
-    } catch (error) {
-      console.error('Error creating test user:', error);
-      process.exit(1);
-    }
-  };
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false, message: 'Token is invalid or expired' });
+  }
+};

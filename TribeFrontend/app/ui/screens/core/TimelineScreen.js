@@ -40,7 +40,6 @@ export default function TimelineScreen() {
 
     try {
       const newPosts = await getTimelinePosts(offset, pageSize);
-      console.log(newPosts);
 
       // If refreshing, replace data; otherwise, append new posts
       setData(prevData => (refreshing ? newPosts : [...prevData, ...newPosts]));
@@ -156,7 +155,7 @@ export default function TimelineScreen() {
           <>
             {isLoadingNextPage && (
               <View style={styles.loader}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color={theme.colors.primary} />
               </View>
             )}
             {!hasMorePosts && (
@@ -177,7 +176,6 @@ const createStyles = (theme) => StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     flex: 1,
-    paddingTop: 10,
     backgroundColor: theme.colors.background,
   },
   loader: {
@@ -185,6 +183,6 @@ const createStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   bottomSpacing: {
-    height: 25, // Adjust the height as needed
+    height: 25,
   },
 });

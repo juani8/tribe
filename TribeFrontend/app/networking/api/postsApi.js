@@ -42,7 +42,7 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
             params: {
                 offset,
                 limit,
-                order: 'desc'
+                order: 'asc'
             }
         });
         console.log('getTimelinePosts', response.data);
@@ -66,9 +66,19 @@ export const getPostById = async (postId) => {
 };
 
 // Obtener todos los comentarios de una publicación específica
-export const getCommentsForPost = async (postId) => {
+export const getCommentsForPost = async (postId, offset = 0, limit = 10) => {
     try {
-        const response = await axios.get(`${BASE_URL}/posts/${postId}/comments`);
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/posts/${postId}/comments`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
+                order: 'asc'
+            }
+        });
         return response.data;
     } catch (error) {
         console.error(`Error al obtener los comentarios de la publicación con ID ${postId}:`, error);
@@ -79,7 +89,14 @@ export const getCommentsForPost = async (postId) => {
 // Crear un comentario en una publicación específica
 export const createComment = async (postId, commentData) => {
     try {
-        const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, commentData);
+        const token = await getToken();
+        console.log('createComment', commentData);
+        console.log('createComment', postId);
+        const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, commentData, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error(`Error al crear un comentario para la publicación con ID ${postId}:`, error);
@@ -203,10 +220,15 @@ export const createTestUser = async () => {
 // Agregado por mrosariopresedo para la integración de los anuncios.
 export const getAds = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/ads`);
-      return response.data;
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/posts/ads`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
     } catch (error) {
-      console.error('Error al obtener los anuncios:', error);
-      throw error;
+        console.error('Error al obtener los anuncios:', error);
+        throw error;
     }
 };

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
-    name: {type: String},
-    lastName: {type: String},
-    nickName: { type: String, required: true },
+const userSchema = new mongoose.Schema({
+    name: String,
+    lastName: String,
+    nickName: { type: String, required: true},
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
@@ -17,6 +17,6 @@ const UserSchema = new mongoose.Schema({
     numberOfFollowing: { type: Number, default: 0 },
     numberOfComments: { type: Number, default: 0 },
     numberOfFavorites: { type: Number, default: 0 },
-}, { timestamps: true }); 
+}, { timestamps: true });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);
