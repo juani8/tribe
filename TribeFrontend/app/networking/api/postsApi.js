@@ -189,33 +189,7 @@ export const checkServerStatus = async () => {
       console.error('Error checking server status:', error);
       return false;
     }
-};
-
-export const bypassLogin = async () => {
-    try {
-        const response = await axios.post(`${BASE_URL}/auths/sessions/bypass`);
-        const token = response.data.token;
-            
-        // Store the token
-        await storeToken(token);
-    
-        // Retrieve the token for use
-        const storedToken = await getToken();
-    } catch (error) {
-        console.error('Error in bypassLogin:', error);
-    }
-};
-  
-
-export const createTestUser = async () => {
-    try {
-        const response = await axios.post(`${BASE_URL}/auths/sessions/test-user`);
-        return response.data;
-    } catch (error) {
-        console.error('Error creating test user:', error);
-        throw error;
-    }
-};
+}; 
 
 // Agregado por mrosariopresedo para la integración de los anuncios.
 export const getAds = async () => {
