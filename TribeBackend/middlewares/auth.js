@@ -14,19 +14,19 @@ const auth = async (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
-        return res.status(401).json({ message: 'Token not provided, authorization denied' });
+        return res.status(401).json({ message: 'Token no proporcionado, autorización denegada.' });
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = await User.findById({ _id: decoded.id });
         if (!req.user) {
-            return res.status(401).json({ message: 'User not found.' });
+            return res.status(401).json({ message: 'Usuario no encontrado.' });
         }
         next();
     } catch (error) {
         console.error('Token error:', error);
-        res.status(401).json({ message: 'Invalid token.' });
+        res.status(401).json({ message: 'Token inválido.' });
     }
 };
 

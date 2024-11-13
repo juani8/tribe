@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
     try {
         const { nickName, email, password } = req.body;
         const userExists = await User.findOne({ email });
-        if (userExists) return res.status(409).json({ message: 'User already registered.' });
+        if (userExists) return res.status(409).json({ message: 'Usuario ya registrado.' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ nickName, email, password: hashedPassword });
@@ -21,10 +21,10 @@ exports.register = async (req, res) => {
         user.isVerified = true;
         await user.save();
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token, message: 'Registration successful.' });
+        res.status(200).json({ token, message: 'Registro exitoso.' });
     } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ message: 'Internal server error.' });
+        console.error('Error en el registro:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -39,19 +39,19 @@ exports.login = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(401).json({ message: 'Invalid credentials.' });
+        if (!user) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         if (!user.isVerified) {
-            return res.status(403).json({ message: 'Please verify your email before logging in.' });
+            return res.status(403).json({ message: 'Por favor, verifica tu correo electrónico antes de iniciar sesión.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials.' });
+        if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token, user });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -65,12 +65,12 @@ exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'User not found.' });
+        if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
 
         await sendRecoveryLink(user.email, user._id); // Send password reset link
-        res.status(200).json({ message: 'Magic link sent.' });
+        res.status(200).json({ message: 'Magic link enviado.' });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -84,7 +84,7 @@ exports.resetPasswordWithToken = async (req, res) => {
     const { token, newPassword } = req.body;
 
     if (!token || !newPassword) {
-        return res.status(400).json({ message: 'Token and new password are required.' });
+        return res.status(400).json({ message: 'Se requieren el token y la nueva contraseña' });
     }
 
     try {
@@ -95,7 +95,7 @@ exports.resetPasswordWithToken = async (req, res) => {
         const user = await User.findById(decoded.id);
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         // Hashear la nueva contraseña
@@ -105,14 +105,14 @@ exports.resetPasswordWithToken = async (req, res) => {
         // Guardar la nueva contraseña en la base de datos
         await user.save();
 
-        res.status(200).json({ message: 'Password has been reset successfully.' });
+        res.status(200).json({ message: 'La contraseña ha sido restablecida exitosamente.' });
 
     } catch (err) {
-        console.error('Error in resetPasswordWithToken:', err); // Registro de errores
+        console.error('Error en resetPasswordWithToken:', err); // Registro de errores
         if (err.name === 'TokenExpiredError') {
-            return res.status(400).json({ message: 'Token has expired.' });
+            return res.status(400).json({ message: 'El token ha expirado.' });
         }
-        res.status(400).json({ message: 'Invalid or expired token.' });
+        res.status(400).json({ message: 'Token inválido o expirado.' });
     }
 };
 
@@ -129,6 +129,6 @@ exports.validateToken = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     res.status(200).json({ valid: true });
   } catch (error) {
-    res.status(401).json({ valid: false, message: 'Token is invalid or expired' });
+    res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
   }
 };
