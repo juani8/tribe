@@ -198,10 +198,6 @@ exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
 
-    console.log('postId', postId);
-    console.log('content', content);
-    console.log('req.body', req.body);
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -254,8 +250,6 @@ exports.likePost = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
 
-    console.log('userId', userId);
-    console.log('postId', postId);
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({ message: 'postId inválido' });
     }

@@ -9,20 +9,13 @@ const auth = require('../middlewares/auth');
 const app = express();
 
 app.use(express.json());
-
 app.use(cors({ origin: "*" }));
 
-// Middleware to log incoming requests
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
-  next(); // Pass control to the next middleware
+  next(); 
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Rutas
 app.use('/auths', authRoutes);
 app.use('/posts', auth, postRoutes);
 app.use('/users', auth, userRoutes);
