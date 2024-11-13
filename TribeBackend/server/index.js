@@ -6,7 +6,7 @@ const app = require("./app");
 async function init() {
   try {    
     await connection();
-    const host = 'http://tribe-redmedia.azurewebsites.net';
+    const host = process.env.HOST;
     
     app.listen(() => {
       console.log(`Servidor escuchando en: ${host}`);
