@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
 
-const BASE_URL = 'https://tribe-redmedia.azurewebsites.net';
+const BASE_URL = 'https://tribe-plp5.onrender.com';
 
 // Obtener el perfil del usuario autenticado
 export const getUserProfile = async () => {
