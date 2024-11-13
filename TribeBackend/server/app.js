@@ -8,11 +8,7 @@ const auth = require('../middlewares/auth');
  
 const app = express();
 
-// Middleware to log incoming requests
-app.use((req, res, next) => {
-  console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
-  next(); // Pass control to the next middleware
-});
+app.use(express.json());
  
 // Middleware
 app.use(
@@ -24,8 +20,12 @@ app.use(
   })
 );
 
-app.use(express.json());
- 
+// Middleware to log incoming requests
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
+  next(); // Pass control to the next middleware
+});
+
 // Rutas
 app.use('/auths', authRoutes);
 app.use('/posts', auth, postRoutes);
