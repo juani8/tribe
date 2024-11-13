@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const path = require('path');
 
 const authRoutes = require('../routes/authRoutes');
 const postRoutes = require('../routes/postRoutes');
@@ -19,6 +22,9 @@ app.use((req, res, next) => {
 app.use('/auths', authRoutes);
 app.use('/posts', auth, postRoutes);
 app.use('/users', auth, userRoutes);
+
+const swaggerDocument = YAML.load(path.join(__dirname, '../docs/swagger.yaml'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
   try {
