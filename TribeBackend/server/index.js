@@ -6,18 +6,11 @@ const app = require("./app");
 async function init() {
   try {    
     await connection();
-    const port = process.env.PORT || 8080;
-    const host = process.env.HOST || 'http://localhost';
+    const host = 'http://tribe-redmedia.azurewebsites.net';
     
-    if (process.env.HOST) {
-      app.listen(() => {
-        console.log(`Servidor escuchando en: ${host}`);
-      });
-    } else {
-      app.listen(port, () => {
-        console.log(`Servidor escuchando en: ${host}:${port}`);
-      });
-    }
+    app.listen(() => {
+      console.log(`Servidor escuchando en: ${host}`);
+    });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);
     process.exit(1);
