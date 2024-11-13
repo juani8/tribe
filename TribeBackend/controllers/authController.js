@@ -23,7 +23,6 @@ exports.register = async (req, res) => {
         // Esto, cuando haya verificación, debería ser user.isVerified = false;
         user.isVerified = true;
         await user.save();
-        // await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token, message: 'Registration successful.' });
     } catch (error) {
