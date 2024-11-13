@@ -182,62 +182,6 @@ exports.getFollowing = async (req, res) => {
 };
 
 /**
- * Obtiene la lista de publicaciones favoritas del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con la lista de publicaciones favoritas.
- */
-exports.getFavorites = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).populate('favorites', 'description multimedia location likes');
-        res.status(200).json(user.favorites);
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
-
-/**
- * Guarda una publicación en favoritos para el usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP que contiene el ID de la publicación a guardar.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un mensaje de éxito si la publicación se guarda correctamente.
- */
-exports.saveFavorite = async (req, res) => {
-    try {
-        const post = await Post.findById(req.params.favoriteId);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found.' });
-        }
-
-        if (!req.user.favorites.includes(post._id)) {
-            req.user.favorites.push(post._id);
-            await req.user.save();
-        }
-
-        res.status(200).json({ message: 'Post added to favorites.' });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
-
-/**
- * Elimina una publicación de favoritos para el usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP que contiene el ID de la publicación a eliminar.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un código de estado 204 si la publicación se elimina correctamente.
- */
-exports.removeFavorite = async (req, res) => {
-    try {
-        req.user.favorites = req.user.favorites.filter(id => id.toString() !== req.params.favoriteId);
-        await req.user.save();
-
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
-
-/**
  * Cambia la contraseña del usuario autenticado.
  * @param {Object} req - Objeto de solicitud HTTP que contiene la contraseña actual y la nueva contraseña.
  * @param {Object} res - Objeto de respuesta HTTP.
