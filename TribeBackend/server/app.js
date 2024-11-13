@@ -9,16 +9,8 @@ const auth = require('../middlewares/auth');
 const app = express();
 
 app.use(express.json());
- 
-// Middleware
-app.use(
-  cors({
-    origin: ["http://10.0.2.2", "http://tribe-redmedia.azurewebsites.net"],  // Permite los orígenes de tu frontend
-    methods: "*",  // Permite todos los métodos HTTP (GET, POST, PUT, DELETE, etc.)
-    allowedHeaders: "*",  // Permite todos los encabezados
-    credentials: false,  // No es necesario ya que no usamos cookies
-  })
-);
+
+app.use(cors({ origin: "*" }));
 
 // Middleware to log incoming requests
 app.use((req, res, next) => {
