@@ -191,7 +191,6 @@ export const checkServerStatus = async () => {
     }
 }; 
 
-// Agregado por mrosariopresedo para la integración de los anuncios.
 export const getAds = async () => {
     try {
         const token = await getToken();

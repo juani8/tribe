@@ -2,10 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
 import PostMainContent from 'ui/components/postComponents/PostMainContent';
-// Agregado por mrosariopresedo para la integración de los anuncios.
 import AdComponent from 'ui/components/postComponents/AdComponent';
 import { useTheme } from 'context/ThemeContext';
-// Modificado por mrosariopresedo para la integración de los anuncios.
 import { getTimelinePosts, checkServerStatus, getAds } from 'networking/api/postsApi';
 import NetInfo from '@react-native-community/netinfo';
 import LottieView from 'lottie-react-native';
@@ -15,7 +13,6 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 
 export default function TimelineScreen() {
   const [data, setData] = useState([]);
-  // Agregado por mrosariopresedo para la integración de los anuncios.
   const [ads, setAds] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
@@ -56,7 +53,6 @@ export default function TimelineScreen() {
   };
 
   // Fetch ads
-  // Agregado por mrosariopresedo para la integración de los anuncios.
   const fetchAdsData = async () => {
     try {
       const adsData = await getAds();
@@ -83,7 +79,6 @@ export default function TimelineScreen() {
 
   useEffect(() => {
     fetchData();
-    // Agregado por mrosariopresedo para la integración de los anuncios.
     fetchAdsData();
     checkServerStatus();
   }, []);
@@ -129,7 +124,6 @@ export default function TimelineScreen() {
     );
   }
 
-  // Agregado por mrosariopresedo para la integración de los anuncios.
   const combinedData = [];
   let adIndex = 0;
 
@@ -144,7 +138,6 @@ export default function TimelineScreen() {
   return (
     <View style={styles.container}>
       <FlatList
-        // Modificado por mrosariopresedo para la integración de los anuncios.
         data={combinedData}
         renderItem={({ item }) => item.commerce ? <AdComponent ad={item} /> : <PostMainContent post={item} />}
         keyExtractor={(item, index) => `${item.userId}-${index}`}

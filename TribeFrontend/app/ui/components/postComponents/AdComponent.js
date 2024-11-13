@@ -1,4 +1,3 @@
-// Agregado por mrosariopresedo para la integración de los anuncios.
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Clipboard, Alert, Linking, Dimensions } from 'react-native';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
