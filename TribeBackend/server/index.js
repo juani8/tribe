@@ -6,10 +6,11 @@ const app = require("./app");
 async function init() {
   try {    
     await connection();
-    const host = process.env.HOST;
+    const port = process.env.PORT || 8080;
+    const host = process.env.HOST || 'http://localhost';
     
-    app.listen(() => {
-      console.log(`Servidor escuchando en: ${host}`);
+    app.listen(port, () => {
+      console.log(`Servidor escuchando en: ${host}:${port}`);
     });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);
