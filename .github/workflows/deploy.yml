@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Render - tribe-redmedia
+name: Build and deploy Node.js app to Render
 
 on:
   push:
@@ -17,9 +17,7 @@ jobs:
       SMPT_PASS: ${{ secrets.SMPT_PASS }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}  
-      RENDER_PRODUCTION: ${{ secrets.RENDER_PRODUCTION }} 
-      RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }} 
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
       NODE_ENV: ${{ vars.NODE_ENV }} 
 
     steps:
@@ -44,8 +42,6 @@ jobs:
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}"
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
           echo "GMAIL_APP_PASSWORD=${{ secrets.GMAIL_APP_PASSWORD }}"
-          echo "RENDER_PRODUCTION=${{ secrets.RENDER_PRODUCTION }}"
-          echo "RENDER_SERVICE_ID=${{ secrets.RENDER_SERVICE_ID }}"
           echo "NODE_ENV=${{ vars.NODE_ENV }}"
       
       - name: Zip TribeBackend for deployment
@@ -69,9 +65,7 @@ jobs:
       SMPT_PASS: ${{ secrets.SMPT_PASS }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-      RENDER_PRODUCTION: ${{ secrets.RENDER_PRODUCTION }} 
-      RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }} 
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }} 
       NODE_ENV: ${{ vars.NODE_ENV }} 
 
     steps:
