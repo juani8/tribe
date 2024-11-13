@@ -62,8 +62,6 @@ const sendEmail = async (email, subject, htmlContent) => {
         subject,
         html: htmlContent
     });
-
-    console.log(`${subject} sent to: ${email}, Message ID: ${info.messageId}`);
 };
 
 // Function to send magic link via email

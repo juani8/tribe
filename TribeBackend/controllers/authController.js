@@ -11,11 +11,8 @@ const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
  */
 exports.register = async (req, res) => {
     try {
-        console.log('Register route hit')
         const { nickName, email, password } = req.body;
-        console.log('Email provided for lookup:', email);
         const userExists = await User.findOne({ email });
-        console.log('User exists:', userExists);
         if (userExists) return res.status(409).json({ message: 'User already registered.' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -94,13 +91,10 @@ exports.resetPasswordWithToken = async (req, res) => {
         // Verificar el token JWT
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        console.log('Decoded token:', decoded); // Registro del token decodificado
-
         // Buscar al usuario usando el ID obtenido del token
         const user = await User.findById(decoded.id);
 
         if (!user) {
-            console.log(`User with ID ${decoded.id} not found.`); // Registro si no se encuentra el usuario
             return res.status(404).json({ message: 'User not found.' });
         }
 
@@ -111,7 +105,6 @@ exports.resetPasswordWithToken = async (req, res) => {
         // Guardar la nueva contraseña en la base de datos
         await user.save();
 
-        console.log(`Password successfully reset for user ID: ${decoded.id}`); // Registro de éxito
         res.status(200).json({ message: 'Password has been reset successfully.' });
 
     } catch (err) {
