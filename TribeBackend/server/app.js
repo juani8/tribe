@@ -36,6 +36,10 @@ app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   res.status(statusCode).send({ message: err.message || 'Ocurrió un error inesperado.' });
 });
+
+app.use((req, res) => {
+  res.status(404).send({ message: 'Ruta no encontrada' });
+});
  
 module.exports = app;
  

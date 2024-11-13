@@ -44,6 +44,7 @@ jobs:
           echo "SMPT_PASS=${{ secrets.SMPT_PASS }}"
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}"
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+          echo "GMAIL_APP_PASSWORD=${{ secrets.GMAIL_APP_PASSWORD }}"
           echo "NODE_ENV=${{ vars.NODE_ENV }}"
       
       - name: Zip TribeBackend for deployment
