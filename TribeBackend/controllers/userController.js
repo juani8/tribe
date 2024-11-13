@@ -3,7 +3,12 @@ const bcrypt = require('bcrypt');
 const Post = require('../models/Post');
 const jwt = require('jsonwebtoken');
 
-// Get profile
+/**
+ * Obtiene el perfil del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con el perfil del usuario si se encuentra, o un mensaje de error.
+ */
 exports.getProfile = async (req, res) => {
     try {
         // Check if req.user is populated
@@ -22,7 +27,12 @@ exports.getProfile = async (req, res) => {
     }
 };
 
-// Update profile
+/**
+ * Actualiza el perfil del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con el perfil actualizado del usuario.
+ */
 exports.updateProfile = async (req, res) => {
     try {
         const { name, lastName, profileImage, coverImage, description } = req.body;
@@ -33,7 +43,12 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-// Delete authenticated user
+/**
+ * Elimina el perfil del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un código de estado 204 si el perfil se elimina correctamente.
+ */
 exports.deleteProfile = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.user.id);
@@ -46,7 +61,12 @@ exports.deleteProfile = async (req, res) => {
     }
 };
 
-// Get users with search, pagination
+/**
+ * Obtiene una lista de usuarios con búsqueda y paginación.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de búsqueda y paginación.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con la lista de usuarios encontrados.
+ */
 exports.getUsers = async (req, res) => {
     const { input = '', offset = 0, limit = 10 } = req.query;
 
@@ -70,7 +90,12 @@ exports.getUsers = async (req, res) => {
     }
 };
 
-// Follow a user
+/**
+ * Sigue a un usuario.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del usuario a seguir.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con el ID del usuario seguido.
+ */
 exports.followUser = async (req, res) => {
     console.log('Requesting to follow user ID:', req.params.userId);
     console.log('Authenticated user:', req.user);
@@ -99,7 +124,12 @@ exports.followUser = async (req, res) => {
     }
 };
 
-// Unfollow a user
+/**
+ * Deja de seguir a un usuario.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del usuario a dejar de seguir.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un código de estado 204 si se deja de seguir al usuario correctamente.
+ */
 exports.unfollowUser = async (req, res) => {
     try {
         const userToUnfollow = await User.findById(req.params.userId);
@@ -121,7 +151,12 @@ exports.unfollowUser = async (req, res) => {
     }
 };
 
-// Get followers list
+/**
+ * Obtiene la lista de seguidores del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con la lista de seguidores.
+ */
 exports.getFollowers = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate('followers', 'name lastName nickName profileImage');
@@ -131,7 +166,12 @@ exports.getFollowers = async (req, res) => {
     }
 };
 
-// Get following list
+/**
+ * Obtiene la lista de usuarios seguidos por el usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con la lista de usuarios seguidos.
+ */
 exports.getFollowing = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate('following', 'name lastName nickName profileImage');
@@ -141,7 +181,12 @@ exports.getFollowing = async (req, res) => {
     }
 };
 
-// Get favorite posts
+/**
+ * Obtiene la lista de publicaciones favoritas del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con la lista de publicaciones favoritas.
+ */
 exports.getFavorites = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate('favorites', 'description multimedia location likes');
@@ -151,7 +196,12 @@ exports.getFavorites = async (req, res) => {
     }
 };
 
-// Save post to favorites
+/**
+ * Guarda una publicación en favoritos para el usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID de la publicación a guardar.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si la publicación se guarda correctamente.
+ */
 exports.saveFavorite = async (req, res) => {
     try {
         const post = await Post.findById(req.params.favoriteId);
@@ -170,7 +220,12 @@ exports.saveFavorite = async (req, res) => {
     }
 };
 
-// Remove post from favorites
+/**
+ * Elimina una publicación de favoritos para el usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID de la publicación a eliminar.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un código de estado 204 si la publicación se elimina correctamente.
+ */
 exports.removeFavorite = async (req, res) => {
     try {
         req.user.favorites = req.user.favorites.filter(id => id.toString() !== req.params.favoriteId);
@@ -182,7 +237,12 @@ exports.removeFavorite = async (req, res) => {
     }
 };
 
-// Change password for authenticated user
+/**
+ * Cambia la contraseña del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene la contraseña actual y la nueva contraseña.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si la contraseña se cambia correctamente.
+ */
 exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const user = await User.findById(req.user.id);
@@ -196,7 +256,12 @@ exports.changePassword = async (req, res) => {
     res.status(200).json({ message: 'Password changed successfully.' });
 };
 
-// Logout
+/**
+ * Cierra la sesión del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un token JWT con una validez mínima.
+ */
 exports.logout = async (req, res) => {
     try {
         // Generar un token con una validez mínima (por ejemplo, 1 segundo)

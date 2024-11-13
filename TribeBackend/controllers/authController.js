@@ -3,7 +3,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
 
-// Registration
+/**
+ * Registro de usuario.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un token JWT y un mensaje de éxito si el registro es exitoso.
+ */
 exports.register = async (req, res) => {
     try {
         console.log('Register route hit')
@@ -27,6 +32,12 @@ exports.register = async (req, res) => {
     }
 };
 
+/**
+ * Verifica el magic link para el registro.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si la verificación es exitosa.
+ */
 exports.verifyMagicLink = async (req, res) => {
     console.log('Verify Magic Link Route Hit');
     const { token } = req.body;
@@ -52,7 +63,12 @@ exports.verifyMagicLink = async (req, res) => {
     }
 };
 
-// Login
+/**
+ * Inicio de sesión de usuario.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un token JWT y el usuario si el inicio de sesión es exitoso.
+ */
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -74,9 +90,12 @@ exports.login = async (req, res) => {
     }
 };
 
-// Request password reset (send magic link)
-// This is the function that will handle requests made to /auths/sessions/passwords to request a password reset
-// The user provides their email, and the magic link is sent.
+/**
+ * Solicita el restablecimiento de contraseña (envía un magic link).
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si el magic link se envía correctamente.
+ */
 exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
@@ -90,9 +109,12 @@ exports.requestPasswordReset = async (req, res) => {
     }
 };
 
-// Verify magic link for password reset
-// This is the function that will handle requests made to POST /auths/sessions/passwords/tokens.
-// It checks if the token is valid and then redirects the user to the password reset page.
+/**
+ * Verifica el magic link para el restablecimiento de contraseña.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si el magic link es válido.
+ */
 exports.verifyPasswordResetMagicLink = (req, res) => {
     const { token } = req.body;
 
@@ -113,9 +135,12 @@ exports.verifyPasswordResetMagicLink = (req, res) => {
     }
 };
 
-// Change password (after magic link verification)
-// This is the function that will handle requests made to PATCH /auths/sessions/passwords.
-// It verifies the token sent with the request and updates the password.
+/**
+ * Cambia la contraseña (después de la verificación del magic link).
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si la contraseña se cambia correctamente.
+ */
 exports.resetPasswordWithToken = async (req, res) => {
     const { token, newPassword } = req.body;
 
@@ -163,7 +188,12 @@ exports.resetPasswordWithToken = async (req, res) => {
     }
 };
 
-// Function to validate the token
+/**
+ * Valida el token.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si el token es válido.
+ */
 exports.validateToken = async (req, res) => {
   const token = req.body.token;
 
