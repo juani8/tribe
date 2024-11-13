@@ -97,12 +97,9 @@ exports.getUsers = async (req, res) => {
  * @returns {Promise<void>} - Responde con el ID del usuario seguido.
  */
 exports.followUser = async (req, res) => {
-    console.log('Requesting to follow user ID:', req.params.userId);
-    console.log('Authenticated user:', req.user);
     try {
         const userToFollow = await User.findById(req.params.userId);
         if (!userToFollow) {
-            console.log('User not found in database');
             return res.status(404).json({ message: 'User not found.' });
         }
 
