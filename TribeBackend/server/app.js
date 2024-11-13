@@ -14,16 +14,7 @@ app.use((req, res, next) => {
 });
  
 // Middleware
-const allowedOrigins = ["http://10.0.2.2", "https://tribe-redmedia.azurewebsites.net"];
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  }
-}));
+app.use(cors({ origin: "*" }));
 
 app.use(express.json());
  
