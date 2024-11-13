@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - tribe-redmedia
+name: Build and deploy Node.js app to Render - tribe-redmedia
 
 on:
   push:
@@ -21,6 +18,8 @@ jobs:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}  
+      RENDER_PRODUCTION: ${{ secrets.RENDER_PRODUCTION }} 
+      RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }} 
       NODE_ENV: ${{ vars.NODE_ENV }} 
 
     steps:
@@ -45,11 +44,13 @@ jobs:
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}"
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
           echo "GMAIL_APP_PASSWORD=${{ secrets.GMAIL_APP_PASSWORD }}"
+          echo "RENDER_PRODUCTION=${{ secrets.RENDER_PRODUCTION }}"
+          echo "RENDER_SERVICE_ID=${{ secrets.RENDER_SERVICE_ID }}"
           echo "NODE_ENV=${{ vars.NODE_ENV }}"
       
       - name: Zip TribeBackend for deployment
         run: |
-          Compress-Archive -Path TribeBackend/* -DestinationPath TribeBackend.zip
+          zip -r TribeBackend.zip TribeBackend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -60,11 +61,6 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
     env:
       HOST: ${{ vars.HOST }}
       SMPT_SERVER: ${{ vars.SMPT_SERVER }}
@@ -74,6 +70,8 @@ jobs:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      RENDER_PRODUCTION: ${{ secrets.RENDER_PRODUCTION }} 
+      RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }} 
       NODE_ENV: ${{ vars.NODE_ENV }} 
 
     steps:
@@ -81,19 +79,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_72B604568D2641DF92C8B8E8FA0F42C0 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3684328871E64D6BA3A732F38F5E6E5C }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_35A913709129438AAE64926A5BA316AA }}
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
+      - name: Deploy to Render
+        uses: JorgeLNJunior/render-deploy@v1.4.4
         with:
-          app-name: 'tribe-redmedia'
-          slot-name: 'Production'
-          package: TribeBackend.zip
-          
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.RENDER_PRODUCTION }}
+          github_deployment: true 
+          deployment_environment: 'production'
+          github_token: ${{ secrets.TRIBE_GITHUB_TOKEN }}
