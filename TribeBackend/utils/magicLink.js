@@ -18,6 +18,9 @@ const createTransporter = () => {
             auth: {
                 user: 'no.reply.tribe.app@gmail.com',
                 pass: process.env.GMAIL_APP_PASSWORD
+            },
+            tls: {
+                rejectUnauthorized: false
             }
         });
     }
@@ -52,7 +55,10 @@ const generateEmailTemplate = (subject, header, message, linkText, link) => `
 // Helper function to send an email
 const sendEmail = async (email, subject, htmlContent) => {
     const transporter = createTransporter();
-
+    console.log('Sending email...');
+    console.log('Email:', email);
+    console.log('Subject:', subject);
+    
     const info = await transporter.sendMail({
         from: 'no.reply.tribe.app@gmail.com',
         to: email,

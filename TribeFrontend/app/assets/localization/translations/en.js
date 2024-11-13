@@ -139,7 +139,7 @@ export default {
     redirectAdvertisement: 'Tap the post to go to the advertiser\'s website.',
     
     // Header
-    headerTitle: "Discover what's new, ",
+    headerTitle: "Discover what's new",
 
     // Settings
     settingsTitle: 'Settings',

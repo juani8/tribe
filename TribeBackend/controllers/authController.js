@@ -18,7 +18,8 @@ exports.register = async (req, res) => {
         user.isVerified = false;
         await user.save();
         //await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
-        res.status(200).json({ message: 'Registration successful. Magic Link sent.' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).json({ token, message: 'Registration successful. Magic Link sent.' });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ message: 'Internal server error.' });

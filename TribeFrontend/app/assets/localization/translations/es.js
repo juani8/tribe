@@ -140,7 +140,7 @@ export default {
     loginButton: 'Iniciar sesión',
 
     // Header
-    headerTitle: 'Descubre lo nuevo, ',
+    headerTitle: 'Descubre lo nuevo',
 
     // Settings
     settingsTitle: 'Configuración',
