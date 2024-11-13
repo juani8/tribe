@@ -33,37 +33,6 @@ exports.register = async (req, res) => {
 };
 
 /**
- * Verifica el magic link para el registro.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un mensaje de éxito si la verificación es exitosa.
- */
-exports.verifyMagicLink = async (req, res) => {
-    console.log('Verify Magic Link Route Hit');
-    const { token } = req.body;
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
-        if (!user) return res.status(404).json({ message: 'User not found.' });
-
-        user.isVerified = true;  // Mark the user as verified
-        console.log('User verified');
-        await user.save();
-
-        // If NODE_ENV is 'development' or there's no frontend URL, return JSON (for Postman testing)
-        if (process.env.NODE_ENV === 'development' || !process.env.FRONTEND_URL) {
-            return res.status(200).json({ message: 'User verified successfully. You can now log in.' });
-        } else {
-            // Otherwise, redirect to the frontend initial configuration page
-            const deepLinkUrl = `tribeapp://initial-configuration?token=${token}`;
-            return res.redirect(302, deepLinkUrl);
-        }
-    } catch (err) {
-        return res.status(400).json({ message: 'Invalid or expired token.' });
-    }
-};
-
-/**
  * Inicio de sesión de usuario.
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.
@@ -110,32 +79,6 @@ exports.requestPasswordReset = async (req, res) => {
 };
 
 /**
- * Verifica el magic link para el restablecimiento de contraseña.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un mensaje de éxito si el magic link es válido.
- */
-exports.verifyPasswordResetMagicLink = (req, res) => {
-    const { token } = req.body;
-
-    try {
-        jwt.verify(token, process.env.JWT_SECRET);
-
-        // Check if the environment variable is set to development (for Postman) or if no frontend URL is set
-        if (process.env.NODE_ENV === 'development' || !process.env.FRONTEND_URL) {
-            // Return a JSON response for Postman
-            return res.status(200).json({ message: 'Password reset link verified. You can now reset your password.', token });
-        } else {
-            // Otherwise, redirect to the frontend login page
-            const deepLinkUrl = `https://tribe.com/login?token=${token}`;
-            return res.redirect(302, deepLinkUrl);
-        }
-    } catch (err) {
-        return res.status(400).json({ message: 'Invalid or expired token.' });
-    }
-};
-
-/**
  * Cambia la contraseña (después de la verificación del magic link).
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.
@@ -160,13 +103,6 @@ exports.resetPasswordWithToken = async (req, res) => {
         if (!user) {
             console.log(`User with ID ${decoded.id} not found.`); // Registro si no se encuentra el usuario
             return res.status(404).json({ message: 'User not found.' });
-        }
-
-        // Validar si la nueva contraseña cumple con los criterios
-        if (newPassword.length < 8) {
-            return res.status(400).json({
-                message: 'Password must be at least 8 characters long.'
-            });
         }
 
         // Hashear la nueva contraseña
