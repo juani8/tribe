@@ -1,7 +1,6 @@
 const express = require('express');
 
-const { getProfile, updateProfile, deleteProfile, getUsers, followUser, unfollowUser, getFollowers, getFollowing, changePassword, logout
-} = require('../controllers/userController');
+const { getProfile, updateProfile, deleteProfile, getUsers, followUser, unfollowUser, getFollowers, getFollowing, changePassword, logout } = require('../controllers/userController');
 const router = express.Router();
 
 router.get('/me', getProfile);
