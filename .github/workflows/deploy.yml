@@ -46,7 +46,7 @@ jobs:
       
       - name: Zip TribeBackend for deployment
         run: |
-          zip -r TribeBackend.zip TribeBackend
+          Compress-Archive -Path TribeBackend/* -DestinationPath TribeBackend.zip
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
