@@ -14,7 +14,7 @@ const { getMonthlyAds } = require('../utils/adsService');
  * @returns {Promise<void>} - Responde con los posts del timeline.
  */
 exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
     const userId = req.user.id; 
 
     try {
