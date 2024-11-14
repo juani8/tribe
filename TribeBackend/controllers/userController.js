@@ -13,17 +13,17 @@ exports.getProfile = async (req, res) => {
     try {
         // Check if req.user is populated
         if (!req.user) {
-            return res.status(401).json({ message: 'User not authenticated.' });
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
         }
 
         const user = await User.findById(req.user.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -39,7 +39,7 @@ exports.updateProfile = async (req, res) => {
         const user = await User.findByIdAndUpdate(req.user.id, { name, lastName, profileImage, coverImage, description }, { new: true });
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -53,11 +53,11 @@ exports.deleteProfile = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.user.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
         res.status(204).send(); // No content
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -82,11 +82,11 @@ exports.getUsers = async (req, res) => {
             .limit(parseInt(limit));
 
         if (!users.length) {
-            return res.status(404).json({ message: 'No users found.' });
+            return res.status(404).json({ message: 'No se encontraron usuarios.' });
         }
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -100,7 +100,7 @@ exports.followUser = async (req, res) => {
     try {
         const userToFollow = await User.findById(req.params.userId);
         if (!userToFollow) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         // Add user to following list
@@ -117,7 +117,7 @@ exports.followUser = async (req, res) => {
 
         res.status(200).json({ followedUserId: userToFollow._id });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -131,7 +131,7 @@ exports.unfollowUser = async (req, res) => {
     try {
         const userToUnfollow = await User.findById(req.params.userId);
         if (!userToUnfollow) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         // Remove user from following list
@@ -144,7 +144,7 @@ exports.unfollowUser = async (req, res) => {
 
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -174,7 +174,7 @@ exports.getFollowing = async (req, res) => {
         const user = await User.findById(req.user.id).populate('following', 'name lastName nickName profileImage');
         res.status(200).json(user.following);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -187,14 +187,14 @@ exports.getFollowing = async (req, res) => {
 exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: 'User not found.' });
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) return res.status(403).json({ message: 'Incorrect current password.' });
+    if (!isMatch) return res.status(403).json({ message: 'Contraseña actual incorrecta.' });
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
-    res.status(200).json({ message: 'Password changed successfully.' });
+    res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
 };
 
 /**

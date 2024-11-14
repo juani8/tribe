@@ -80,8 +80,8 @@ exports.sendMagicLink = async (email, userId) => {
 
         await sendEmail(email, '¡Bienvenido/a a Tribe! Confirma tu correo electrónico', htmlContent);
     } catch (error) {
-        console.error('Error sending magic link:', error);
-        throw new Error('Could not send magic link');
+        console.error('Error al enviar magic link:', error);
+        throw new Error('No se pudo enviar el magic link');
     }
 };
 
@@ -101,7 +101,7 @@ exports.sendRecoveryLink = async (email, userId) => {
 
         await sendEmail(email, 'Recupera tu contraseña en Tribe', htmlContent);
     } catch (error) {
-        console.error('Error sending password recovery link:', error);
-        throw new Error('Could not send password recovery link');
+        console.error('Error al enviar el enlace de recuperación de contraseña:', error);
+        throw new Error('No se pudo enviar el enlace de recuperación de contraseña');
     }
 };

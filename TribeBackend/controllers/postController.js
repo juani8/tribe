@@ -329,7 +329,7 @@ exports.bookmarkPost = async (req, res) => {
         const bookmark = new Bookmark({ postId, userId });
         await bookmark.save();
 
-        res.status(200).json({ message: 'Post marcado como favorito' });
+        res.status(200).json({ message: 'Post marcado como bookmark' });
     } catch (error) {
         console.error("Error en bookmarkPost:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
