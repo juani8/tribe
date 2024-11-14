@@ -42,7 +42,6 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
             params: {
                 offset,
                 limit,
-                order: 'asc'
             }
         });
         console.log('getTimelinePosts', response.data);

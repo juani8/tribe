@@ -38,7 +38,7 @@ const PostSchema = new mongoose.Schema({
         default: 0
     }
 }, {
-    timestamps: true // Añade createdAt y updatedAt automáticamente
+    timestamps: true 
 });
 
 module.exports = mongoose.model('Post', PostSchema);
