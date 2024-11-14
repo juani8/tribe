@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Post = require('../models/Post');
-const User = require('../models/User');
 const Comment = require('../models/Comment');
 const Like = require('../models/Like');
 const { check, validationResult } = require('express-validator');
@@ -14,67 +13,36 @@ const { getMonthlyAds } = require('../utils/adsService');
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con los posts del timeline.
  */
-/**exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
-
-    try {
-        // Obtener los IDs de los usuarios seguidos por el usuario autenticado
-        const followedUsers = await User.findById(req.user.id).select('following');
-        if (!followedUsers) {
-            return res.status(404).json({ message: 'Usuarios seguidos no encontrados.' });
-        }
-        
-        // Buscar los posts de los usuarios seguidos
-        const posts = await Post.find({ userId: { $in: user.following } })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .select('-comments') 
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .lean();
-
-        const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ postId: post._id });
-            return {
-                ...post,
-                totalComments
-            };
-        }));
-
-        res.status(200).json(postSummary);
-    } catch (error) {
-        console.error("Error en getTimeline:", error);
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
-    }
-};*/
 exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
     const userId = req.user.id; 
 
     try {
-        // Buscar los posts en la colección Post
         const posts = await Post.find()
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
             .populate('userId', 'nickName profileImage')
+            .populate({
+                path: 'lastComment',
+                populate: {
+                    path: 'userId',
+                    select: 'nickName profileImage'
+                }
+            })
             .lean();
 
-        // Calcular el número de comentarios para cada post
         const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ _id: { $in: post.comments } });
-            const lastComment = await Comment.find({ _id: { $in: post.comments } }).sort({ createdAt: -1 }).limit(1).populate('userId', 'nickName profileImage');
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
  
             return {
               ...post,
-              totalComments,
-              lastComment: lastComment[0] || null,
               isLiked: !!isLiked,
               isBookmarked: !!isBookmarked
           };
-        })); 
- 
+        }));
+
         res.status(200).json(postSummary);
     } catch (error) {
         console.error("Error en getTimeline:", error);
@@ -95,7 +63,7 @@ exports.fetchAds = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: 'Error al obtener los anuncios', error: error.message });
     }
-  };
+};
 
 /**
  * Crea un nuevo post.
@@ -103,49 +71,7 @@ exports.fetchAds = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-/**exports.createPost = async (req, res) => {
-    const { description, multimedia, latitude, longitude } = req.body;
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
-    }
-
-    if (!multimedia) {
-        return res.status(400).json({ error: 400, message: 'El contenido multimedia es obligatorio.' });
-    }
-
-    try {
-        // Obtener el nombre de la ciudad usando las coordenadas
-        const city = await getCityFromCoordinates(latitude, longitude);
-
-        const newPost = new Post({
-            userId: req.user.id,
-            description,
-            multimedia,
-            location: {
-                latitude, 
-                longitude, 
-                city
-            }
-        });
-
-        const savedPost = await newPost.save();
-
-        res.status(201).send({ data: savedPost, message: 'Post creado exitosamente' });
-    } catch (error) {
-        console.error("Error en createPost:", error);
-        
-        if (error.message.includes('Coordenadas inválidas')) {
-            return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
-        }
-        
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
-    }
-};*/
-
 exports.createPost = [
-    // Validación de los campos
     check('multimedia').notEmpty().withMessage('El contenido multimedia es obligatorio.'),
     check('description').optional(),
     check('latitude').optional(),
@@ -162,7 +88,6 @@ exports.createPost = [
         try {
             let city;
             if (latitude !== undefined && longitude !== undefined) {
-                // Obtener el nombre de la ciudad usando las coordenadas
                 city = await getCityFromCoordinates(latitude, longitude);
             }
 
@@ -206,22 +131,22 @@ exports.getPostById = async (req, res) => {
     }
 
     try {
-        const post = await Post.findById(postId).lean();
+        const post = await Post.findById(postId)
+            .populate('userId', 'nickName profileImage')
+            .populate({
+                path: 'lastComment',
+                populate: {
+                    path: 'userId',
+                    select: 'nickName profileImage'
+                }
+            })
+            .lean();
         
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
-        const totalComments = await Comment.countDocuments({ postId });
-        const lastComment = await Comment.findOne({ postId }).sort({ createdAt: -1 }).populate('userId');
-
-        const response = {
-            ...post,
-            totalComments,
-            lastComment: lastComment || 'Aún no hay comentarios'
-        };
-
-        res.status(200).json(response);
+        res.status(200).json(post);
     } catch (error) {
         console.error("Error en getPostById:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -249,22 +174,11 @@ exports.getCommentsByPostId = async (req, res) => {
     }
 
     try {
-        const post = await Post.findById(postId).populate({
-            path: 'comments',
-            options: {
-                sort: { createdAt: -1 },
-                skip: parseInt(offset),
-                limit: parseInt(limit)
-            },
-            // Llena el campo userId en cada comentario con los datos del usuario, seleccionando solo nickName y profileImage.
-            populate: { path: 'userId', select: 'nickName profileImage' }
-        });
-
-        if (!post) {
-            return res.status(404).json({ message: 'Post no encontrado' });
-        }
-
-        const comments = post.comments;
+        const comments = await Comment.find({ postId })
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .sort({ createdAt: -1 })
+            .populate('userId', 'nickName profileImage');
 
         res.status(200).json(comments);
     } catch (error) {
@@ -283,10 +197,6 @@ exports.getCommentsByPostId = async (req, res) => {
 exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
-
-    console.log('postId', postId);
-    console.log('content', content);
-    console.log('req.body', req.body);
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -319,7 +229,8 @@ exports.createComment = async (req, res) => {
         }
 
         // Solo actualiza el post si el comentario se creó correctamente
-        post.comments.push(savedComment._id);
+        post.lastComment = savedComment._id;
+        post.totalComments += 1;
         await post.save();
 
         res.status(201).json(savedComment);
@@ -339,8 +250,6 @@ exports.likePost = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
 
-    console.log('userId', userId);
-    console.log('postId', postId);
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({ message: 'postId inválido' });
     }
@@ -420,7 +329,7 @@ exports.bookmarkPost = async (req, res) => {
         const bookmark = new Bookmark({ postId, userId });
         await bookmark.save();
 
-        res.status(200).json({ message: 'Post marcado como favorito' });
+        res.status(200).json({ message: 'Post marcado como bookmark' });
     } catch (error) {
         console.error("Error en bookmarkPost:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -455,49 +364,3 @@ exports.unbookmarkPost = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 };
-
-/* exports.checkLike = async (req, res) => {
-    const { postId, userId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
-        return res.status(400).json({ message: 'postId inválido' });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: 'userId inválido' });
-    }
-
-    try {
-        const like = await Like.findOne({ postId, userId });
-        if (like) {
-            return res.json({ liked: true });
-        } else {
-            return res.json({ liked: false });
-        }
-    } catch (error) {
-        return res.status(500).json({ error: 'Error al verificar el like' });
-    }
-}; 
-
-exports.checkBookmark = async (req, res) => {
-    const { postId, userId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
-        return res.status(400).json({ message: 'postId inválido' });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: 'userId inválido' });
-    }
-
-    try {
-        const bookmark = await Bookmark.findOne({ postId, userId });
-        if (bookmark) {
-            return res.json({ bookmarked: true });
-        } else {
-            return res.json({ bookmarked: false });
-        }
-    } catch (error) {
-        return res.status(500).json({ error: 'Error al verificar el bookmark' });
-    }
-};*/

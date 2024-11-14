@@ -1,0 +1,1582 @@
+# Info #
+openapi: 3.0.0
+info:
+  version: 2.5.0
+  title: Tribe API
+  description: Documentación de la API de Tribe RedMedia
+# Endpoints #
+paths:
+  # User Registration Endpoints #
+  /auths/registrations:
+    post:
+      summary: Registro de usuario
+      tags: 
+        - Registration
+      description: Permite al usuario registrarse proporcionando su nickname, email y contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickName:
+                  type: string
+                  description: El nombre de fantasía del usuario.
+                email:
+                  type: string
+                  description: El correo electrónico del usuario.
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  description: La contraseña del usuario.
+              required:
+                - nickName
+                - email
+                - password
+      responses:
+        "200":
+          description: Registro exitoso, Magic Link enviado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT para el usuario registrado.
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        "400":
+          description: Datos no válidos.
+        "409":
+          description: Usuario ya registrado.
+        "500":
+          description: Error interno del servidor.
+  /auths/registrations/tokens:
+    post:
+      summary: Verificar Magic Link para registro
+      tags: 
+        - Registration
+      description: Verifica el Magic Link y redirige al usuario a la vista para completar el registro.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token de Magic Link.
+              required:
+                - token
+      responses:
+        "200":
+          description: Verificación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        "400":
+          description: Token inválido o expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  # User Login Endpoints #
+  /auths/sessions:
+    post:
+      summary: Inicio de sesión
+      tags: 
+        - Login
+      description: Inicia sesión con el correo y contraseña del usuario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: Inicio de sesión exitoso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT para el usuario autenticado.
+                  user:
+                    $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Credenciales inválidas.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "403":
+          description: Usuario no verificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /auths/sessions/passwords:
+    post:
+      summary: Solicitar cambio de contraseña
+      tags: 
+        - Password
+      description: Envía un Magic Link para validar la identidad del usuario y permitir el cambio de contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Dirección de correo electrónico del usuario.
+              required:
+                - email
+      responses:
+        "200":
+          description: Magic link enviado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+    patch:
+      summary: Cambiar contraseña
+      tags: 
+        - Password
+      description: Permite al usuario cambiar su contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token de Magic Link.
+                newPassword:
+                  type: string
+                  format: password
+                  description: Nueva contraseña del usuario.
+              required:
+                - token
+                - newPassword
+      responses:
+        "200":
+          description: Contraseña actualizada correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        "400":
+          description: Token inválido o expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /auths/sessions/passwords/tokens:
+    post:
+      summary: Verificar Magic Link para restablecimiento de contraseña
+      tags: 
+        - Password
+      description: Verifica el Magic Link y redirige al usuario a la vista de cambio de contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token del Magic Link.
+              required:
+                - token
+      responses:
+        "200":
+          description: Enlace de restablecimiento de contraseña verificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+                  token:
+                    type: string
+                    description: Token de restablecimiento de contraseña.
+        "400":
+          description: Token inválido o expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  # User Profile Endpoints #
+  /users/me/logout:
+    post:
+      summary: Cerrar sesión del usuario actual
+      tags: 
+        - Logout
+      description: Invalida la sesión o el token de autenticación, cerrando la sesión del usuario.
+      responses:
+        '200':
+          description: Sesión cerrada correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT con una validez mínima.
+        "401":
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /users/me:
+    get:
+      summary: Obtener perfil del usuario autenticado
+      tags: 
+        - User
+      description: Devuelve los detalles del perfil del usuario autenticado.
+      responses:
+        "200":
+          description: Perfil obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+    patch:
+      summary: Editar perfil del usuario autenticado
+      tags: 
+        - User
+      description: Permite editar el perfil del usuario autenticado, excepto el email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProfileUpdate"
+      responses:
+        "200":
+          description: Perfil actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Datos inválidos o incompletos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "401":
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "409":
+          description: El nickName ya está en uso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+    delete:
+      summary: Dar de baja al usuario autenticado
+      tags: 
+        - User
+      description: Elimina la cuenta del usuario autenticado.
+      responses:
+        "204":
+          description: Cuenta eliminada correctamente.
+        "401":
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /users/me/passwords:
+    patch:
+      summary: Cambiar contraseña
+      tags: 
+        - Password
+      description: Permite cambiar la contraseña del usuario autenticado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                  format: password
+                  description: Contraseña actual del usuario.
+                newPassword:
+                  type: string
+                  format: password
+                  description: Nueva contraseña del usuario.
+              required:
+                - currentPassword
+                - newPassword
+      responses:
+        "200":
+          description: Contraseña actualizada correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        "400":
+          description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "401":
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "403":
+          description: Contraseña actual incorrecta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /users:
+    get:
+      summary: Buscar usuarios
+      tags: 
+        - User
+      description: Permite buscar usuarios por nombre, apellido o nickname.
+      parameters:
+        - in: query
+          name: input
+          schema:
+            type: string
+          description: Input que el usuario ingresa en la barra de búsqueda.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Desplazamiento para la paginación.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Número de resultados por página.
+      responses:
+        '200':
+          description: Usuarios encontrados.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSearchResult'
+        '400':
+          description: Parámetros de búsqueda inválidos.
+        '404':
+          description: No se encontraron usuarios que coincidan con los criterios de búsqueda.
+        '500':
+          description: Error interno del servidor.
+  /users/me/following/{userId}:
+    post:
+      summary: Seguir a un usuario
+      tags: 
+        - User
+      description: Permite seguir a un usuario específico.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: ID del usuario a seguir.
+      responses:
+        "200":
+          description: Usuario seguido correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  followedUserId:
+                    type: string
+                    description: ID del usuario seguido.
+        "400":
+          description: Solicitud inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "401":
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+    delete:
+      summary: Dejar de seguir a un usuario
+      tags: 
+        - User
+      description: Permite dejar de seguir a un usuario específico.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: ID del usuario a dejar de seguir.
+      responses:
+        "204":
+          description: Usuario dejado de seguir correctamente.
+        "400":
+          description: Solicitud inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "401":
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /users/me/followers:
+    get:
+      summary: Obtener lista de seguidores del usuario autenticado
+      tags: 
+        - User
+      description: Devuelve la lista de seguidores del usuario autenticado.
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Desplazamiento para la paginación.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Número de resultados por página.
+      responses:
+        '200':
+          description: Lista obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSearchResult'
+        '401':
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /users/me/following:
+    get:
+      summary: Obtener lista de seguidos del usuario autenticado
+      tags: 
+        - User
+      description: Devuelve la lista de usuarios que el usuario autenticado sigue.
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Desplazamiento para la paginación.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Número de resultados por página.
+      responses:
+        '200':
+          description: Lista obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSearchResult'
+        '401':
+          description: Token inválido o no proporcionado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  # User Posts Endpoints #
+  /posts:
+    post:
+      summary: Crear un nuevo post
+      tags: 
+        - Post
+      description: Crea un nuevo post para el usuario autenticado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: Descripción del post.
+                multimedia:
+                  type: array
+                  items:
+                    type: string
+                  description: URLs de archivos multimedia asociados al post.
+                latitude:
+                  type: number
+                  description: Latitud de la ubicación del post.
+                longitude:
+                  type: number
+                  description: Longitud de la ubicación del post.
+              required:
+                - multimedia
+      responses:
+        "201":
+          description: El post se creó exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostSummary"
+        "400":
+          description: La solicitud contiene datos inválidos o incompletos.
+        "500":
+          description: Error interno del servidor.
+  /timeline:
+    get:
+      summary: Obtener posts para el timeline o feed
+      tags: 
+        - Post
+      description: Devuelve una lista combinada de posts de seguidos con scroll infinito.
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Desplazamiento para la paginación.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Número de resultados por página.
+        - in: query
+          name: sort
+          schema:
+            type: string
+            default: createdAt
+          description: Campo por el cual ordenar.
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          description: Orden de los resultados (asc/desc).
+      responses:
+        "200":
+          description: Posts obtenidos exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PostSummary"
+        "400":
+          description: Solicitud inválida.
+        "500":
+          description: Error interno del servidor.
+  /ads:
+    get:
+      summary: Obtener anuncios
+      tags: 
+        - Ads
+      description: Obtiene una lista de anuncios especificando la cantidad deseada.
+      parameters:
+        - name: count
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Número de anuncios a devolver.
+      responses:
+        "200":
+          description: Anuncios obtenidos exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Advertisement"
+        "400":
+          description: Solicitud inválida o incompleta.
+        "500":
+          description: Error interno del servidor.
+  /posts/{postId}:
+    get:
+      summary: Obtener un post específico
+      tags: 
+        - Post
+      description: Devuelve los detalles de un post específico.
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: ID del post a obtener.
+      responses:
+        "200":
+          description: Post encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostSummary"
+        "400":
+          description: Solicitud inválida.
+        "404":
+          description: Post no encontrado.
+        "500":
+          description: Error interno del servidor.
+  /posts/{postId}/comments:
+    get:
+      summary: Obtener todos los comentarios de un post
+      tags: 
+        - Post
+      description: Devuelve la lista de comentarios para un post específico.
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: ID del post cuyos comentarios se desean obtener.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Desplazamiento para la paginación.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Número de resultados por página.
+      responses:
+        "200":
+          description: Comentarios obtenidos exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommentSummary"
+        "400":
+          description: Solicitud inválida.
+        "404":
+          description: Post no encontrado.
+        "500":
+          description: Error interno del servidor.
+    post:
+      summary: Crear un comentario en un post creado
+      tags: 
+        - Post
+      description: Permite al usuario actual crear un comentario en un post específico.
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: ID del post en el que se quiere comentar
+          schema:
+            type: string
+      requestBody:
+        description: Contenido del comentario
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: El texto del comentario
+                  example: ¡Gran post!
+      responses:
+        '201':
+          description: Comentario creado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentSummary"
+        '400':
+          description: Solicitud incorrecta. Entrada inválida o ID de post incorrecto
+        '404':
+          description: Post no encontrado
+        '401':
+          description: No autorizado. El usuario debe estar logueado para comentar.
+  /posts/{postId}/likes:
+    post:
+      summary: Dar like a un post
+      tags: 
+        - Post
+      description: Permite al usuario dar un 'like' a un post.
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: ID del post al que se le quiere dar like.
+      responses:
+        "200":
+          description: El 'like' se añadió correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostSummary"
+        "400":
+          description: Solicitud inválida o incompleta.
+        "404":
+          description: El post no se encuentra.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Eliminar un like de un post
+      tags: 
+        - Post
+      description: Permite al usuario eliminar un 'like' de un post.
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: ID del post del cual se quiere eliminar el like.
+      responses:
+        "204":
+          description: El 'like' se eliminó correctamente.
+        "400":
+          description: Solicitud inválida o incompleta.
+        "404":
+          description: El post no se encuentra.
+        "500":
+          description: Error interno del servidor.
+  /posts/{postId}/bookmarks:
+    post:
+      summary: Guardar un post en favoritos
+      tags: 
+        - Post
+      description: Marca un post como favorito del usuario autenticado.
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: ID del post a marcar como favorito.
+      responses:
+        "200":
+          description: Post marcado como favorito correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        "400":
+          description: Solicitud inválida.
+        "401":
+          description: Token inválido o no proporcionado.
+        "404":
+          description: Post no encontrado.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Eliminar un post de favoritos
+      tags: 
+        - Post
+      description: Elimina un post de la lista de favoritos del usuario autenticado.
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+          description: ID del post a eliminar de favoritos.
+      responses:
+        "204":
+          description: Post eliminado de favoritos correctamente.
+        "400":
+          description: Solicitud inválida.
+        "401":
+          description: Token inválido o no proporcionado.
+        "404":
+          description: Post no encontrado.
+        "500":
+          description: Error interno del servidor.
+  # Notification Endpoints #
+  /users/me/notifications:
+    get:
+      summary: Obtener todas las notificaciones
+      tags: 
+        - Notification
+      description: Devuelve una lista de todas las notificaciones del usuario autenticado.
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Desplazamiento para la paginación.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Número de resultados por página.
+      responses:
+        '200':
+          description: Lista de notificaciones obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+        '401':
+          description: Token inválido o no proporcionado.
+        '500':
+          description: Error interno del servidor.
+    post:
+      summary: Crear una nueva notificación
+      tags: 
+        - Notification
+      description: Crea una nueva notificación para el usuario autenticado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewNotification"
+      responses:
+        "201":
+          description: Notificación creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+        "400":
+          description: Datos inválidos.
+        "401":
+          description: Token inválido o no proporcionado.
+        "500":
+          description: Error interno del servidor.
+  # Health Endpoints #
+  /:
+    get:
+      summary: Verificar estado del backend
+      tags: 
+        - Health
+      description: Verifica si el backend y sus dependencias están activos.
+      responses:
+        "200":
+          description: Backend activo.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: El servidor está funcionando correctamente.
+        "500":
+          description: Ocurrió un problema con el backend.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error interno del servidor
+# Components #
+components:
+  schemas:
+    UserRegistration:
+      type: object
+      properties:
+        nickName:
+          type: string
+          description: El nombre de fantasía del usuario.
+        email:
+          type: string
+          description: El correo electrónico del usuario.
+          format: email
+        password:
+          type: string
+          format: password
+          description: La contraseña del usuario.
+        name:
+          type: string
+          description: El nombre del usuario.
+        lastName:
+          type: string
+          description: El apellido del usuario.
+        gender:
+          type: string
+          description: El género del usuario.
+          enum:
+            - masculino
+            - femenino
+            - no binario
+            - otro
+            - prefiero no decir
+      required:
+        - nickName
+        - email
+        - password
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          description: El correo electrónico del usuario.
+          format: email
+        password:
+          type: string
+          description: La contraseña del usuario.
+          format: password
+        googleToken:
+          type: string
+          description: Token de autenticación de Google.
+    UserProfile:
+      type: object
+      properties:
+        name:
+          type: string
+          description: El nombre del usuario.
+        lastName:
+          type: string
+          description: El apellido del usuario.
+        nickName:
+          type: string
+          description: El nombre de fantasía del usuario.
+        profileImage:
+          type: string
+          description: URL de la imagen de perfil del usuario.
+        coverImage:
+          type: string
+          description: URL de la imagen de portada del usuario.
+        gender:
+          type: string
+          description: El género del usuario.
+          enum:
+            - masculino
+            - femenino
+            - no binario
+            - otro
+            - prefiero no decir
+        description:
+          type: string
+          description: Descripción o biografía del usuario.
+        gamificationLevel:
+          type: string
+          description: Nivel de gamificación del usuario.
+        numberOfFollowers:
+          type: integer
+          description: Número de seguidores del usuario.
+        numberOfFollowing:
+          type: integer
+          description: Número de seguidos del usuario.
+        numberOfComments:
+          type: integer
+          description: Número de comentarios realizados por el usuario.
+        numberOfFavorites:
+          type: integer
+          description: Número de posts favoritos del usuario.
+    UserProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: El nombre del usuario.
+        lastName:
+          type: string
+          description: El apellido del usuario.
+        nickName:
+          type: string
+          description: El nombre de fantasía del usuario.
+        profileImage:
+          type: string
+          description: URL de la imagen de perfil del usuario.
+        coverImage:
+          type: string
+          description: URL de la imagen de portada del usuario.
+        description:
+          type: string
+          description: Descripción o biografía del usuario.
+        gender:
+          type: string
+          description: El género del usuario.
+          enum:
+            - masculino
+            - femenino
+            - no binario
+            - otro
+            - prefiero no decir
+    UserSearchResult:
+      type: object
+      properties:
+        name:
+          type: string
+          description: El nombre del usuario.
+        lastName:
+          type: string
+          description: El apellido del usuario.
+        nickName:
+          type: string
+          description: El nombre de fantasía del usuario.
+        profileImage:
+          type: string
+          description: URL de la imagen de perfil del usuario.
+      required:
+        - name
+        - lastName
+        - nickName
+        - profileImage
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: objectId
+          description: Identificador único del comentario.
+        userId:
+          type: string
+          format: objectId
+          description: Identificador único del usuario.
+        postId:
+          type: string
+          format: objectId
+          description: Identificador único del post.
+        comment:
+          type: string
+          description: Contenido del comentario.
+        createdAt:
+          type: integer
+          format: int64
+          description: Fecha y hora de creación del comentario en formato timestamp.
+        updatedAt:
+          type: integer
+          format: int64
+          description: Fecha y hora de la última actualización del comentario en formato timestamp.
+      required:
+        - postId
+        - userId
+        - comment
+    CommentSummary:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: objectId
+          description: Identificador único del usuario que hizo el comentario.
+        comment:
+          type: string
+          description: Contenido del comentario.
+        createdAt:
+          type: integer
+          format: int64
+          description: Fecha y hora de creación del comentario en formato timestamp.
+      required:
+        - userId
+        - comment
+        - createdAt
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: objectId
+          description: Identificador único del post.
+        userId:
+          type: string
+          format: objectId
+          description: Identificador único del usuario.
+        description:
+          type: string
+          description: Descripción o contenido del post.
+        multimedia:
+          type: array
+          items:
+            type: string
+          description: Lista de URLs de archivos multimedia asociados al post.
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+              description: Latitud de la ubicación del post.
+            longitude:
+              type: number
+              format: float
+              description: Longitud de la ubicación del post.
+            city:
+              type: string
+              description: Ciudad de la ubicación del post.
+        likes:
+          type: integer
+          format: int32
+          description: Número de 'likes' que ha recibido el post.
+        lastComment:
+          type: string
+          format: objectId
+          description: Identificador único del último comentario del post.
+        totalComments:
+          type: integer
+          format: int32
+          description: Número total de comentarios que ha recibido el post.
+        createdAt:
+          type: integer
+          format: int64
+          description: Fecha y hora de creación del post en formato timestamp.
+        updatedAt:
+          type: integer
+          format: int64
+          description: Fecha y hora de la última actualización del post en formato timestamp.
+      required:
+        - userId
+        - multimedia
+    PostSummary:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: objectId
+          description: Identificador único del usuario.
+        description:
+          type: string
+          description: Descripción o contenido del post.
+        multimedia:
+          type: array
+          items:
+            type: string
+          description: Lista de URLs de archivos multimedia asociados al post.
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+              description: Latitud de la ubicación del post.
+            longitude:
+              type: number
+              format: float
+              description: Longitud de la ubicación del post.
+            city:
+              type: string
+              description: Ciudad de la ubicación del post.
+        likes:
+          type: integer
+          format: int32
+          description: Número de 'likes' que ha recibido el post.
+        lastComment:
+          type: string
+          format: objectId
+          description: Identificador único del último comentario del post.
+        totalComments:
+          type: integer
+          format: int32
+          description: Número total de comentarios que ha recibido el post.
+        createdAt:
+          type: integer
+          format: int64
+          description: Fecha y hora de creación del post en formato timestamp.
+      required:
+        - userId
+        - description
+        - multimedia
+        - location
+        - likes
+        - lastComment
+        - createdAt
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID de la notificación.
+        type:
+          type: string
+          description: Tipo de notificación (ej. "comment", "like", "follow").
+        message:
+          type: string
+          description: Mensaje de la notificación.
+        read:
+          type: boolean
+          description: Estado de lectura de la notificación.
+        createdAt:
+          type: string
+          format: int64
+          description: Fecha y hora de creación de la notificación.
+      required:
+        - id
+        - type
+        - message
+        - read
+        - createdAt
+    NewNotification:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Tipo de notificación.
+        message:
+          type: string
+          description: Mensaje de la notificación.
+      required:
+        - type
+        - message
+    Advertisement:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: URLs de las imágenes del anuncio.
+        companyName:
+          type: string
+          description: Nombre de la empresa que publica el anuncio.
+        websiteUrl:
+          type: string
+          format: uri
+          description: URL del sitio web de la empresa.
+        likes:
+          type: integer
+          format: int32
+          description: Número de 'likes' que ha recibido el post.
+      required:
+        - images
+        - companyName
+        - websiteUrl
+        - likes
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://app.swaggerhub.com/apis/PRESEDOROSARIO/tribe-api/2.5.0

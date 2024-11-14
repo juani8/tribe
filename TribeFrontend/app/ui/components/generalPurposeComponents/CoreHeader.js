@@ -15,6 +15,7 @@ import TextKey from 'assets/localization/TextKey';
 const CoreHeader = () => {
     const { theme, isDarkMode } = useTheme();
     const [isMenuVisible, setMenuVisible] = useState(false);
+    const navigation = useNavigation();
 
     // Handlers for menu visibility
     const openMenu = () => setMenuVisible(true);

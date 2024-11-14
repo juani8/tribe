@@ -8,6 +8,7 @@ export const PostProvider = ({ children }) => {
   const [likedPosts, setLikedPosts] = useState(new Map());
   const [bookmarkStatus, setBookmarkStatus] = useState(new Map());
   const [likeCounts, setLikeCounts] = useState(new Map());
+  
 
   // Function to handle toggling the like status for each post
   const handleFavoriteToggle = async (isLiked, likeCount, postId) => {

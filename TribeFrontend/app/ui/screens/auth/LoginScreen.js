@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
       navigation.navigate('Main');
 
       
-      Alert.alert('Inicio de sesión simulado', 'Inicio de sesión exitoso.');
+      Alert.alert('Inicio de sesión exitoso.');
       navigation.navigate('Main'); 
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
