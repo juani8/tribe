@@ -12,42 +12,10 @@ const InitialConfigurationScreen = ({ navigation }) => {
   const route = useRoute();
   const { theme } = useTheme();
   const styles = createStyles(theme);
-  const { token } = route.params || {};  // Extrae el token de los parámetros de la ruta
-
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [gender, setGender] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  // useEffect(() => {
-  //   if (token) {
-  //     // Llama a la función para verificar el token
-  //     verifyToken(token);
-  //   } else {
-  //     Alert.alert('Error', 'Token no encontrado en el enlace.');
-  //     navigation.navigate('Login'); // Redirige al login si no hay token
-  //   }
-  // }, [token]);
-
-  // const verifyToken = async (token) => {
-  //   try {
-  //     console.log('Verificando token:', token);
-
-  //     // Supongamos que haces la llamada al backend para verificar el token
-  //     // const response = await axios.post(`${BASE_URL}/auths/verifyMagicLink`, { token });
-
-  //     // Si la verificación es exitosa, guarda el token en Keychain
-  //     await storeToken(token);
-
-  //     // Notifica al usuario que la verificación fue exitosa
-  //     Alert.alert('Verificación exitosa', 'Tu cuenta ha sido verificada y estás autenticado.');
-  //     navigation.navigate('Main'); // Navega a la pantalla principal o realiza el setup inicial
-  //   } catch (error) {
-  //     console.error('Error verificando el token:', error);
-  //     Alert.alert('Error', 'Hubo un problema al verificar tu cuenta.');
-  //     navigation.navigate('Login'); // Redirige al login en caso de error
-  //   }
-  // };
 
   const handleContinue = () => {
     // proceso para completar la configuración inicial si es necesario

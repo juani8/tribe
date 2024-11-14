@@ -90,9 +90,12 @@ const TextKey = {
     recoverPasswordDescription: 'recoverPasswordDescription',
     emailLabel: 'emailLabel',
     emailPlaceholder: 'emailPlaceholder',
+    completeFields: 'completeFields',
     verifyButton: 'verifyButton',
-    completeFields: 'completeFields',    completeFields: 'completeFields',
-
+    passwordResetSuccessTitle: 'passwordResetSuccessTitle',
+    passwordResetSuccessMessage: 'passwordResetSuccessMessage',
+    passwordResetErrorMessage: 'passwordResetErrorMessage',
+    
     // Verify Identity Screen
     verifyIdentityTitle: 'verifyIdentityTitle',
     verifyIdentityInstruction: 'verifyIdentityInstruction',

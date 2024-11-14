@@ -32,13 +32,10 @@ const SignupScreen = ({ navigation }) => {
       const response = await registerUser(registrationData);
       console.log('Respuesta del registro:', response);
       {response.token && await storeToken(response.token)};
-
       navigation.navigate('InitialConfiguration');
-      // Si la respuesta es exitosa, navega a VerifyIdentity
-      // Alert.alert('Registro exitoso', 'Se ha enviado un enlace de verificación a tu correo.');
-      // navigation.navigate('VerifyIdentity');
+      // Si la respuesta es exitosa, navega a VerifyIdentity;
     } catch (error) {
-      console.error('Error registrando el usuario:', error);
+      //console.error('Error registrando el usuario:', error);
 
       // Mostrar un mensaje de error apropiado según la respuesta del backend
       if (error.response && error.response.status === 409) {

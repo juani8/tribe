@@ -36,7 +36,7 @@ const CoreHeader = () => {
                         <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
                             <Image source={theme.UserCircleLight} style={{ width: 50, height: 50 }} />
                         </TouchableOpacity>
-                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}John</CustomTextNunito>
+                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}</CustomTextNunito>
                     </View>
                     <View style={styles.itemsRight}>
                         <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>
