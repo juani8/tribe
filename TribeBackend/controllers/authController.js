@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-
+/*
 exports.verifyMagicLink = async (req, res) => {
     console.log('Verify Magic Link Route Hit');
     const { token } = req.body;
@@ -50,7 +50,7 @@ exports.verifyMagicLink = async (req, res) => {
         return res.status(400).json({ message: 'Invalid or expired token.' });
     }
 };
-
+*/
 // Login
 exports.login = async (req, res) => {
     try {
@@ -92,6 +92,7 @@ exports.requestPasswordReset = async (req, res) => {
 // Verify magic link for password reset
 // This is the function that will handle requests made to POST /auths/sessions/passwords/tokens.
 // It checks if the token is valid and then redirects the user to the password reset page.
+/*
 exports.verifyPasswordResetMagicLink = (req, res) => {
     const { token } = req.body;
 
@@ -112,6 +113,7 @@ exports.verifyPasswordResetMagicLink = (req, res) => {
     }
 };
 
+*/
 // Change password (after magic link verification)
 // This is the function that will handle requests made to PATCH /auths/sessions/passwords.
 // It verifies the token sent with the request and updates the password.
