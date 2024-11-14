@@ -1,141 +1,127 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { sendMagicLink } = require('../utils/magicLink');
+const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
 
-// Registration
+/**
+ * Registro de usuario.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un token JWT y un mensaje de éxito si el registro es exitoso.
+ */
 exports.register = async (req, res) => {
     try {
-        console.log('Register route hit')
         const { nickName, email, password } = req.body;
-        console.log('Email provided for lookup:', email);
         const userExists = await User.findOne({ email });
-        console.log('User exists:', userExists);
-        if (userExists) return res.status(409).json({ message: 'User already registered.' });
+        if (userExists) return res.status(409).json({ message: 'Usuario ya registrado.' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ nickName, email, password: hashedPassword });
         // Esto, cuando haya verificación, debería ser user.isVerified = false;
         user.isVerified = true;
         await user.save();
-        // await sendMagicLink(user.email, user._id); // Function that sends a verification magic link
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token, message: 'Registration successful.' });
+        res.status(200).json({ token, message: 'Registro exitoso.' });
     } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ message: 'Internal server error.' });
+        console.error('Error en el registro:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-exports.verifyMagicLink = async (req, res) => {
-    console.log('Verify Magic Link Route Hit');
-    const { token } = req.body;
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
-        if (!user) return res.status(404).json({ message: 'User not found.' });
-
-        user.isVerified = true;  // Mark the user as verified
-        console.log('User verified');
-        await user.save();
-
-        // If NODE_ENV is 'development' or there's no frontend URL, return JSON (for Postman testing)
-        if (process.env.NODE_ENV === 'development' || !process.env.FRONTEND_URL) {
-            return res.status(200).json({ message: 'User verified successfully. You can now log in.' });
-        } else {
-            // Otherwise, redirect to the frontend initial configuration page
-            const deepLinkUrl = `tribeapp://initial-configuration?token=${token}`;
-            return res.redirect(302, deepLinkUrl);
-        }
-    } catch (err) {
-        return res.status(400).json({ message: 'Invalid or expired token.' });
-    }
-};
-
-// Login
+/**
+ * Inicio de sesión de usuario.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un token JWT y el usuario si el inicio de sesión es exitoso.
+ */
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(401).json({ message: 'Invalid credentials.' });
+        if (!user) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         if (!user.isVerified) {
-            return res.status(403).json({ message: 'Please verify your email before logging in.' });
+            return res.status(403).json({ message: 'Por favor, verifica tu correo electrónico antes de iniciar sesión.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials.' });
+        if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token, user });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Request password reset (send magic link)
-// This is the function that will handle requests made to /auths/sessions/passwords to request a password reset
-// The user provides their email, and the magic link is sent.
+/**
+ * Solicita el restablecimiento de contraseña (envía un magic link).
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si el magic link se envía correctamente.
+ */
 exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'User not found.' });
+        if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
 
-        await sendMagicLink(user.email, user._id); // Send password reset magic link
-        res.status(200).json({ message: 'Magic link sent.' });
+        await sendRecoveryLink(user.email, user._id); // Send password reset link
+        res.status(200).json({ message: 'Magic link enviado.' });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Verify magic link for password reset
-// This is the function that will handle requests made to POST /auths/sessions/passwords/tokens.
-// It checks if the token is valid and then redirects the user to the password reset page.
-exports.verifyPasswordResetMagicLink = (req, res) => {
-    const { token } = req.body;
-
-    try {
-        jwt.verify(token, process.env.JWT_SECRET);
-
-        // Check if the environment variable is set to development (for Postman) or if no frontend URL is set
-        if (process.env.NODE_ENV === 'development' || !process.env.FRONTEND_URL) {
-            // Return a JSON response for Postman
-            return res.status(200).json({ message: 'Password reset link verified. You can now reset your password.', token });
-        } else {
-            // Otherwise, redirect to the frontend password reset page
-            const deepLinkUrl = `https://tribe.com/reset-password?token=${token}`;
-            return res.redirect(302, deepLinkUrl);
-        }
-    } catch (err) {
-        return res.status(400).json({ message: 'Invalid or expired token.' });
-    }
-};
-
-// Change password (after magic link verification)
-// This is the function that will handle requests made to PATCH /auths/sessions/passwords.
-// It verifies the token sent with the request and updates the password.
-exports.changePasswordWithMagicLink = async (req, res) => {
+/**
+ * Cambia la contraseña (después de la verificación del magic link).
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si la contraseña se cambia correctamente.
+ */
+exports.resetPasswordWithToken = async (req, res) => {
     const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+        return res.status(400).json({ message: 'Se requieren el token y la nueva contraseña' });
+    }
+
     try {
+        // Verificar el token JWT
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log('Decoded token:', decoded); // Log the decoded token
 
+        // Buscar al usuario usando el ID obtenido del token
         const user = await User.findById(decoded.id);
-        console.log('Looking for user with ID:', decoded.id); // Log the user ID being searched
-        if (!user) return res.status(404).json({ message: 'User not found.' });
 
-        user.password = await bcrypt.hash(newPassword, 10);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        // Hashear la nueva contraseña
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+
+        // Guardar la nueva contraseña en la base de datos
         await user.save();
-        res.status(200).json({ message: 'Password changed successfully.' });
+
+        res.status(200).json({ message: 'La contraseña ha sido restablecida exitosamente.' });
+
     } catch (err) {
-        console.error('Error in changePasswordWithMagicLink:', err); // Log any errors
-        res.status(400).json({ message: 'Invalid or expired token.' });
+        console.error('Error en resetPasswordWithToken:', err); // Registro de errores
+        if (err.name === 'TokenExpiredError') {
+            return res.status(400).json({ message: 'El token ha expirado.' });
+        }
+        res.status(400).json({ message: 'Token inválido o expirado.' });
     }
 };
 
-// Function to validate the token
+/**
+ * Valida el token.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si el token es válido.
+ */
 exports.validateToken = async (req, res) => {
   const token = req.body.token;
 
@@ -143,6 +129,6 @@ exports.validateToken = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     res.status(200).json({ valid: true });
   } catch (error) {
-    res.status(401).json({ valid: false, message: 'Token is invalid or expired' });
+    res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
   }
 };

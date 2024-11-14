@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Post = require('../models/Post');
-const User = require('../models/User');
 const Comment = require('../models/Comment');
 const Like = require('../models/Like');
 const { check, validationResult } = require('express-validator');
@@ -14,44 +13,11 @@ const { getMonthlyAds } = require('../utils/adsService');
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con los posts del timeline.
  */
-/**exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
-
-    try {
-        // Obtener los IDs de los usuarios seguidos por el usuario autenticado
-        const followedUsers = await User.findById(req.user.id).select('following');
-        if (!followedUsers) {
-            return res.status(404).json({ message: 'Usuarios seguidos no encontrados.' });
-        }
-        
-        // Buscar los posts de los usuarios seguidos
-        const posts = await Post.find({ userId: { $in: user.following } })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .select('-comments') 
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .lean();
-
-        const postSummary = await Promise.all(posts.map(async post => {
-            const totalComments = await Comment.countDocuments({ postId: post._id });
-            return {
-                ...post,
-                totalComments
-            };
-        }));
-
-        res.status(200).json(postSummary);
-    } catch (error) {
-        console.error("Error en getTimeline:", error);
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
-    }
-};*/
 exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'timestamp', order = 'desc' } = req.query;
+    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
     const userId = req.user.id; 
 
     try {
-        // Buscar los posts en la colección Post
         const posts = await Post.find()
             .skip(parseInt(offset))
             .limit(parseInt(limit))
@@ -106,7 +72,6 @@ exports.fetchAds = async (req, res) => {
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
 exports.createPost = [
-    // Validación de los campos
     check('multimedia').notEmpty().withMessage('El contenido multimedia es obligatorio.'),
     check('description').optional(),
     check('latitude').optional(),
@@ -123,7 +88,6 @@ exports.createPost = [
         try {
             let city;
             if (latitude !== undefined && longitude !== undefined) {
-                // Obtener el nombre de la ciudad usando las coordenadas
                 city = await getCityFromCoordinates(latitude, longitude);
             }
 
@@ -286,8 +250,6 @@ exports.likePost = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
 
-    console.log('userId', userId);
-    console.log('postId', postId);
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({ message: 'postId inválido' });
     }
@@ -367,7 +329,7 @@ exports.bookmarkPost = async (req, res) => {
         const bookmark = new Bookmark({ postId, userId });
         await bookmark.save();
 
-        res.status(200).json({ message: 'Post marcado como favorito' });
+        res.status(200).json({ message: 'Post marcado como bookmark' });
     } catch (error) {
         console.error("Error en bookmarkPost:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -402,49 +364,3 @@ exports.unbookmarkPost = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 };
-
-/* exports.checkLike = async (req, res) => {
-    const { postId, userId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
-        return res.status(400).json({ message: 'postId inválido' });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: 'userId inválido' });
-    }
-
-    try {
-        const like = await Like.findOne({ postId, userId });
-        if (like) {
-            return res.json({ liked: true });
-        } else {
-            return res.json({ liked: false });
-        }
-    } catch (error) {
-        return res.status(500).json({ error: 'Error al verificar el like' });
-    }
-}; 
-
-exports.checkBookmark = async (req, res) => {
-    const { postId, userId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
-        return res.status(400).json({ message: 'postId inválido' });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: 'userId inválido' });
-    }
-
-    try {
-        const bookmark = await Bookmark.findOne({ postId, userId });
-        if (bookmark) {
-            return res.json({ bookmarked: true });
-        } else {
-            return res.json({ bookmarked: false });
-        }
-    } catch (error) {
-        return res.status(500).json({ error: 'Error al verificar el bookmark' });
-    }
-};*/
