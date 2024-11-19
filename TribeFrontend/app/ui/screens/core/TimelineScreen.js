@@ -12,6 +12,7 @@ import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 export default function TimelineScreen() {
+  const [data, setData] = useState([]);
   const [ads, setAds] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
