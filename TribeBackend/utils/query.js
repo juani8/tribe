@@ -25,7 +25,7 @@ async function updateImagesForSpecificUsers() {
 
     // Update the profileImage and coverImage for specific users
     await User.updateMany(
-      { email: { $in: ['a@a.com', 'juanisosa442@gmail.com'] } },
+      { email: { $in: ['a@a.com'] } },
       {
         $set: {
           profileImage: randomImageUrl(),
