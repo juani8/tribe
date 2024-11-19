@@ -2,10 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
 import PostMainContent from 'ui/components/postComponents/PostMainContent';
-// Agregado por mrosariopresedo para la integración de los anuncios.
 import AdComponent from 'ui/components/postComponents/AdComponent';
 import { useTheme } from 'context/ThemeContext';
-// Modificado por mrosariopresedo para la integración de los anuncios.
 import { getTimelinePosts, checkServerStatus, getAds } from 'networking/api/postsApi';
 import NetInfo from '@react-native-community/netinfo';
 import LottieView from 'lottie-react-native';
@@ -14,8 +12,6 @@ import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
 export default function TimelineScreen() {
-  const [data, setData] = useState([]);
-  // Agregado por mrosariopresedo para la integración de los anuncios.
   const [ads, setAds] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
@@ -41,10 +37,12 @@ export default function TimelineScreen() {
 
     try {
       const newPosts = await getTimelinePosts(offset, pageSize);
-
+      const adsData = await getAds();
+      
       // If refreshing, replace data; otherwise, append new posts
       setData(prevData => (refreshing ? newPosts : [...prevData, ...newPosts]));
       setPage(nextPage);
+      setAds(adsData);
 
       // Update `hasMorePosts` based on response size
       setHasMorePosts(newPosts.length === pageSize);
@@ -54,17 +52,6 @@ export default function TimelineScreen() {
       setIsLoadingNextPage(false);
       setRefreshing(false);
       setIsLoading(false); // Set loading to false when data is fetched
-    }
-  };
-
-  // Fetch ads
-  // Agregado por mrosariopresedo para la integración de los anuncios.
-  const fetchAdsData = async () => {
-    try {
-      const adsData = await getAds();
-      setAds(adsData);
-    } catch (error) {
-      console.error('Error fetching ads:', error);
     }
   };
 
@@ -85,8 +72,6 @@ export default function TimelineScreen() {
 
   useEffect(() => {
     fetchData();
-    // Agregado por mrosariopresedo para la integración de los anuncios.
-    fetchAdsData();
     checkServerStatus();
   }, []);
 
