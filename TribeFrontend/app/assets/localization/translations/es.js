@@ -66,23 +66,21 @@ export default {
 
     // Password recovery Screen
     recoverPasswordTitle: 'Recupera tu contraseña',
-    recoverPasswordDescription: 'Ingresa el email con el que te registraste, te enviaremos un código para cambiar tu contraseña.',
-    emailLabel: 'Correo',
-    emailPlaceholder: 'Ingresa tu correo',
-    verifyButton: 'Verificar',
-    completeFields: "Por favor, completa todos los campos.",
-    completeFields: "Por favor, completa todos los campos.",
+    recoverPasswordDescription: 'Ingresa el correo electrónico con el que te registraste, y te enviaremos un enlace para restablecer tu contraseña.',
+    emailLabel: 'Correo electrónico',
+    emailPlaceholder: 'Ingresa tu correo electrónico',
+    verifyButton: 'Enviar enlace',
+    completeFields: 'Por favor, completa todos los campos.',
+    passwordResetSuccessTitle: 'Solicitud enviada',
+    passwordResetSuccessMessage: 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo.',
+    passwordResetErrorMessage: 'Hubo un error al procesar la solicitud. Inténtalo de nuevo.',
 
     // Verify Identity Screen
     verifyIdentityTitle: 'Verifica tu identidad',
     verifyIdentityInstruction: 'Hemos enviado un correo electrónico para confirmar que realmente eres tú.',
     verifyIdentityCheckInbox: 'Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.',
     verifyIdentityCheckSpam: 'Si no visualizas el correo, verifica la carpeta de spam.',
-    verifyTokenPlaceholder: 'Ingresa el token de verificación',
-    verifyTokenButton: 'Verificar Token',
-    completeTokenFields: 'Por favor, ingresa el token de verificación.',
-    invalidTokenError: 'Token inválido o expirado. Por favor, inténtalo de nuevo.',
-
+    
     // Initial Configuration Screen
     initialConfigTitle: 'Bienvenido a Tribe',
     initialConfigSubtitle: 'Comencemos completando tu perfil.',
@@ -142,7 +140,7 @@ export default {
     loginButton: 'Iniciar sesión',
 
     // Header
-    headerTitle: 'Descubre lo nuevo, ',
+    headerTitle: 'Descubre lo nuevo',
 
     // Settings
     settingsTitle: 'Configuración',
