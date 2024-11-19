@@ -74,6 +74,13 @@ const PostMainContent = ({ post, viewMore = true }) => {
             />
           </TouchableOpacity>
         </View>
+        {/* Location */}
+        {post.location && post.location.city && (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.location.city}</CustomTextNunito>
+          </View>
+        )}
       </View>
     </View>
   );
