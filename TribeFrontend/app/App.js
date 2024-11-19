@@ -22,7 +22,7 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
 import { PostProvider } from 'context/PostContext';
-import { UserProvider } from 'context/UserContext';
+import { UserProvider, useUserContext } from 'context/UserContext';
 import CustomTextNutito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import { checkToken } from 'networking/api/authsApi';
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
@@ -79,9 +79,39 @@ function TabBar() {
     );
 }
 
-function MainStack({ initialRoute }) {
+function MainStack() {
     const { theme } = useTheme();
+    const { setUser } = useUserContext();
+    const [initialRoute, setInitialRoute] = useState('Welcome');
+    const [isSessionChecked, setIsSessionChecked] = useState(false);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            try {
+                const { valid, user } = await checkToken();
+                if (valid) {
+                    setInitialRoute('Main');
+                    setUser(user);
+                } else {
+                    setInitialRoute('Welcome');
+                }
+            } catch (error) {
+                console.error('Error checking session:', error);
+                setInitialRoute('Welcome');
+            } finally {
+                SplashScreen.hide();
+                setIsSessionChecked(true);
+            }
+        };
+        checkSession();
+    }, []);
+
     useMagicLinkListener();
+
+    if (!isSessionChecked) {
+        return null; // or a loading spinner
+    }
+
     return (
         <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: theme.colors.background } }} initialRouteName={initialRoute}>
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -114,25 +144,9 @@ function AppContent() {
         }
     }
 
-
-    const [initialRoute, setInitialRoute] = useState('Welcome');
-    const [isSessionChecked, setIsSessionChecked] = useState(false);
-
-    useEffect(() => {
-        const checkSession = async () => {
-            const token = await checkToken();
-            if (token) setInitialRoute('Main');
-            SplashScreen.hide();
-            setIsSessionChecked(true);
-        };
-        checkSession();
-    }, []);
-
-    if (!isSessionChecked) return null;
-
     return (
         <NavigationContainer linking={linking}>
-            <MainStack initialRoute={initialRoute} />
+            <MainStack />
         </NavigationContainer>
     );
 }

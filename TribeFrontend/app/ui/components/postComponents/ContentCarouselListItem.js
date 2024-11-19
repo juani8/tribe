@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Image, StyleSheet, Dimensions, Modal, TouchableOpacity, Text, Pressable } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import { BlurView } from '@react-native-community/blur';
+import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
 
 const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control the modal visibility
@@ -20,32 +21,7 @@ const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
       </TouchableOpacity>
 
       {/* Full Screen Modal */}
-      <Modal
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={toggleModal} // Handle back button press on Android
-        animationType="fade" // You can also use "slide" or other animations
-      >
-        <BlurView
-          style={StyleSheet.absoluteFill}
-          blurType="dark"  // You can adjust the blur effect ("light", "dark", etc.)
-          blurAmount={10}  // The intensity of the blur
-          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.6)"  // Fallback color
-        />
-
-        {/* Modal Content */}
-        <View style={styles.modalContainer}>
-          {/* Full-screen image */}
-          <View style={styles.modalContent}>
-            <Image source={{ uri }} style={styles.fullScreenImage} />
-
-            {/* Close Button */}
-            <Pressable onPress={toggleModal} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>x</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+      <FullSizeImage isModalVisible={isModalVisible} uri={uri} toggleModal={toggleModal} />
     </>
   );
 };

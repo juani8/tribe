@@ -6,10 +6,12 @@ import I18n from 'assets/localization/i18n';
 import { loginUser } from 'networking/api/authsApi';
 import { getToken, storeToken } from 'helper/JWTHelper'; 
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import {useUserContext} from 'context/UserContext';
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const { setUser } = useUserContext();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,13 +26,11 @@ const LoginScreen = ({ navigation }) => {
     try {
       const loginData = { email, password };
       const response = await loginUser(loginData);
+      setUser(response.user);
+      console.log(response);
 
       // Guarda el token usando Keychain
       await storeToken(response.token);
-
-      // Redirige al usuario a la pantalla principal
-      navigation.navigate('Main');
-
       
       Alert.alert('Inicio de sesión exitoso.');
       navigation.navigate('Main'); 
