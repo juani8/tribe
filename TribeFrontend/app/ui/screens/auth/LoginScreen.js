@@ -31,10 +31,6 @@ const LoginScreen = ({ navigation }) => {
 
       // Guarda el token usando Keychain
       await storeToken(response.token);
-
-      // Redirige al usuario a la pantalla principal
-      navigation.navigate('Main');
-
       
       Alert.alert('Inicio de sesión exitoso.');
       navigation.navigate('Main'); 

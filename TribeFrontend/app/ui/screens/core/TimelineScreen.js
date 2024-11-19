@@ -21,6 +21,7 @@ export default function TimelineScreen() {
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);  // New state to track if more posts are available
+  const [isLoading, setIsLoading] = useState(true); // State to track initial loading
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [isConnected, setIsConnected] = useState(true);
@@ -52,6 +53,7 @@ export default function TimelineScreen() {
     } finally {
       setIsLoadingNextPage(false);
       setRefreshing(false);
+      setIsLoading(false); // Set loading to false when data is fetched
     }
   };
 
@@ -141,6 +143,14 @@ export default function TimelineScreen() {
     }
   });
 
+  if (isLoading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -179,8 +189,11 @@ const createStyles = (theme) => StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   loader: {
-    padding: 16,
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: theme.colors.background,
+    paddingVertical: 40,
   },
   bottomSpacing: {
     height: 25,

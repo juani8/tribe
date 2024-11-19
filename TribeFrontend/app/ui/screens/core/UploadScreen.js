@@ -156,6 +156,7 @@ export default function UploadScreen({ navigation }) {
                             style={[styles.button, { alignSelf: 'flex-start' }]} 
                             locked={selectedMedia.length > 0 ? false : true} 
                             onPress={handleCreatePost}
+                            showLoading={true}
                         />
                     </View>
                 </ScrollView>

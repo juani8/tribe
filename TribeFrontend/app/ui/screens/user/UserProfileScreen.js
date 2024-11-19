@@ -29,7 +29,7 @@ const UserProfileScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginHorizontal: 20, marginTop: 10 }}>
-        <CustomTextNunito weight={'Bold'} style={{ fontSize: 20 }}>Juan Sosa</CustomTextNunito>
+        <CustomTextNunito weight={'Bold'} style={{ fontSize: 18 }}>Juan Sosa - <CustomTextNunito weight={'MediumItalic'}>@juaniii</CustomTextNunito></CustomTextNunito>
         <CustomTextNunito weight={'Bold'}>Masculino</CustomTextNunito>
         <CustomTextNunito>{user.description}</CustomTextNunito>
       </View>
