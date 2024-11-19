@@ -27,7 +27,7 @@ const ComplementaryHeader = ({title}) => {
                     <CustomTextNunito weight='Bold' style={{fontSize: 18, color: theme.colors.primary, marginLeft: 12}}>{title}</CustomTextNunito>
                 </View>
             </View>
-            <Separator theme={theme} />
+            <Separator />
         </View>
     );
 };

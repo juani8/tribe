@@ -49,7 +49,7 @@ const CoreHeader = () => {
                     </View>
                 </View>
 
-                <Separator style={{marginHorizontal: -2}} theme={theme} />
+                <Separator style={{marginHorizontal: -2}} />
             </View>
 
             <PopupMenu
