@@ -13,6 +13,10 @@ const TextKey = {
     notificationsNavegation: 'notificationsNavegation',
     userProfileNavegation: 'userProfileNavegation',
     postDetailNavegation: 'postDetailNavegation',
+    gamificationProgressNavegation: 'gamificationProgressNavegation',
+    followersNavegation: 'followersNavegation',
+    followingNavegation: 'followingNavegation',
+    gamificationActivityNavegation: 'gamificationActivityNavegation',
 
     // PopUp
     settingsTitle: 'settingsTitle',

@@ -7,6 +7,10 @@ import { useUserContext } from 'context/UserContext';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import { ProgressBar } from 'react-native-paper';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
+import {NavigateToGamificationProgress, NavigateToFollowersScreen, NavigateToFollowingScreen} from 'helper/navigationHandlers/UserNavigationHandlers';
+import GamificationBar from 'ui/components/userComponents/GamificationBar';
+import { useNavigation } from '@react-navigation/native';
+import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 
 const UserProfileScreen = () => {
   const { theme } = useTheme();
@@ -14,6 +18,7 @@ const UserProfileScreen = () => {
   const [postView, setPostView] = useState('UserPosts');
   const [isProfileImageModalVisible, setIsProfileImageModalVisible] = useState(false);
   const [isCoverImageModalVisible, setIsCoverImageModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   const toggleProfileImageModal = () => setIsProfileImageModalVisible(!isProfileImageModalVisible);
   const toggleCoverImageModal = () => setIsCoverImageModalVisible(!isCoverImageModalVisible);
@@ -30,38 +35,29 @@ const UserProfileScreen = () => {
       </View>
       <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginHorizontal: 20, marginTop: 10 }}>
         <CustomTextNunito weight={'Bold'} style={{ fontSize: 18 }}>Juan Sosa - <CustomTextNunito weight={'MediumItalic'}>@juaniii</CustomTextNunito></CustomTextNunito>
-        <CustomTextNunito weight={'Bold'}>Masculino</CustomTextNunito>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <CustomTextNunito weight={'Bold'}>Masculino</CustomTextNunito>
+          <CustomButton title={'Editar perfil'} smallHeight={true} />
+        </View>
         <CustomTextNunito>{user.description}</CustomTextNunito>
       </View>
 
       <Separator style={{ marginVertical: 6 }} />
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginVertical: 10 }}>
-        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => NavigateToFollowersScreen(navigation)} style={{ flexDirection: 'column', alignItems: 'center' }}>
           <CustomTextNunito weight={'Bold'}>{user.numberOfFollowers}</CustomTextNunito>
           <CustomTextNunito>Seguidores</CustomTextNunito>
-        </View>
-        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => NavigateToFollowingScreen(navigation)} style={{ flexDirection: 'column', alignItems: 'center' }}>
           <CustomTextNunito weight={'Bold'}>{user.numberOfFollowing}</CustomTextNunito>
           <CustomTextNunito>Seguidos</CustomTextNunito>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <Separator style={{ marginVertical: 6 }} />
 
-      <View style={{ flexDirection: 'column', justifyContent: 'space-evenly', gap: 6, marginVertical: 10, paddingVertical: 16, backgroundColor: theme.colors.primary }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 10 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <CustomTextNunito weight={'Medium'} style={{ color: theme.colors.textAlternative }}>Nivel </CustomTextNunito>
-            <CustomTextNunito weight={'Medium'} style={{ color: theme.colors.textAlternative }}>{user.gamificationLevel}</CustomTextNunito>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <CustomTextNunito weight={'MediumItalic'} style={{ color: theme.colors.textAlternative }}>2/5 </CustomTextNunito>
-            <CustomTextNunito weight={'MediumItalic'} style={{ color: theme.colors.textAlternative }}>publicaciones realizadas</CustomTextNunito>
-          </View>
-        </View>
-        <ProgressBar progress={0.4} color={theme.colors.secondary} style={{ height: 10, borderRadius: 5, marginHorizontal: 10 }} />
-      </View>
+      <GamificationBar />
 
       <View style={{ 
         flexDirection: 'row', 

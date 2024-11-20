@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, Animated, StyleSheet, ActivityIndicator } from 
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from './CustomTextNunito';
 
-const CustomButton = ({ title, color, normalizedSize, fullSize, onPress, textWeight, locked, showLoading }) => {
+const CustomButton = ({ title, color, normalizedSize, fullSize, smallHeight, onPress, textWeight, locked, showLoading }) => {
   const { theme } = useTheme();
   const [scale] = useState(new Animated.Value(1));
   const [isLoading, setIsLoading] = useState(false);
@@ -54,13 +54,15 @@ const CustomButton = ({ title, color, normalizedSize, fullSize, onPress, textWei
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={handlePress}
-        style={[
-          styles.button,
-          {
+        style={{
+            paddingVertical: smallHeight ? 4 : 15,
+            paddingHorizontal: 25,
+            borderRadius: 14,
+            justifyContent: 'center',
+            alignItems: 'center',
             minWidth: normalizedSize ? 250 : fullSize ? '100%' : 'auto',
             backgroundColor: locked || (showLoading && isLoading) ? theme.colors.disabled : colorApplied,
-          },
-        ]}
+          }}
         disabled={locked || (showLoading && isLoading)}
       >
         {showLoading && isLoading ? (
@@ -74,15 +76,5 @@ const CustomButton = ({ title, color, normalizedSize, fullSize, onPress, textWei
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default CustomButton;

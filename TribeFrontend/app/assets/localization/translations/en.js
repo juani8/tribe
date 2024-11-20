@@ -15,6 +15,10 @@ export default {
     notificationsNavegation: 'Notifications',
     userProfileNavegation: 'User Profile',
     postDetailNavegation: 'Post Detail',
+    gamificationProgressNavegation: 'Gamification Progress',
+    followersNavegation: 'Followers',
+    followingNavegation: 'Following',
+    gamificationActivityNavegation: 'Gamification Activity',
 
     // PopUp
     settingsTitle: 'Settings',
