@@ -14,4 +14,14 @@ I18n.locale = locales[0]?.languageCode || 'es'; // Usar 'es' si no se detecta el
 // Habilitar fallback para versiones regionales (ej. 'en-US' y 'en-GB' usarán 'en')
 I18n.fallbacks = true;
 
+// Function to manually switch language
+export const switchLanguage = (languageCode) => {
+  I18n.locale = languageCode;
+};
+
+// Function to set language to device's default language
+export const useDeviceLanguage = () => {
+  I18n.locale = locales[0]?.languageCode || 'es';
+};
+
 export default I18n;

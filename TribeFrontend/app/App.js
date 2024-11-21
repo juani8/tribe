@@ -4,8 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
+
 import CoreHeader from 'ui/components/generalPurposeComponents/CoreHeader';
 import ComplementaryHeader from 'ui/components/generalPurposeComponents/ComplementaryHeader';
+
 import WelcomeScreen from 'ui/screens/WelcomeScreen';
 import TimelineScreen from 'ui/screens/core/TimelineScreen';
 import UploadScreen from 'ui/screens/core/UploadScreen';
@@ -17,7 +19,15 @@ import VerifyIdentityScreen from 'ui/screens/auth/VerifyIdentityScreen';
 import InitialConfigurationScreen from 'ui/screens/auth/InitialConfigurationScreen';
 import NotificationsScreen from 'ui/screens/core/NotificationsScreen';
 import UserProfileScreen from 'ui/screens/user/UserProfileScreen';
+import FollowersScreen from 'ui/screens/user/FollowersScreen';
+import FollowingScreen from 'ui/screens/user/FollowingScreen';
+import GamificationProgressScreen from 'ui/screens/user/GamificationProgressScreen';
+import GamificationActivityScreen from 'ui/screens/user/GamificationActivityScreen';
 import PostDetail from 'ui/screens/core/PostDetail';
+import LanguageSelectionScreen from 'ui/screens/configuration/LanguageSelectionScreen';
+import MetricsScreen from 'ui/screens/configuration/MetricsScreen';
+import ThemeSelectionScreen from 'ui/screens/configuration/ThemeSelectionScreen';
+
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
@@ -124,6 +134,13 @@ function MainStack() {
             <Stack.Screen name="PostDetail" component={PostDetail} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.postDetailNavegation)} /> }} />
             <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.notificationsNavegation)} /> }} />
             <Stack.Screen name="UserProfile" component={UserProfileScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.userProfileNavegation)} /> }} />
+            <Stack.Screen name="Followers" component={FollowersScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.followersNavegation)} /> }} />
+            <Stack.Screen name="Following" component={FollowingScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.followingNavegation)} /> }} />
+            <Stack.Screen name="GamificationProgress" component={GamificationProgressScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.gamificationProgressNavegation)} /> }} />
+            <Stack.Screen name="GamificationActivity" component={GamificationActivityScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.gamificationActivityNavegation)} /> }} />
+            <Stack.Screen name="LanguageSelection" component={LanguageSelectionScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.languageSelectionNavegation)} /> }} />
+            <Stack.Screen name="ThemeSelection" component={ThemeSelectionScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.themeSelectionNavegation)} /> }} />
+            <Stack.Screen name="Metrics" component={MetricsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.metricsNavegation)} /> }} />  
         </Stack.Navigator>
     );
 }
@@ -154,11 +171,11 @@ function AppContent() {
 export default function App() {
     return (
         <ThemeProvider>
-            <PostProvider>
-                <UserProvider>
+            <UserProvider>
+                <PostProvider>
                     <AppContent />
-                </UserProvider>
-            </PostProvider>
+                </PostProvider>
+            </UserProvider>
         </ThemeProvider>
     );
 }

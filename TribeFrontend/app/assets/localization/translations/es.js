@@ -13,6 +13,13 @@ export default {
     notificationsNavegation: 'Notificaciones',
     userProfileNavegation: 'Perfil de Usuario',
     postDetailNavegation: 'Detalle de Publicación',
+    gamificationProgressNavegation: 'Progreso de Gamificación',
+    followersNavegation: 'Seguidores',
+    followingNavegation: 'Siguiendo',
+    gamificationActivityNavegation: 'Actividad de Gamificación',
+    languageSelectionNavegation: 'Selección de Idioma',
+    themeSelectionNavegation: 'Selección de Tema',
+    metricsNavegation: 'Métricas',
 
     // PopUp
     settingsTitle: 'Configuración',
@@ -186,4 +193,30 @@ export default {
     multimediaHelperChooseMediaVideo: 'Grabar video',
     multimediaHelperChooseMediaCancel: 'Cancelar',
     multimediaHelperChooseMediaClose: 'Cerrar',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: "Seleccionar Tema",
+    lightTheme: "Tema Claro",
+    darkTheme: "Tema Oscuro",
+    systemTheme: "Predeterminado del Sistema",
+
+    // userProfileScreen
+    followers: "Seguidores",
+    following: "Siguiendo",
+    posts: "Publicaciones",
+    favorites: "Favoritos",
+
+    // GamificationBar
+    level: "Nivel",
+    postsCompleted: "publicaciones realizadas",
+
+    // languageSelectionScreen
+    deviceLanguage: "Idioma del Dispositivo",
+
+    // MetricsScreen
+    userMetricsTitle: "Métricas del Usuario",
+    numberOfFollowers: "Número de Seguidores",
+    numberOfFollowing: "Número de Seguidos",
+    numberOfComments: "Número de Comentarios",
+    numberOfLikes: "Número de Me Gusta"
 };
