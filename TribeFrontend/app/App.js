@@ -165,11 +165,11 @@ function AppContent() {
 export default function App() {
     return (
         <ThemeProvider>
-            <PostProvider>
-                <UserProvider>
+            <UserProvider>
+                <PostProvider>
                     <AppContent />
-                </UserProvider>
-            </PostProvider>
+                </PostProvider>
+            </UserProvider>
         </ThemeProvider>
     );
 }

@@ -13,6 +13,7 @@ import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/
 import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 import { createComment } from 'networking/api/postsApi';
 import PostMainContent from 'ui/components/postComponents/PostMainContent';
+import { usePostContext } from 'context/PostContext';
 import PostComments from 'ui/components/postComponents/PostComments';
 import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 
@@ -22,8 +23,11 @@ const PostDetail = ({ route }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
-
   const [isCommentViewVisible, setCommentViewVisible] = useState(false);
+  const { totalComments, lastComments, handleAddComment } = usePostContext();
+
+  const postTotalComments = totalComments.get(post._id) ?? post.totalComments;
+  const postLastComment = lastComments.get(post._id) ?? post.lastComment;
 
   // Handlers for menu visibility
   const openCommentView = () => setCommentViewVisible(true);
@@ -48,9 +52,8 @@ const PostDetail = ({ route }) => {
     if (commentText.trim().length > 0) {
       try {
         const commentData = { content: commentText };
-        console.log('Creating comment:', post);
-        const newComment = await createComment(post._id, commentData);
-        console.log('Comment created:', newComment);
+        const postDTO = { _id: post._id, totalComments: post.totalComments };
+        await handleAddComment(postDTO, commentData);
         // Reset the comment text
         setCommentText('');
       } catch (error) {
@@ -62,7 +65,6 @@ const PostDetail = ({ route }) => {
     }
   };
 
-
   return (
     <>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -71,54 +73,51 @@ const PostDetail = ({ route }) => {
 
         <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
         
-        {/* Comment section */}
-        <View>
-          <View style={styles.commentSection}>
-            <View style={{marginBottom:10}}>
-              <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
-                {I18n.t(TextKey.commentsTitle)} ({post.totalComments})
-              </CustomTextNunito>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{width: '92%'}}>
-                  <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
-                </View>
-                <TouchableOpacity onPress={handleCreateComment}>
-                  <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
-                </TouchableOpacity>
-              </View>
-              {post.totalComments > 0 ? (
-                <>
-                  <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-                      <Image source={post.lastComment?.userId?.profileImage ? { uri: post.lastComment.userId.profileImage } : theme.UserCircleLight} 
-                      style={{ width: 24, height: 24, borderRadius: 100 }} />
-                      <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId?.nickName}</CustomTextNunito>
-                    </View>
-                    <CustomTextNunito style={styles.timeAgo}>
-                      {formatDistanceToNow(new Date(post.lastComment?.createdAt))} ago
-                    </CustomTextNunito>
+          {/* Comment section */}
+          <View>
+            <View style={styles.commentSection}>
+              <View style={{ marginBottom: 10 }}>
+                <CustomTextNunito weight={'SemiBold'} style={{ fontSize: 18, marginBottom: 10 }}>
+                  {I18n.t(TextKey.commentsTitle)} ({postTotalComments})
+                </CustomTextNunito>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ width: '92%' }}>
+                    <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
                   </View>
-                  <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
-                  <TouchableOpacity style={{marginTop:6}} onPress={openCommentView}>
-                    <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
+                  <TouchableOpacity onPress={handleCreateComment}>
+                    <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
                   </TouchableOpacity>
-                </>
-              ) : (
-                <CustomTextNunito>{post.lastComment}</CustomTextNunito>
-              )}
+                </View>
+                {postTotalComments > 0 && postLastComment && (
+                  <>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Image source={postLastComment?.userId?.profileImage ? { uri: postLastComment.userId.profileImage } : theme.UserCircleLight}
+                          style={{ width: 24, height: 24, borderRadius: 100 }} />
+                        <CustomTextNunito weight='Bold' style={{ marginLeft: 8 }}>{postLastComment.userId?.nickName ? postLastComment.userId.nickName : 'unknown'}</CustomTextNunito>
+                      </View>
+                      <CustomTextNunito style={styles.timeAgo}>
+                        {formatDistanceToNow(new Date(postLastComment?.createdAt))} ago 
+                      </CustomTextNunito>
+                    </View>
+                    <CustomTextNunito style={{ marginLeft: 30 }}>{postLastComment.comment}</CustomTextNunito>
+                    <TouchableOpacity style={{ marginTop: 6 }} onPress={openCommentView}>
+                      <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
-
-  </TouchableWithoutFeedback>
-        <PopupMenu
+        </ScrollView>
+      </TouchableWithoutFeedback>
+      <PopupMenu
         visible={isCommentViewVisible}
         onClose={closeCommentView}
         title={I18n.t(TextKey.commentsViewTitle)}
-    >
-      <PostComments onClose={closeCommentView} postId={post._id} />
-    </PopupMenu>
+      >
+        <PostComments onClose={closeCommentView} postId={post._id} />
+      </PopupMenu>
     </>
   );
 };

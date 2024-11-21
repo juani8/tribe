@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
-import { likePost, unlikePost, bookmarkPost, unbookmarkPost } from 'networking/api/postsApi';
+import { likePost, unlikePost, bookmarkPost, unbookmarkPost, createComment } from 'networking/api/postsApi';
+import { useUserContext } from 'context/UserContext';
 
 const PostContext = createContext();
 
@@ -8,7 +9,10 @@ export const PostProvider = ({ children }) => {
   const [likedPosts, setLikedPosts] = useState(new Map());
   const [bookmarkStatus, setBookmarkStatus] = useState(new Map());
   const [likeCounts, setLikeCounts] = useState(new Map());
-  
+  const [totalComments, setTotalComments] = useState(new Map());
+  const [lastComments, setLastComments] = useState(new Map());
+  const { user } = useUserContext();
+
 
   // Function to handle toggling the like status for each post
   const handleFavoriteToggle = async (isLiked, likeCount, postId) => {
@@ -47,14 +51,31 @@ export const PostProvider = ({ children }) => {
     }
   };
 
+  // Function to handle adding a new comment
+  const handleAddComment = async (postDTO, commentData) => {
+    try {
+      const newComment = await createComment(postDTO._id, commentData);
+      const currentTotalComments = totalComments.get(postDTO._id) ?? postDTO.totalComments;
+      const localNewComment = { ...newComment, userId: { profileImage: user.profileImage, nickName: user.nickName } };
+      
+      setTotalComments(new Map(totalComments.set(postDTO._id, currentTotalComments + 1)));
+      setLastComments(new Map(lastComments.set(postDTO._id, localNewComment)));
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
+
   return (
     <PostContext.Provider
       value={{
         likedPosts,
-        likeCounts,
         bookmarkStatus,
+        likeCounts,
+        totalComments,
+        lastComments,
         handleFavoriteToggle,
         handleBookmarkToggle,
+        handleAddComment,
       }}
     >
       {children}
