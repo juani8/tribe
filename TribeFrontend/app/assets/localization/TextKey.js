@@ -17,6 +17,9 @@ const TextKey = {
     followersNavegation: 'followersNavegation',
     followingNavegation: 'followingNavegation',
     gamificationActivityNavegation: 'gamificationActivityNavegation',
+    languageSelectionNavegation: 'languageSelectionNavegation',
+    themeSelectionNavegation: 'themeSelectionNavegation',
+    metricsNavegation: 'metricsNavegation',
 
     // PopUp
     settingsTitle: 'settingsTitle',
@@ -213,7 +216,33 @@ const TextKey = {
     multimediaHelperChooseMediaPhoto: 'multimediaHelperChooseMediaPhoto',
     multimediaHelperChooseMediaVideo: 'multimediaHelperChooseMediaVideo',
     multimediaHelperChooseMediaCancel: 'multimediaHelperChooseMediaCancel',
-    multimediaHelperChooseMediaClose: 'multimediaHelperChooseMediaClose'
+    multimediaHelperChooseMediaClose: 'multimediaHelperChooseMediaClose',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: 'themeSelectionTitle',
+    darkTheme: 'darkTheme',
+    lightTheme: 'lightTheme',
+    systemTheme: 'systemTheme',
+
+    // userProfileScreen
+    followers: 'followers',
+    following: 'following',
+    posts: 'posts',
+    favorites: 'favorites',
+
+    // GamificationBar
+    level: "level",
+    postsCompleted: "postsCompleted",
+
+    // languageSelectionScreen
+    deviceLanguage: "deviceLanguage",
+
+    // UserMetricsScreen
+    userMetricsTitle: 'userMetricsTitle',
+    numberOfFollowers: 'numberOfFollowers',
+    numberOfFollowing: 'numberOfFollowing',
+    numberOfComments: 'numberOfComments',
+    numberOfLikes: 'numberOfLikes',
 };
 
 export default TextKey;

@@ -13,7 +13,6 @@ export const PostProvider = ({ children }) => {
   const [lastComments, setLastComments] = useState(new Map());
   const { user } = useUserContext();
 
-
   // Function to handle toggling the like status for each post
   const handleFavoriteToggle = async (isLiked, likeCount, postId) => {
     const currentLikeStatus = likedPosts.get(postId) ?? isLiked;

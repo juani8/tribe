@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback, Alert, TouchableOpacity } from 'react-native';
+import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
@@ -24,6 +24,7 @@ const PostDetail = ({ route }) => {
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
   const [isCommentViewVisible, setCommentViewVisible] = useState(false);
+  const [isCreatingComment, setIsCreatingComment] = useState(false);
   const { totalComments, lastComments, handleAddComment } = usePostContext();
 
   const postTotalComments = totalComments.get(post._id) ?? post.totalComments;
@@ -50,6 +51,7 @@ const PostDetail = ({ route }) => {
 
   const handleCreateComment = async () => {
     if (commentText.trim().length > 0) {
+      setIsCreatingComment(true);
       try {
         const commentData = { content: commentText };
         const postDTO = { _id: post._id, totalComments: post.totalComments };
@@ -59,6 +61,8 @@ const PostDetail = ({ route }) => {
       } catch (error) {
         console.error('Error creating comment:', error);
         Alert.alert('There was an error creating your comment.', 'Please try again.');
+      } finally {
+        setIsCreatingComment(false);
       }
     } else {
       Alert.alert('Please enter a comment before submitting.');
@@ -85,7 +89,11 @@ const PostDetail = ({ route }) => {
                     <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
                   </View>
                   <TouchableOpacity onPress={handleCreateComment}>
-                    <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
+                    {isCreatingComment ? (
+                      <ActivityIndicator size="small" color={theme.colors.primary} style={{ alignSelf: 'center', marginTop: -15, marginLeft: 5  }} />
+                    ) : (
+                      <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
+                    )}
                   </TouchableOpacity>
                 </View>
                 {postTotalComments > 0 && postLastComment && (

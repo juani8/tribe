@@ -1,15 +1,15 @@
-export const NavigateToGamificationProgress = (navigation) => {
+export const navigateToGamificationProgress = (navigation) => {
   navigation.navigate('GamificationProgress');
 }
 
-export const NavigateToGamificationActivity = (navigation) => {
+export const navigateToGamificationActivity = (navigation) => {
   navigation.navigate('GamificationActivity');
 }
 
-export const NavigateToFollowersScreen = (navigation) => {
-  navigation.navigate('FollowersScreen');
+export const navigateToFollowers = (navigation) => {
+  navigation.navigate('Followers');
 }
 
-export const NavigateToFollowingScreen = (navigation) => {
-  navigation.navigate('FollowingScreen');
+export const navigateToFollowing = (navigation) => {
+  navigation.navigate('Following');
 }

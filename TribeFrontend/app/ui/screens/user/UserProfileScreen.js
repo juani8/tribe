@@ -7,7 +7,7 @@ import { useUserContext } from 'context/UserContext';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import { ProgressBar } from 'react-native-paper';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
-import {NavigateToGamificationProgress, NavigateToFollowersScreen, NavigateToFollowingScreen} from 'helper/navigationHandlers/UserNavigationHandlers';
+import {navigateToGamificationProgress, navigateToFollowers, navigateToFollowing} from 'helper/navigationHandlers/UserNavigationHandlers';
 import GamificationBar from 'ui/components/userComponents/GamificationBar';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
@@ -45,13 +45,13 @@ const UserProfileScreen = () => {
       <Separator style={{ marginVertical: 6 }} />
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginVertical: 10 }}>
-        <TouchableOpacity onPress={() => NavigateToFollowersScreen(navigation)} style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => navigateToFollowers(navigation)} style={{ flexDirection: 'column', alignItems: 'center' }}>
           <CustomTextNunito weight={'Bold'}>{user.numberOfFollowers}</CustomTextNunito>
-          <CustomTextNunito>Seguidores</CustomTextNunito>
+          <CustomTextNunito>{I18n.t(TextKey.followers)}</CustomTextNunito>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => NavigateToFollowingScreen(navigation)} style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => navigateToFollowing(navigation)} style={{ flexDirection: 'column', alignItems: 'center' }}>
           <CustomTextNunito weight={'Bold'}>{user.numberOfFollowing}</CustomTextNunito>
-          <CustomTextNunito>Seguidos</CustomTextNunito>
+          <CustomTextNunito>{I18n.t(TextKey.following)}</CustomTextNunito>
         </TouchableOpacity>
       </View>
 
@@ -69,10 +69,10 @@ const UserProfileScreen = () => {
         backgroundColor: theme.colors.placeholder 
       }}>
         <TouchableOpacity onPress={() => setPostView('UserPosts')} style={{ width: '50%', height: 50, borderRadius: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: postView === 'UserPosts' ? theme.colors.background : null }}>
-          <CustomTextNunito weight={'Bold'} style={{ color: postView === 'UserPosts' ? theme.colors.primary : theme.colors.text }}>Publicaciones</CustomTextNunito>
+          <CustomTextNunito weight={'Bold'} style={{ color: postView === 'UserPosts' ? theme.colors.primary : theme.colors.text }}>{I18n.t(TextKey.posts)}</CustomTextNunito>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setPostView('UserFavorites')}  style={{ width: '50%', height: 50, borderRadius: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: postView === 'UserFavorites' ? theme.colors.background : null }}>
-          <CustomTextNunito weight={'Bold'} style={{ color: postView === 'UserFavorites' ? theme.colors.primary : theme.colors.text }}>Favoritos</CustomTextNunito>
+          <CustomTextNunito weight={'Bold'} style={{ color: postView === 'UserFavorites' ? theme.colors.primary : theme.colors.text }}>{I18n.t(TextKey.favorites)}</CustomTextNunito>
         </TouchableOpacity>
       </View>
 

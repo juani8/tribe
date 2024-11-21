@@ -6,7 +6,7 @@ import { useUserContext } from 'context/UserContext';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
 import { ProgressBar } from 'react-native-paper';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
-import {NavigateToGamificationActivity} from 'helper/navigationHandlers/UserNavigationHandlers';
+import {navigateToGamificationActivity} from 'helper/navigationHandlers/UserNavigationHandlers';
 import GamificationBar from 'ui/components/userComponents/GamificationBar';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -33,7 +33,7 @@ const GamificationProgressScreen = () => {
       }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <CustomTextNunito style={{ fontSize: 24 }} textColor={theme.colors.primary} weight={'Bold'}>2/5</CustomTextNunito>
-          <CustomButton title={'Ver actividad'} onPress={() => NavigateToGamificationActivity(navigation)} smallHeight={true} />
+          <CustomButton title={'Ver actividad'} onPress={() => navigateToGamificationActivity(navigation)} smallHeight={true} />
         </View>
         <CustomTextNunito style={{ fontSize: 16 }} textColor={theme.colors.primary} weight={'Bold'}>3 publicaciones más hasta nivel 3</CustomTextNunito>
       </View>
