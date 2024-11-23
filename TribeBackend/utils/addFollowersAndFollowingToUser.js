@@ -49,4 +49,4 @@ async function updateUserFollowersAndFollowing(email) {
 }
 
 // Run the update function for the specified user email
-updateUserFollowersAndFollowing('juanisosa442@gmail.com');
+updateUserFollowersAndFollowing('');

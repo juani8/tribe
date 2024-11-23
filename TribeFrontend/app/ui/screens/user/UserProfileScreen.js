@@ -38,7 +38,7 @@ const UserProfileScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginHorizontal: 20, marginTop: 10 }}>
-        <CustomTextNunito weight={'Bold'} style={{ fontSize: 18 }}>Juan Sosa - <CustomTextNunito weight={'MediumItalic'}>@juaniii</CustomTextNunito></CustomTextNunito>
+        <CustomTextNunito weight={'Bold'} style={{ fontSize: 18 }}>Juan Sosa - <CustomTextNunito weight={'MediumItalic'}>@{user.nickName}</CustomTextNunito></CustomTextNunito>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <CustomTextNunito weight={'Bold'}>Masculino</CustomTextNunito>
           <CustomButton title={'Editar perfil'} smallHeight={true} />
