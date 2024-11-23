@@ -31,6 +31,7 @@ const ThemeSelectionScreen = () => {
           <RadioButton
             value="light"
             status={checked === 'light' ? 'checked' : 'unchecked'}
+            onPress={() => handleThemeChange('light')}
           />
           <CustomTextNunito style={{ fontSize: 18 }}>{I18n.t(TextKey.lightTheme)}</CustomTextNunito>
         </TouchableOpacity>
@@ -40,6 +41,7 @@ const ThemeSelectionScreen = () => {
           <RadioButton
             value="dark"
             status={checked === 'dark' ? 'checked' : 'unchecked'}
+            onPress={() => handleThemeChange('dark')}
           />
           <CustomTextNunito style={{ fontSize: 18 }}>{I18n.t(TextKey.darkTheme)}</CustomTextNunito>
         </TouchableOpacity>
@@ -49,6 +51,7 @@ const ThemeSelectionScreen = () => {
           <RadioButton
             value="system"
             status={checked === 'system' ? 'checked' : 'unchecked'}
+            onPress={() => handleThemeChange('system')}
           />
           <CustomTextNunito style={{ fontSize: 18 }}>{I18n.t(TextKey.systemTheme)}</CustomTextNunito>
         </TouchableOpacity>

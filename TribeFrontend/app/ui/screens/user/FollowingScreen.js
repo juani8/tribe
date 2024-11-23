@@ -54,7 +54,7 @@ const FollowingScreen = () => {
         <Image source={item.profileImage ? { uri: item.profileImage } : theme.UserCircleLight} style={{ width: 50, height: 50, borderRadius: 25 }} />
         <CustomTextNunito style={{ marginLeft: 10 }}>{item.nickName}</CustomTextNunito>
       </View>
-      <CustomButton title="Unfollow" style={{ marginLeft: 'auto' }} onPress={() => confirmUnfollow(item._id, item.nickName)} />    
+      <CustomButton title="Dejar de seguir" style={{ marginLeft: 'auto' }} onPress={() => confirmUnfollow(item._id, item.nickName)} />    
     </View>
   );
 
