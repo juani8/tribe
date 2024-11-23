@@ -61,7 +61,12 @@ export const followUser = async (userId) => {
 // Dejar de seguir a un usuario
 export const unfollowUser = async (userId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`);
+    const token = await getToken();
+    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error(`Error al dejar de seguir al usuario ${userId}:`, error);

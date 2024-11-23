@@ -16,7 +16,6 @@ const FollowersScreen = () => {
         <Image source={item.profileImage ? { uri: item.profileImage } : theme.UserCircleLight} style={{ width: 50, height: 50, borderRadius: 25 }} />
         <CustomTextNunito style={{ marginLeft: 10 }}>{item.nickName}</CustomTextNunito>
       </View>
-      <CustomButton title="Unfollow" style={{ marginLeft: 'auto' }} />
     </View>
   );
 

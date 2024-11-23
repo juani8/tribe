@@ -1,14 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, Image, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, FlatList, Image, ActivityIndicator, Alert } from 'react-native';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import { useTheme } from 'context/ThemeContext';
-import { getFollowing } from 'networking/api/usersApi';
+import { getFollowing, unfollowUser } from 'networking/api/usersApi';
 
 const FollowingScreen = () => {
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
+
+  const fetchFollowing = useCallback(async () => {
+    setLoading(true);
+    try {
+      const following = await getFollowing();
+      setFollowing(following);
+      console.log('Following:', following);
+    } catch (error) {
+      console.error('Error fetching following:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFollowing();
+  }, [fetchFollowing]);
+
+  const handleUnfollow = async (userId) => {
+    try {
+      await unfollowUser(userId);
+      fetchFollowing();
+    } catch (error) {
+      console.error('Error unfollowing user:', error);
+    }
+  };
+
+  const confirmUnfollow = (userId, nickName) => {
+    Alert.alert(
+      'Confirm Unfollow',
+      `Are you sure you want to unfollow ${nickName}?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Unfollow', onPress: () => handleUnfollow(userId) },
+      ],
+      { cancelable: true }
+    );
+  };
 
   const renderItem = ({ item }) => (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }}>
@@ -16,24 +54,9 @@ const FollowingScreen = () => {
         <Image source={item.profileImage ? { uri: item.profileImage } : theme.UserCircleLight} style={{ width: 50, height: 50, borderRadius: 25 }} />
         <CustomTextNunito style={{ marginLeft: 10 }}>{item.nickName}</CustomTextNunito>
       </View>
-      <CustomButton title="Unfollow" style={{ marginLeft: 'auto' }} />
+      <CustomButton title="Unfollow" style={{ marginLeft: 'auto' }} onPress={() => confirmUnfollow(item._id, item.nickName)} />    
     </View>
   );
-
-  useEffect(() => {
-    const fetchFollowing = async () => {
-      try {
-        const following = await getFollowing();
-        setFollowing(following);
-        console.log('Following:', following);
-      } catch (error) {
-        console.error('Error fetching following:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFollowing();
-  }, []);
 
   if (loading) {
     return (
