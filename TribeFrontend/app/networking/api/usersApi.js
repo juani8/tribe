@@ -72,7 +72,12 @@ export const unfollowUser = async (userId) => {
 // Obtener la lista de seguidores del usuario autenticado
 export const getFollowers = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/followers`);
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/followers`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener la lista de seguidores:', error);
@@ -83,7 +88,12 @@ export const getFollowers = async () => {
 // Obtener la lista de usuarios seguidos por el usuario autenticado
 export const getFollowing = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/following`);
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/following`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener la lista de seguidos:', error);
