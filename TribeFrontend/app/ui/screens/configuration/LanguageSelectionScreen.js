@@ -32,6 +32,7 @@ const LanguageSelectionScreen = () => {
           <RadioButton
             value="en"
             status={checked === 'en' ? 'checked' : 'unchecked'}
+            onPress={() => handleLanguageChange('en')}
           />
           <CustomTextNunito style={{ fontSize: 18, color: theme.colors.text }}>English</CustomTextNunito>
         </TouchableOpacity>
@@ -41,6 +42,7 @@ const LanguageSelectionScreen = () => {
           <RadioButton
             value="es"
             status={checked === 'es' ? 'checked' : 'unchecked'}
+            onPress={() => handleLanguageChange('es')}
           />
           <CustomTextNunito style={{ fontSize: 18, color: theme.colors.text }}>Español</CustomTextNunito>
         </TouchableOpacity>
@@ -50,6 +52,7 @@ const LanguageSelectionScreen = () => {
           <RadioButton
             value="device"
             status={checked === 'device' ? 'checked' : 'unchecked'}
+            onPress={() => handleLanguageChange('device')}
           />
           <CustomTextNunito style={{ fontSize: 18, color: theme.colors.text }}>{I18n.t(TextKey.deviceLanguage)}</CustomTextNunito>
         </TouchableOpacity>
