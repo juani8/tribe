@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Image } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useEffect, useState, useRef } from 'react';
+import { Image, Pressable } from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
@@ -33,17 +33,20 @@ import TextKey from 'assets/localization/TextKey';
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
 import { PostProvider } from 'context/PostContext';
 import { UserProvider, useUserContext } from 'context/UserContext';
-import CustomTextNutito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import { checkToken } from 'networking/api/authsApi';
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
 import { AddSquareSelectedNight, HomeSelectedNight, SearchAltSelectedNight, AddSquareNight, HomeNight, SearchAltNight } from 'assets/images';
 import useMagicLinkListener from 'hooks/useMagicLinkListener';
+import { navigateToHome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function TabBar() {
+function TabBar({ navigation }) {
     const { theme, isDarkMode } = useTheme();
+    const flatListRef = useRef(null); // Add a ref to the FlatList
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -61,7 +64,7 @@ function TabBar() {
                             label = I18n.t(TextKey.searchNavegation);
                             break;
                     }
-                    return <CustomTextNutito weight='Bold' style={{color: (isDarkMode ? focused ? theme.colors.secondary : theme.colors.background : !focused ? theme.colors.secondary : theme.colors.background)}}>{label}</CustomTextNutito>;
+                    return <CustomTextNunito weight='Bold' style={{color: (isDarkMode ? focused ? theme.colors.secondary : theme.colors.background : !focused ? theme.colors.secondary : theme.colors.background)}}>{label}</CustomTextNunito>;
                 },
                 tabBarIcon: ({ focused }) => {
                     let icon;
@@ -82,7 +85,21 @@ function TabBar() {
                 tabBarInactiveTintColor: 'gray',
             })}
         >
-            <Tab.Screen name="Home" component={TimelineScreen} options={{ headerShown: true, header: () => <CoreHeader /> }} />
+            <Tab.Screen
+                name="Home"
+                options={{
+                headerShown: true,
+                header: () => <CoreHeader />,
+                tabBarButton: (props) => (
+                    <Pressable
+                    {...props}
+                    onPress={() => navigateToHome(navigation, flatListRef)}
+                    />
+                ),
+                }}
+            >
+                {() => <TimelineScreen flatListRef={flatListRef} />}
+            </Tab.Screen>
             <Tab.Screen name="Upload" component={UploadScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.uploadNavegation)} /> }} />
             <Tab.Screen name="Search" component={SearchScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.searchNavegation)} /> }} />
         </Tab.Navigator>
