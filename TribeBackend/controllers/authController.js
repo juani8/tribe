@@ -2,14 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
-const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
 
-/**
- * Registro de usuario.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un token JWT y un mensaje de éxito si el registro es exitoso.
- */
 /**
  * Registro de usuario.
  * @param {Object} req - Objeto de solicitud HTTP.
@@ -21,7 +14,6 @@ exports.register = async (req, res) => {
         const { nickName, email, password } = req.body;
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(409).json({ message: 'Usuario ya registrado.' });
-        if (userExists) return res.status(409).json({ message: 'Usuario ya registrado.' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ nickName, email, password: hashedPassword });
@@ -30,21 +22,12 @@ exports.register = async (req, res) => {
         await user.save();
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token, message: 'Registro exitoso.' });
-        res.status(200).json({ token, message: 'Registro exitoso.' });
     } catch (error) {
-        console.error('Error en el registro:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
         console.error('Error en el registro:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-/**
- * Inicio de sesión de usuario.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un token JWT y el usuario si el inicio de sesión es exitoso.
- */
 /**
  * Inicio de sesión de usuario.
  * @param {Object} req - Objeto de solicitud HTTP.
@@ -57,31 +40,21 @@ exports.login = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) return res.status(401).json({ message: 'Credenciales inválidas.' });
-        if (!user) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         if (!user.isVerified) {
-            return res.status(403).json({ message: 'Por favor, verifica tu correo electrónico antes de iniciar sesión.' });
             return res.status(403).json({ message: 'Por favor, verifica tu correo electrónico antes de iniciar sesión.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
         if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token, user });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
-        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-/**
- * Solicita el restablecimiento de contraseña (envía un magic link).
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un mensaje de éxito si el magic link se envía correctamente.
- */
 /**
  * Solicita el restablecimiento de contraseña (envía un magic link).
  * @param {Object} req - Objeto de solicitud HTTP.
@@ -93,25 +66,14 @@ exports.requestPasswordReset = async (req, res) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
-        if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
 
-        await sendRecoveryLink(user.email, user._id); // Send password reset link
-        res.status(200).json({ message: 'Magic link enviado.' });
         await sendRecoveryLink(user.email, user._id); // Send password reset link
         res.status(200).json({ message: 'Magic link enviado.' });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
-        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-/**
- * Cambia la contraseña (después de la verificación del magic link).
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un mensaje de éxito si la contraseña se cambia correctamente.
- */
-exports.resetPasswordWithToken = async (req, res) => {
 /**
  * Cambia la contraseña (después de la verificación del magic link).
  * @param {Object} req - Objeto de solicitud HTTP.
@@ -125,17 +87,10 @@ exports.resetPasswordWithToken = async (req, res) => {
         return res.status(400).json({ message: 'Se requieren el token y la nueva contraseña' });
     }
 
-
-    if (!token || !newPassword) {
-        return res.status(400).json({ message: 'Se requieren el token y la nueva contraseña' });
-    }
-
     try {
-        // Verificar el token JWT
         // Verificar el token JWT
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Buscar al usuario usando el ID obtenido del token
         // Buscar al usuario usando el ID obtenido del token
         const user = await User.findById(decoded.id);
 
@@ -143,15 +98,6 @@ exports.resetPasswordWithToken = async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
-
-        // Hashear la nueva contraseña
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedPassword;
-
-        // Guardar la nueva contraseña en la base de datos
         // Hashear la nueva contraseña
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
@@ -161,15 +107,7 @@ exports.resetPasswordWithToken = async (req, res) => {
 
         res.status(200).json({ message: 'La contraseña ha sido restablecida exitosamente.' });
 
-
-        res.status(200).json({ message: 'La contraseña ha sido restablecida exitosamente.' });
-
     } catch (err) {
-        console.error('Error en resetPasswordWithToken:', err); // Registro de errores
-        if (err.name === 'TokenExpiredError') {
-            return res.status(400).json({ message: 'El token ha expirado.' });
-        }
-        res.status(400).json({ message: 'Token inválido o expirado.' });
         console.error('Error en resetPasswordWithToken:', err); // Registro de errores
         if (err.name === 'TokenExpiredError') {
             return res.status(400).json({ message: 'El token ha expirado.' });
@@ -184,25 +122,13 @@ exports.resetPasswordWithToken = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con un mensaje de éxito si el token es válido.
  */
-/**
- * Valida el token.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con un mensaje de éxito si el token es válido.
- */
 exports.validateToken = async (req, res) => {
-    const token = req.body.token;
-  
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password');
-  
-      if (!user) {
-        return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
-      }
-  
-      res.status(200).json({ valid: true, user });
-    } catch (error) {
-      res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
-    }
-  };
+  const token = req.body.token;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
+  }
+};
