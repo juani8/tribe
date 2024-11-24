@@ -13,6 +13,13 @@ export default {
     notificationsNavegation: 'Notificaciones',
     userProfileNavegation: 'Perfil de Usuario',
     postDetailNavegation: 'Detalle de Publicación',
+    gamificationProgressNavegation: 'Progreso de Gamificación',
+    followersNavegation: 'Seguidores',
+    followingNavegation: 'Siguiendo',
+    gamificationActivityNavegation: 'Actividad de Gamificación',
+    languageSelectionNavegation: 'Selección de Idioma',
+    themeSelectionNavegation: 'Selección de Tema',
+    metricsNavegation: 'Métricas',
 
     // PopUp
     settingsTitle: 'Configuración',
@@ -102,14 +109,14 @@ export default {
     timelineTitle: 'Pantalla de Línea de Tiempo',
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
     timelineSeePostDetail: 'Ver mas',
-    timelineNoMorePosts: 'Has llegado al fin de la linea de tiempo. No hay más publicaciones para mostrar.',
+    timelineNoMorePosts: 'Has llegado al fin. No hay más publicaciones para mostrar.',
 
     // Timeline Screen (no conection)
-    noConectionTitle: '¡Conexión perdida!',
-    noConectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
-    noConectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
-    noConectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
-    noConectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
+    noConnectionTitle: '¡Conexión perdida!',
+    noConnectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
+    noConnectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
+    noConnectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
+    noConnectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
 
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',
@@ -186,4 +193,30 @@ export default {
     multimediaHelperChooseMediaVideo: 'Grabar video',
     multimediaHelperChooseMediaCancel: 'Cancelar',
     multimediaHelperChooseMediaClose: 'Cerrar',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: "Seleccionar Tema",
+    lightTheme: "Tema Claro",
+    darkTheme: "Tema Oscuro",
+    systemTheme: "Predeterminado del Sistema",
+
+    // userProfileScreen
+    followers: "Seguidores",
+    following: "Siguiendo",
+    posts: "Publicaciones",
+    favorites: "Favoritos",
+
+    // GamificationBar
+    level: "Nivel",
+    postsCompleted: "publicaciones realizadas",
+
+    // languageSelectionScreen
+    deviceLanguage: "Idioma del Dispositivo",
+
+    // MetricsScreen
+    userMetricsTitle: "Métricas del Usuario",
+    numberOfFollowers: "Número de Seguidores",
+    numberOfFollowing: "Número de Seguidos",
+    numberOfComments: "Número de Comentarios",
+    numberOfLikes: "Número de Me Gusta"
 };

@@ -15,6 +15,13 @@ export default {
     notificationsNavegation: 'Notifications',
     userProfileNavegation: 'User Profile',
     postDetailNavegation: 'Post Detail',
+    gamificationProgressNavegation: 'Gamification Progress',
+    followersNavegation: 'Followers',
+    followingNavegation: 'Following',
+    gamificationActivityNavegation: 'Gamification Activity',
+    languageSelectionNavegation: 'Language Selection',
+    themeSelectionNavegation: 'Theme Selection',
+    metricsNavegation: 'Metrics',
 
     // PopUp
     settingsTitle: 'Settings',
@@ -104,7 +111,7 @@ export default {
     timelineTitle: 'Timeline Screen',
     timelineMessage: 'This is the Timeline Screen',
     timelineSeePostDetail: 'See more',
-    timelineNoMorePosts: 'You reached the end of the timeline. No more posts to show.',
+    timelineNoMorePosts: 'You reached the end. No more posts to show.',
 
     // Timeline Screen (no connection)
     noConnectionTitle: 'Connection Lost!',
@@ -185,4 +192,30 @@ export default {
     multimediaHelperChooseMediaVideo: 'Record Video',
     multimediaHelperChooseMediaCancel: 'Cancel',
     multimediaHelperChooseMediaClose: 'Close',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: "Select Theme",
+    lightTheme: "Light Theme",
+    darkTheme: "Dark Theme",
+    systemTheme: "System Default",
+
+    // userProfileScreen
+    followers: "Followers",
+    following: "Following",
+    posts: "Posts",
+    favorites: "Favorites",
+
+    // GamificationBar
+    level: "Level",
+    postsCompleted: "posts completed",
+
+    // languageSelectionScreen
+    deviceLanguage: "Device Language",
+
+    // MetricsScreen
+    userMetricsTitle: "User Metrics",
+    numberOfFollowers: "Number of Followers",
+    numberOfFollowing: "Number of Following",
+    numberOfComments: "Number of Comments",
+    numberOfLikes: "Number of Likes",
 };

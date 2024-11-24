@@ -8,6 +8,7 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { logoutUser } from 'networking/api/usersApi';
 import { navigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
+import { navigateToLanguageSelection, navigateToThemeSelection, navigateToMetrics } from 'helper/navigationHandlers/ConfigurationNavigationHandlers';
 
 const CoreMenuOptionsList = ({ onClose }) => {
   const { theme } = useTheme();
@@ -18,12 +19,12 @@ const CoreMenuOptionsList = ({ onClose }) => {
     {
       icon: Lamp,
       label: I18n.t(TextKey.settingsOptionTheme),
-      onPress: () => console.log('Theme option selected'),
+      onPress: () => navigateToThemeSelection(navigation),
     },
     {
       icon: Aa,
       label: I18n.t(TextKey.settingsOptionLanguage),
-      onPress: () => console.log('Language option selected'),
+      onPress: () => navigateToLanguageSelection(navigation),
     },
     {
       icon: SettingFill,
@@ -33,7 +34,7 @@ const CoreMenuOptionsList = ({ onClose }) => {
     {
       icon: ChartPin,
       label: I18n.t(TextKey.settingsOptionMetrics),
-      onPress: () => console.log('Metrics selected'),
+      onPress: () => navigateToMetrics(navigation),
     },
     {
       icon: SignInSquare,

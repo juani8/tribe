@@ -44,32 +44,35 @@ const PostComments = ({ postId }) => {
   }, [postId]);
 
   return (
-    <FlatList
-      data={comments}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={({ item }) => (
-        <View style={styles.commentContainer}>
-          <Image source={item.userId.profileImage ? { uri: item.userId.profileImage } : theme.UserCircleLight} style={styles.profileImage} />
-          <View style={styles.commentContent}>
-            <View style={styles.header}>
-              <CustomTextNunito weight="SemiBold" style={styles.nickName}>
-                {item.userId.nickName}
-              </CustomTextNunito>
-              <CustomTextNunito style={styles.commentDate}>
-                {moment(item.createdAt).fromNow()}
-              </CustomTextNunito>
+    <View>
+      <FlatList
+        data={comments}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.commentContainer}>
+            <Image source={item.userId.profileImage ? { uri: item.userId.profileImage } : theme.UserCircleLight} style={styles.profileImage} />
+            <View style={styles.commentContent}>
+              <View style={styles.header}>
+                <CustomTextNunito weight="SemiBold" style={styles.nickName}>
+                  {item.userId.nickName}
+                </CustomTextNunito>
+                <CustomTextNunito style={styles.commentDate}>
+                  {moment(item.createdAt).fromNow()}
+                </CustomTextNunito>
+              </View>
+              <CustomTextNunito style={styles.commentText}>{item.comment}</CustomTextNunito>
             </View>
-            <CustomTextNunito style={styles.commentText}>{item.comment}</CustomTextNunito>
           </View>
-        </View>
-      )}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.8}
-      ListFooterComponent={isLoadingNextPage && (
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      )}
-      contentContainerStyle={styles.contentWrapper}
-    />
+        )}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.8}
+        ListFooterComponent={isLoadingNextPage && (
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        )}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        scrollEnabled={true}
+      />
+    </View>
   );
 };
 
