@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
+import { HOST, NODE_ENV } from 'react-native-dotenv';
 
 const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
 
