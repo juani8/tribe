@@ -40,36 +40,26 @@ Welcome to the Tribe Backend! This project is built with JavaScript, Express, No
 
 ```yaml
 ├── TribeBackend                      # Root folder for the backend application
-│   ├── .env                          # Environment variables file for storing sensitive information (e.g., database URL, JWT secret)
-│   ├── .gitignore                    # Git ignore file to exclude files and directories from version control
 │   ├── controllers/                  # Contains controller files that handle requests and responses
 │   │   ├── authController.js         # Controller for authentication-related operations (e.g., login, registration)
-│   │   ├── postController.js         # Controller for post-related operations (e.g., create post, get timeline)
 │   │   └── userController.js         # Controller for user-related operations (e.g., user profile, updates)
-│   ├── docs/                         # Contains documentation files
-│   │   └── swagger.yaml              # Swagger documentation for the API
 │   ├── middlewares/                  # Contains middleware functions that process requests before reaching the routes
 │   │   └── auth.js                   # Middleware to check user authentication (e.g., verifying JWT tokens)
 │   ├── models/                       # Contains data models that define the structure of the database documents
 │   │   ├── User.js                   # User model representing user data in the database
-│   │   ├── Post.js                   # Post model representing posts made by users in the database
-│   │   ├── Comment.js                # Comment model representing comments made on posts
-│   │   ├── Like.js                   # Like model representing likes on posts
-│   │   └── Bookmark.js               # Bookmark model representing bookmarked posts
+│   │   └── Post.js                   # Post model representing posts made by users in the database
 │   ├── routes/                       # Contains route files that define API endpoints and their corresponding controllers
 │   │   ├── authRoutes.js             # Routes for authentication-related endpoints (e.g., login, register)
-│   │   ├── postRoutes.js             # Routes for post-related endpoints (e.g., create post, get timeline)
 │   │   └── userRoutes.js             # Routes for user-related endpoints (e.g., user profile, updates)
-│   ├── server/                       # Contains server-related configuration and setup files
+│   └── server                        # Contains server-related configuration and setup files
 │   │   ├── app.js                    # Main application file where Express app is initialized and configured
 │   │   ├── db.js                     # Database connection setup (e.g., connecting to MongoDB)
 │   │   └── index.js                  # Entry point of the application that starts the server
-│   ├── utils/                        # Contains utility functions that can be reused across the application
-│   │   ├── adsService.js             # Functionality for fetching ads from external APIs
-│   │   ├── magicLink.js              # Functionality for generating and handling magic links for authentication
-│   │   └── osmGeocoder.js            # Functionality for geocoding using OpenStreetMap
-│   ├── package.json                  # Project configuration file that lists dependencies and scripts for the application
-│   └── README.md
+│   └── utils                         # Contains utility functions that can be reused across the application
+│   │   └── magicLink.js              # Functionality for generating and handling magic links for authentication
+├── ├── .env                          # Environment variables file for storing sensitive information (e.g., database URL, JWT secret)
+├── ├── package.json                  # Project configuration file that lists dependencies and scripts for the application
+└── ├── README.md                     # Documentation file for the project, explaining how to set up and use the application
 ```
 
 ## Connection to Database
@@ -85,7 +75,7 @@ Welcome to the Tribe Backend! This project is built with JavaScript, Express, No
 Locate the `.env` file in the root directory of the project. Ensure it contains the following lines:
 
 ```ruby
-MONGODB_URI=mongodb+srv://<user>:<password>@tribe.efseo.mongodb.net/tribe?retryWrites=true&w=majority&appName=TRIBE
+MONGODB_URI=mongodb://localhost:27017/local_database_name
 JWT_SECRET=long_key
 ```
 
@@ -100,30 +90,31 @@ For the `JWT_SECRET`, this is a secret key used for signing JSON Web Tokens (JWT
 Navigate to the `db.js` file located in the `server` folder of the project. Ensure that it includes the following code:
 
 ```ruby
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config(); // Ensure environment variables are loaded
 const mongoose = require('mongoose');
 
+// Replace with your actual MongoDB URI
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
-  console.error('La URI de MongoDB no está definida en el archivo .env');
+  console.error('MONGODB_URI is not defined in .env file');
   process.exit(1);
 }
 
-async function connection() {
+const connectDB = async () => {
   try {
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     });
-    console.log('Conexión exitosa a MongoDB!');
+    console.log('Connected to MongoDB');
   } catch (error) {
-    console.error('Error al conectar con MongoDB:', error);
-    process.exit(1);
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1); // Exit the process with failure
   }
-}
+};
 
-module.exports = connection;
+module.exports = connectDB;
 ```
 
 #### Step 3: Run the Application

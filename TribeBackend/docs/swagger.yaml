@@ -55,6 +55,55 @@ paths:
           description: Usuario ya registrado.
         "500":
           description: Error interno del servidor.
+  /auths/registrations/tokens:
+    post:
+      summary: Verificar Magic Link para registro
+      tags: 
+        - Registration
+      description: Verifica el Magic Link y redirige al usuario a la vista para completar el registro.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token de Magic Link.
+              required:
+                - token
+      responses:
+        "200":
+          description: Verificación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        "400":
+          description: Token inválido o expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
   # User Login Endpoints #
   /auths/sessions:
     post:
@@ -194,6 +243,58 @@ paths:
                   message:
                     type: string
                     description: Mensaje de éxito.
+        "400":
+          description: Token inválido o expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de error.
+  /auths/sessions/passwords/tokens:
+    post:
+      summary: Verificar Magic Link para restablecimiento de contraseña
+      tags: 
+        - Password
+      description: Verifica el Magic Link y redirige al usuario a la vista de cambio de contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token del Magic Link.
+              required:
+                - token
+      responses:
+        "200":
+          description: Enlace de restablecimiento de contraseña verificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+                  token:
+                    type: string
+                    description: Token de restablecimiento de contraseña.
         "400":
           description: Token inválido o expirado.
           content:

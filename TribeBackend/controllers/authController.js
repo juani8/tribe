@@ -123,18 +123,12 @@ exports.resetPasswordWithToken = async (req, res) => {
  * @returns {Promise<void>} - Responde con un mensaje de éxito si el token es válido.
  */
 exports.validateToken = async (req, res) => {
-    const token = req.body.token;
-  
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password'); // Exclude the password field
-  
-      if (!user) {
-        return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
-      }
-  
-      res.status(200).json({ valid: true, user });
-    } catch (error) {
-      res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
-    }
-  };
+  const token = req.body.token;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
+  }
+};
