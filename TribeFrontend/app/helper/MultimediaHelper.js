@@ -20,7 +20,7 @@ const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'm
             { mediaType, selectionLimit: 5 },
             (response) => {
                 if (response.didCancel) {
-                    console.log('User cancelled camera');
+                    console.log('User cancelled gallery picker');
                 } else if (response.errorCode) {
                     Alert.alert(I18n.t(TextKey.Error), response.errorMessage);
                 } else {
