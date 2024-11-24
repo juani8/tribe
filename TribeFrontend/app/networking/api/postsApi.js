@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
+import { HOST, HOST_LOCAL, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = 'https://tribe-plp5.onrender.com';
+const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
 
 // Crear una nueva publicación
 export const createPost = async (postData) => {

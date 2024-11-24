@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
 
-const BASE_URL = 'https://tribe-plp5.onrender.com';
+const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
 
 // Obtener el perfil del usuario autenticado
 export const getUserProfile = async () => {
