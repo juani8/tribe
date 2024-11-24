@@ -56,10 +56,6 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    gender: {
-        type: String,
-        enum: ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'],
-    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

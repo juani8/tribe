@@ -1,17 +1,5 @@
 const mongoose = require('mongoose');
 
-const MultimediaSchema = new mongoose.Schema({
-    url: {
-        type: String,
-        required: true
-    },
-    type: {
-        type: String,
-        enum: ['image', 'video'],
-        required: true
-    }
-});
-
 const PostSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +10,7 @@ const PostSchema = new mongoose.Schema({
         type: String,
     },
     multimedia: {
-        type: [MultimediaSchema],
+        type: [String],
         required: true
     },
     location: {

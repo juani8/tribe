@@ -35,8 +35,8 @@ exports.getProfile = async (req, res) => {
  */
 exports.updateProfile = async (req, res) => {
     try {
-        const { name, lastName, profileImage, coverImage, description, gender } = req.body;
-        const user = await User.findByIdAndUpdate(req.user.id, { name, lastName, profileImage, coverImage, description, gender }, { new: true });
+        const { name, lastName, profileImage, coverImage, description } = req.body;
+        const user = await User.findByIdAndUpdate(req.user.id, { name, lastName, profileImage, coverImage, description }, { new: true });
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
