@@ -28,7 +28,10 @@ export default function UploadScreen({ navigation }) {
         } else {
             // Create the post with the selected media
             try {
-                const postMedia = selectedMedia.map(media => media.uri);
+                const postMedia = selectedMedia.map(media => ({
+                    url: media.uri,
+                    type: media.type.startsWith('image') ? 'image' : 'video'
+                }));
                 const postComment = (commentText.trim().length > 0) ? commentText : null;
                 const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: undefined, longitude: undefined };
                 
