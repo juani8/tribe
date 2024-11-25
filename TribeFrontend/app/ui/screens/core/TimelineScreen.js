@@ -1,16 +1,16 @@
-  import React, { useState, useEffect, useRef } from 'react';
+  import React, { useState, useEffect, useCallback } from 'react';
   import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
   import PostMainContent from 'ui/components/postComponents/PostMainContent';
   import AdComponent from 'ui/components/postComponents/AdComponent';
   import { useTheme } from 'context/ThemeContext';
-  import { getTimelinePosts, checkServerStatus, getAds } from 'networking/api/postsApi';
+  import { getTimelinePosts, getAds } from 'networking/api/postsApi';
   import NetInfo from '@react-native-community/netinfo';
   import LottieView from 'lottie-react-native';
   import I18n from 'assets/localization/i18n';
   import TextKey from 'assets/localization/TextKey';
   import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-  import { useNavigation, useRoute } from '@react-navigation/native';
-
+  import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+  
   export default function TimelineScreen({ flatListRef }) {
     const [data, setData] = useState([]);
     const [ads, setAds] = useState([]);
@@ -24,19 +24,19 @@
     const [isConnected, setIsConnected] = useState(true);
     const navigation = useNavigation();
     const route = useRoute();
-
+  
     const pageSize = 10;
-
+  
     const checkInternetConnection = async () => {
       const netInfo = await NetInfo.fetch();
       setIsConnected(netInfo.isConnected);
     };
-
+  
     const fetchData = async (nextPage = 1, refreshing = false) => {
       if (!hasMorePosts && !refreshing) return;
-
+  
       const offset = (nextPage - 1) * pageSize;
-
+  
       try {
         const newPosts = await getTimelinePosts(offset, pageSize);
         setData(prevData => (refreshing ? newPosts : [...prevData, ...newPosts]));
@@ -50,7 +50,7 @@
         setIsLoading(false);
       }
     };
-
+  
     const fetchAdsData = async () => {
       try {
         const adsData = await getAds();
@@ -59,40 +59,44 @@
         console.error('Error fetching ads:', error);
       }
     };
-
+  
     const fetchNextPage = () => {
       if (!isLoadingNextPage && hasMorePosts) {
         setIsLoadingNextPage(true);
         fetchData(page + 1);
       }
     };
-
+  
     const onRefresh = () => {
       setRefreshing(true);
       setHasMorePosts(true);
       fetchData(1, true);
     };
-
+  
+    useFocusEffect(
+      useCallback(() => {
+        if (route.params?.refresh) {
+          fetchData(1, true);
+        }
+      }, [route.params?.refresh])
+    );
+  
     useEffect(() => {
       fetchData();
       fetchAdsData();
-      checkServerStatus();
-    }, []);
-
-    useEffect(() => {
       checkInternetConnection();
-    }, [isConnected]);
-
+    }, []);
+  
     useEffect(() => {
       const unsubscribe = NetInfo.addEventListener((state) => {
         setIsConnected(state.isConnected);
       });
-
+  
       return () => {
         unsubscribe();
       };
     }, []);
-
+  
     if (!isConnected) {
       return (
         <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
@@ -112,16 +116,15 @@
                 loop
                 style={{ width: 300, height: 300 }}
               />
-              <CustomTextNunito weight={'Regular'}>{I18n.t(TextKey.noConnectionSecondMessage)}</CustomTextNunito>
             </View>
           </View>
         </View>
       );
     }
-
+  
     const combinedData = [];
     let adIndex = 0;
-
+  
     data.forEach((post, index) => {
       combinedData.push(post);
       if ((index + 1) % 3 === 0 && adIndex < ads.length) {
@@ -129,7 +132,7 @@
         adIndex++;
       }
     });
-
+  
     if (isLoading) {
       return (
         <View style={styles.loader}>
@@ -137,7 +140,7 @@
         </View>
       );
     }
-
+  
     return (
       <View style={styles.container}>
         <FlatList
@@ -168,7 +171,7 @@
       </View>
     );
   }
-
+  
   const createStyles = (theme) => StyleSheet.create({
     container: {
       paddingHorizontal: 20,

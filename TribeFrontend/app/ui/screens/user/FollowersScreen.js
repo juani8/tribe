@@ -24,7 +24,6 @@ const FollowersScreen = () => {
       try {
         const followers = await getFollowers();
         setFollowers(followers);
-        console.log('Followers:', followers);
       } catch (error) {
         console.error('Error fetching followers:', error);
       } finally {

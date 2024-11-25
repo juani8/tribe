@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Image, StyleSheet, Modal, Pressable } from 'react-native';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import { FullAlt } from 'assets/images';
 import { useTheme } from 'context/ThemeContext';
 import { BlurView } from '@react-native-community/blur';
+import Video from 'react-native-video-controls';
 
-export default function FullSizeImage({ isModalVisible, uri, toggleModal }) {
+export default function FullSizeImage({ isModalVisible, uri, type, toggleModal }) {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
@@ -25,13 +27,24 @@ export default function FullSizeImage({ isModalVisible, uri, toggleModal }) {
 
         {/* Modal Content */}
         <View style={styles.modalContainer}>
-          {/* Full-screen image */}
+          {/* Full-screen media */}
           <View style={styles.modalContent}>
-            <Image source={{ uri }} style={styles.fullScreenImage} />
+            {type === 'image' ? (
+              <Image source={{ uri }} style={styles.fullScreenImage} />
+            ) : (
+              <Video
+                source={{ uri }}
+                style={styles.fullScreenVideo}
+                useNativeControls
+                resizeMode="contain"
+                disableFullscreen
+                disableBack
+              />
+            )}
 
             {/* Close Button */}
-            <Pressable onPress={toggleModal} style={styles.closeButton}>
-              <CustomTextNunito style={styles.closeButtonText}>x</CustomTextNunito>
+            <Pressable onPress={toggleModal} style={{ position: 'absolute', top: 14, right: 10 }}>
+              <Image source={FullAlt} style={{ width: 30, height: 30 }} />
             </Pressable>
           </View>
         </View>
@@ -41,14 +54,6 @@ export default function FullSizeImage({ isModalVisible, uri, toggleModal }) {
 }
 
 const createStyles = (theme) => StyleSheet.create({
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -61,6 +66,11 @@ const createStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   fullScreenImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
+  },
+  fullScreenVideo: {
     width: '100%',
     height: '100%',
     borderRadius: 20,

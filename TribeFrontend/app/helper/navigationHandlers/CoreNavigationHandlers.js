@@ -23,6 +23,10 @@ export const navigateToHome = (navigation, flatListRef) => {
   lastTapTime = currentTime;
 };
 
+export const navigateToHomeRefresh = (navigation) => {
+  navigation.navigate('Home', { refresh: true });
+}
+
 export const navigateToSearch = (navigation) => {
   navigation.navigate('Search');
 }
