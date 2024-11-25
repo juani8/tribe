@@ -1,34 +1,64 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, Dimensions, Modal, TouchableOpacity, Text, Pressable } from 'react-native';
+import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Full } from 'assets/images';
 import { useTheme } from 'context/ThemeContext';
-import { BlurView } from '@react-native-community/blur';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
+import Video from 'react-native-video-controls';
 
-const ContentCarouselListItem = ({ uri, index, dataLength, multimedia }) => {
+const ContentCarouselListItem = ({ uri, type, index, dataLength }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control the modal visibility
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const { theme } = useTheme();
-  const styles = createStyles(theme,dataLength);
+  const styles = createStyles(theme, dataLength);
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
+  const handleEnterFullScreen = () => {
+    setIsFullScreen(true);
+    setIsModalVisible(true);
+  };
+
+  const handleExitFullScreen = () => {
+    setIsFullScreen(false);
+    setIsModalVisible(false);
+  };
+
+
   return (
     <>
-      {/* Main Image */}
+      {/* Main Media */}
       <TouchableOpacity onPress={toggleModal}>
-        <Image source={{ uri }} style={[styles.image]} />
+        {type === 'image' && (
+          <Image source={{ uri }} style={[styles.media]} />
+        )}
+        {type === 'video' && (
+          <>
+            <Video
+              source={{ uri }}
+              style={[styles.media]}
+              useNativeControls
+              resizeMode="cover"
+              paused={true}
+              disableBack
+              disableFullscreen
+              disableVolume
+            />
+            <Image source={Full} style={{ position: 'absolute', top: 16, right: 20, width: 24, height: 24 }} />
+          </>
+        )}
       </TouchableOpacity>
 
       {/* Full Screen Modal */}
-      <FullSizeImage isModalVisible={isModalVisible} uri={uri} toggleModal={toggleModal} />
+      <FullSizeImage isModalVisible={isModalVisible} uri={uri} type={type} toggleModal={toggleModal} />
     </>
   );
 };
 
-const createStyles = (theme,dataLength) => StyleSheet.create({
-  image: {
-    width: dataLength == 1 ? Dimensions.get('window').width-40 : 250,
+const createStyles = (theme, dataLength) => StyleSheet.create({
+  media: {
+    width: dataLength === 1 ? Dimensions.get('window').width - 40 : 250,
     marginRight: 8,
     borderRadius: 20,
     height: 300,

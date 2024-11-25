@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    gender: {
+        type: String,
+        enum: ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'],
+    },
     gamificationLevel: {
         type: String,
     },
@@ -56,9 +60,13 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    gender: {
-        type: String,
-        enum: ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'],
+    numberOfPosts: {
+        type: Number,
+        default: 0,
+    },
+    numberOfFavorites: {
+        type: Number,
+        default: 0,
     },
 }, { timestamps: true });
 

@@ -24,7 +24,8 @@ const ContentCarousel = ({ multimedia }) => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item, index}) => (
           <ContentCarouselListItem
-            uri={item}
+            uri={item.url !== undefined ? item.url : item}
+            type={item.type !== undefined ? item.type : 'image'}
             scrollX={scrollX}
             index={index}
             dataLength={multimedia.length}

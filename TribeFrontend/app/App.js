@@ -118,6 +118,7 @@ function MainStack() {
                 const { valid, user } = await checkToken();
                 if (valid) {
                     setInitialRoute('Main');
+                    console.log(user)
                     setUser(user);
                 } else {
                     setInitialRoute('Welcome');

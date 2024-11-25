@@ -57,8 +57,6 @@ async function getCityFromCoordinates(latitude, longitude) {
         },
       });
   
-      console.log('Respuesta OSM:', response.data);
-  
       if (response.data && response.data.address) {
         // Intenta obtener la ciudad primero
         if (response.data.address.city) {

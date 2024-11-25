@@ -41,4 +41,4 @@ async function deletePostsForUser(email) {
 }
 
 // Run the delete function for the specified user email
-deletePostsForUser('');
+deletePostsForUser('juanisosa442@gmail.com');

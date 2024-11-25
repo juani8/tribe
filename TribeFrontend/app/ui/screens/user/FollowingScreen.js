@@ -15,7 +15,6 @@ const FollowingScreen = () => {
     try {
       const following = await getFollowing();
       setFollowing(following);
-      console.log('Following:', following);
     } catch (error) {
       console.error('Error fetching following:', error);
     } finally {

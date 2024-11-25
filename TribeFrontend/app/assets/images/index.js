@@ -10,6 +10,7 @@ export { default as FavoriteFill } from './icons/Favorite_fill.png';
 export { default as Favorite } from './icons/Favorite.png';
 export { default as Fingerprint } from './icons/Fingerprint.png';
 export { default as Full } from './icons/Full.png';
+export { default as FullAlt } from './icons/Full_alt.png';
 export { default as HomeFill } from './icons/Home_fill.png';
 export { default as ImgLoadBoxFill } from './icons/Img_load_box_fill.png';
 export { default as Lamp } from './icons/Lamp.png';
@@ -39,6 +40,7 @@ export { default as HomeSelected } from './icons/Home.png';
 export { default as SearchAltSelected } from './icons/Search_alt.png';
 export { default as Send } from './icons/Send.png';
 export { default as Copy } from './icons/Copy.png';
+export { default as VideoFill } from './icons/Video_fill.png';
 
 //icons night
 export { default as BackNight } from './iconsNight/Back_night.png';

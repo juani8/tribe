@@ -7,7 +7,6 @@ const BASE_URL = 'https://tribe-plp5.onrender.com';
 export const createPost = async (postData) => {
     try {
         const token = await getToken();
-        console.log('createPost', postData);
         const response = await axios.post(`${BASE_URL}/posts`, postData, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -44,7 +43,6 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
                 limit,
             }
         });
-        console.log('getTimelinePosts', response.data);
         return response.data;
     } catch (error) {
         console.error('Error al obtener las publicaciones de la línea de tiempo:', error);
@@ -56,7 +54,6 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
 export const getPostById = async (postId) => {
     try {
         const response = await axios.get(`${BASE_URL}/posts/${postId}`);
-        console.log('getPostById', response.data);
         return response.data;
     } catch (error) {
         console.error(`Error al obtener la publicación con ID ${postId}:`, error);
@@ -89,8 +86,6 @@ export const getCommentsForPost = async (postId, offset = 0, limit = 10) => {
 export const createComment = async (postId, commentData) => {
     try {
         const token = await getToken();
-        console.log('createComment', commentData);
-        console.log('createComment', postId);
         const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, commentData, {
             headers: {
                 'Authorization': `Bearer ${token}`
