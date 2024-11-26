@@ -27,6 +27,11 @@ import PostDetail from 'ui/screens/core/PostDetail';
 import LanguageSelectionScreen from 'ui/screens/configuration/LanguageSelectionScreen';
 import MetricsScreen from 'ui/screens/configuration/MetricsScreen';
 import ThemeSelectionScreen from 'ui/screens/configuration/ThemeSelectionScreen';
+import AccountSettingsScreen from 'ui/screens/configuration/AccountSettingsScreen';
+import ChangePasswordScreen from 'ui/screens/accountSettings/ChangePasswordScreen';
+import DeleteAccountScreen from 'ui/screens/accountSettings/DeleteAccountScreen';
+import EditPersonalDataScreen from 'ui/screens/accountSettings/EditPersonalDataScreen';
+import EnableBiometricsScreen from 'ui/screens/accountSettings/EnableBiometricsScreen';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -159,6 +164,11 @@ function MainStack() {
             <Stack.Screen name="LanguageSelection" component={LanguageSelectionScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.languageSelectionNavegation)} /> }} />
             <Stack.Screen name="ThemeSelection" component={ThemeSelectionScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.themeSelectionNavegation)} /> }} />
             <Stack.Screen name="Metrics" component={MetricsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.metricsNavegation)} /> }} />  
+            <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.accountSettingsNavegation)} /> }} />
+            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.changePasswordNavegation)} /> }} />
+            <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.deleteAccountNavegation)} /> }} />
+            <Stack.Screen name="EditPersonalData" component={EditPersonalDataScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.editPersonalDataNavegation)} /> }} />
+            <Stack.Screen name="EnableBiometrics" component={EnableBiometricsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.enableBiometricsNavegation)} /> }} />
         </Stack.Navigator>
     );
 }

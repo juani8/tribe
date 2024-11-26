@@ -27,13 +27,22 @@ const LoginScreen = ({ navigation }) => {
       const loginData = { email, password };
       const response = await loginUser(loginData);
       setUser(response.user);
-      console.log(response);
-
       // Guarda el token usando Keychain
       await storeToken(response.token);
       
-      Alert.alert('Inicio de sesión exitoso.');
-      navigation.navigate('Main'); 
+      Alert.alert(
+        'Inicio de sesión exitoso.',
+        'Has iniciado sesión correctamente.',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Main'),
+          },
+        ],
+        { cancelable: false }
+      );
+
+
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
 

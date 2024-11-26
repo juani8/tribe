@@ -22,6 +22,11 @@ export default {
     languageSelectionNavegation: 'Language Selection',
     themeSelectionNavegation: 'Theme Selection',
     metricsNavegation: 'Metrics',
+    accountSettingsNavegation: 'Account Settings',
+    changePasswordNavegation: 'Change Password',
+    deleteAccountNavegation: 'Delete Account',
+    editPersonalDataNavegation: 'Edit Personal Data',
+    enableBiometricsNavegation: 'Enable Biometrics',
 
     // PopUp
     settingsTitle: 'Settings',

@@ -20,6 +20,11 @@ const TextKey = {
     languageSelectionNavegation: 'languageSelectionNavegation',
     themeSelectionNavegation: 'themeSelectionNavegation',
     metricsNavegation: 'metricsNavegation',
+    accountSettingsNavegation: 'accountSettingsNavegation',
+    changePasswordNavegation: 'changePasswordNavegation',
+    deleteAccountNavegation: 'deleteAccountNavegation',
+    editPersonalDataNavegation: 'editPersonalDataNavegation',
+    enableBiometricsNavegation: 'enableBiometricsNavegation',
 
     // PopUp
     settingsTitle: 'settingsTitle',

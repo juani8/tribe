@@ -20,6 +20,11 @@ export default {
     languageSelectionNavegation: 'Selección de Idioma',
     themeSelectionNavegation: 'Selección de Tema',
     metricsNavegation: 'Métricas',
+    accountSettingsNavegation: 'Configuración de Cuenta',
+    changePasswordNavegation: 'Cambiar Contraseña',
+    deleteAccountNavegation: 'Eliminar Cuenta',
+    editPersonalDataNavegation: 'Editar Datos Personales',
+    enableBiometricsNavegation: 'Habilitar Biométricos',
 
     // PopUp
     settingsTitle: 'Configuración',

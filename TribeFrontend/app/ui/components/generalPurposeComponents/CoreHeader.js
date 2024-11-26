@@ -8,12 +8,14 @@ import { useNavigation } from '@react-navigation/native';
 import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 import CoreMenuOptionsList from 'ui/components/generalPurposeComponents/CoreMenuOptionsList';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
+import {useUserContext} from 'context/UserContext';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 const CoreHeader = () => {
     const { theme, isDarkMode } = useTheme();
+    const { user } = useUserContext();
     const [isMenuVisible, setMenuVisible] = useState(false);
     const navigation = useNavigation();
 
@@ -35,9 +37,9 @@ const CoreHeader = () => {
                 }}>
                     <View style={styles.itemsLeft}>
                         <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
-                            <Image source={theme.UserCircleLight} style={{ width: 50, height: 50 }} />
+                            <Image source={{ uri: user.profileImage ? user.profileImage : theme.UserCircleLight }} style={{ width: 50, height: 50, borderRadius: 100 }} />
                         </TouchableOpacity>
-                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}</CustomTextNunito>
+                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 8}}>{`${I18n.t(TextKey.headerTitle)}, ${user.nickName}`}</CustomTextNunito>
                     </View>
                     <View style={styles.itemsRight}>
                         <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>

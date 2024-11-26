@@ -8,7 +8,7 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { logoutUser } from 'networking/api/usersApi';
 import { navigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
-import { navigateToLanguageSelection, navigateToThemeSelection, navigateToMetrics } from 'helper/navigationHandlers/ConfigurationNavigationHandlers';
+import { navigateToLanguageSelection, navigateToThemeSelection, navigateToMetrics, navigateToAccountSettings } from 'helper/navigationHandlers/ConfigurationNavigationHandlers';
 
 const CoreMenuOptionsList = ({ onClose }) => {
   const { theme } = useTheme();
@@ -29,7 +29,7 @@ const CoreMenuOptionsList = ({ onClose }) => {
     {
       icon: SettingFill,
       label: I18n.t(TextKey.settingsOptionAccountOptions),
-      onPress: () => console.log('Account options selected'),
+      onPress: () => navigateToAccountSettings(navigation),
     },
     {
       icon: ChartPin,

@@ -13,4 +13,5 @@ export default {
   backgroundSecondary: '#EFEFEF',
   placeholder: '#A9A9A9', 
   ads: '#FEA700',
+  danger: '#CA2626',
 }
