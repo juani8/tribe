@@ -1,5 +1,5 @@
 
-package com.tribefrontend
+package com.tribeapp
 
 import android.app.Application
 import com.facebook.react.PackageList

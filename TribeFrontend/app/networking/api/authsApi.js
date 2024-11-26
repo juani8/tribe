@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { storeToken, getToken } from 'helper/JWTHelper';
 
-// Establezca su URL base aquí
-const BASE_URL = 'https://your-api-url.com';
+const BASE_URL = 'https://tribe-plp5.onrender.com';
 
 // Registro de usuario
 export const registerUser = async (registrationData) => {
@@ -29,11 +29,12 @@ export const verifyRegistrationToken = async (token) => {
 export const loginUser = async (loginData) => {
   try {
     const response = await axios.post(`${BASE_URL}/auths/sessions`, loginData);
+    await storeToken(response.data.token);
     return response.data;
   } catch (error) {
     console.error('Error iniciando sesión de usuario:', error);
     throw error;
-  }
+  } 
 };
 
 // Solicitar restablecimiento de contraseña
@@ -69,24 +70,17 @@ export const verifyPasswordToken = async (token) => {
   }
 };
 
-// Cambiar la contraseña del usuario actual
-export const changeUserPassword = async (passwordData) => {
+// Validar token
+export const checkToken = async () => {
   try {
-    const response = await axios.patch(`${BASE_URL}/users/me/passwords`, passwordData);
-    return response.data;
+      const token = await getToken();
+      if (token) {
+          const response = await axios.post(`${BASE_URL}/auths/validate-token`, { token });
+          return response.data;
+      } else {
+          return false;
+      }
   } catch (error) {
-    console.error('Error cambiando la contraseña del usuario:', error);
-    throw error;
-  }
-};
-
-// Cerrar sesión del usuario actual
-export const logoutUser = async () => {
-  try {
-    const response = await axios.post(`${BASE_URL}/users/me/logout`);
-    return response.data;
-  } catch (error) {
-    console.error('Error cerrando sesión del usuario:', error);
-    throw error;
+      return false;
   }
 };

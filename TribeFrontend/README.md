@@ -15,7 +15,7 @@
 
 1. **Crear la aplicación**:
       ```bash
-      npx react-native init TribeFrontend
+      npx react-native init tribeapp
       ```
 
 ## Ejecución de la aplicación
@@ -45,7 +45,7 @@
 1. **Error [...]A problem occurred configuring project ':react-native-screens'. > [CXX1101] NDK[...]**:
     - Ve a Android Studio > SDK Manager >  Languages & Frameworks > Android SDK > SDK Tools > NDK (Side to Side), seleccionar el ultimo NDK e instalarlo.
     - Copiar el número de versión del NDK recientemente instalado
-    - Ir a TribeFrontend > android > build.gradle y cambiar el valor de la variable buildscript.ext.ndkVersion por la versión recientemente copiada
+    - Ir a tribeapp > android > build.gradle y cambiar el valor de la variable buildscript.ext.ndkVersion por la versión recientemente copiada
 
 2. **Metro bundler no se despliega al ejecutar la app**
     - Abrir una terminal paralela y ejecutar el comando:
@@ -65,7 +65,7 @@
 
 1. Sigue las instrucciones para configurar el entorno de desarrollo en la [documentación oficial de React Native](https://reactnative.dev/docs/set-up-your-environment).
 
-2. Asegurate de tener (o crear) el archivo TribeFrontend > android > local.propierties. El mismo contrendra el path al SDK de Java. Un ejemplo de como podría verse esto es el siguiente:
+2. Asegurate de tener (o crear) el archivo tribeapp > android > local.propierties. El mismo contrendra el path al SDK de Java. Un ejemplo de como podría verse esto es el siguiente:
     ```bash
     sdk.dir=<ingresar_path_local_hasta_AppData>/AppData/Local/Android/Sdk
     ```
@@ -101,34 +101,27 @@ app/
 │
 ├── assets/               # Archivos estáticos como fuentes, imágenes, sonidos, etc.
 │   ├── certificates/     # Certificados digitales o de seguridad, si aplica.
+│   ├── constants/        # Constantes utilizadas en la aplicación.
 │   ├── fonts/            # Fuentes personalizadas utilizadas en la aplicación.
 │   ├── images/           # Imágenes estáticas usadas en la app.
 │   ├── localization/     # Archivos para localización de idiomas.
+│   ├── lottie/           # Animaciones Lottie utilizadas en la aplicación.
 │   └── sound/            # Archivos de sonido usados en la app.
-│
-├── config/               # Configuración global de la aplicación, como claves API, URL base, etc.
 │
 ├── context/              # Contextos que proveeran información requerida globalmente en la aplicación.
 │
 ├── helper/               # Funciones auxiliares o de utilidades que facilitan tareas comunes.
 │   └── navigationHandlers/ # Funciones que gestionan la lógica de redirección o flujo de navegación.
-│
-├── hooks/                # Hooks personalizados para gestionar estado o lógica específica.
-│
-├── models/               # Definición de clases o interfaces para los modelos de datos utilizados.
-│
+│   └── permissionHandlers/ # Archivos de sonido usados en la app.
+│ 
 ├── navigation/           # Configuración del sistema de navegación de la aplicación.
 │
 ├── networking/           # Configuración para la comunicación con servicios externos o API.
-│   ├── api/              # Definición de las conexiones y requests HTTP. Endpoints y lógica para la interacción con servicios web.
-│   └── sockets/          # Configuración y manejo de WebSockets o conexiones en tiempo real.
-│
-├── redux/                # Almacenamiento centralizado y gestión del estado global de la aplicación usando Redux.
+│   └── api/              # Definición de las conexiones y requests HTTP. Endpoints y lógica para la interacción con servicios web.
 │
 ├── ui/                   # Componentes visuales reutilizables de la interfaz de usuario.
 │   ├── components/       # Componentes individuales de la UI como botones, tarjetas, etc.
-│   ├── screens/          # Pantallas completas que componen las diferentes vistas de la aplicación.
-│   └── styles/           # Estilos personalizados reutilizables para los componentes y pantallas.
+│   └── screens/          # Pantallas completas que componen las diferentes vistas de la aplicación.
 │
 └── App.js                # Punto de entrada principal de la aplicación React Native.
 ```
@@ -136,48 +129,88 @@ app/
 ### Descripción de cada directorio
 
 - **assets/**: Contiene todos los recursos estáticos que no cambian durante el ciclo de vida de la aplicación. Incluye fuentes personalizadas, imágenes, sonidos y certificados necesarios para la app.
+   - **certificates/**: Almacena certificados digitales o de seguridad que pueden ser necesarios para la autenticación o encriptación dentro de la aplicación.
+   - **constants/**: Contiene valores constantes que se utilizan en toda la aplicación, como claves de API, URLs de servicios, etc.
+   - **fonts/**: Incluye todas las fuentes personalizadas que se utilizan en la aplicación para mantener una apariencia consistente.
+   - **images/**: Almacena todas las imágenes estáticas que se utilizan en la aplicación, como logotipos, iconos y gráficos.
+   - **localization/**: Contiene archivos de localización que permiten que la aplicación soporte múltiples idiomas y regiones.
+   - **lottie/**: Almacena animaciones Lottie que se utilizan para mejorar la experiencia del usuario con animaciones atractivas.
+   - **sound/**: Incluye archivos de sonido que se utilizan en la aplicación, como efectos de sonido y notificaciones.
 
-   - **fonts/**: Fuentes como Poppins u otras que se utilicen en la aplicación.
+- **context/**: Proporciona contextos que permiten compartir información globalmente en la aplicación sin necesidad de pasar props manualmente a través de cada componente.
 
-   - **images/**: Contiene todas las imágenes estáticas.
+- **helper/**: Contiene funciones auxiliares o utilidades que facilitan tareas comunes y reutilizables en la aplicación.
+   - **navigationHandlers/**: Incluye funciones que gestionan la lógica de redirección o flujo de navegación dentro de la aplicación.
+   - **permissionHandlers/**: Contiene funciones que gestionan los permisos necesarios para la aplicación, como acceso a la cámara o ubicación.
 
-   - **localization/**: Archivos de traducción para manejar diferentes idiomas.
+- **navigation/**: Configura el sistema de navegación de la aplicación, definiendo las rutas y la estructura de navegación entre las diferentes pantallas.
 
-   - **sound/**: Archivos de audio que podrían utilizarse en alertas o notificaciones dentro de la app.
+- **networking/**: Gestiona la comunicación con servicios externos o APIs, incluyendo la configuración de las conexiones y las solicitudes HTTP.
+   - **api/**: Define las conexiones y requests HTTP, incluyendo los endpoints y la lógica para la interacción con servicios web.
 
-- **config/**: Aquí se almacenan las configuraciones globales de la app, como variables de entorno, configuración de claves API, y cualquier ajuste que sea utilizado en diferentes partes de la app.
+- **ui/**: Contiene componentes visuales reutilizables de la interfaz de usuario que se utilizan en toda la aplicación.
+   - **components/**: Incluye componentes individuales de la UI, como botones, tarjetas, y otros elementos reutilizables.
+   - **screens/**: Contiene las pantallas completas que componen las diferentes vistas de la aplicación, cada una representando una sección o funcionalidad específica.
 
-- **context/**: Aquí se almacenan los contextos proveedores de variables y funciones de información requerida globalmente en la aplicación.
+- **App.js**: Es el punto de entrada principal de la aplicación React Native, donde se inicializa la aplicación y se configuran los proveedores globales y la navegación.
 
-- **helper/**: Funciones auxiliares para resolver problemas recurrentes, como formateo de fechas, validación de datos, etc.
+# Generación de APK en modo release
 
-- **hooks/**: Contiene hooks personalizados, que permiten manejar lógica reutilizable, como gestionar formularios, lógica asincrónica, etc.
+## Configura tu proyecto para un build en release
 
-- **models/**: Define los modelos de datos que representan la estructura de la información en la aplicación, ya sea en formato de clases o interfaces.
+1. **Configura el archivo `android/app/build.gradle`**:
+   Asegúrate de que la configuración de signing esté habilitada para el modo release.
 
-- **navigation/**: Aquí se configura el sistema de navegación, como el stack de pantallas, tabs, etc. Además, puede incluir lógica de rutas.
+2. **Configura el archivo `gradle.properties`**:
+   Para mejorar el rendimiento y evitar problemas de memoria durante el proceso de build, agrega estas opciones al archivo `android/gradle.properties`:
+   ```gradle
+   org.gradle.daemon=true
+   org.gradle.parallel=true
+   org.gradle.configureondemand=true
+   org.gradle.jvmargs=-Xmx2048M -Dfile.encoding=UTF-8
+   ```
 
-- **networking/**: Gestión de la comunicación con servidores externos. Incluye la definición de endpoints y el manejo de websockets para conexión en tiempo real.
+3. **Genera una clave de firma para la aplicación**:
+   Abre un terminal y navega a la carpeta del proyecto. Genera una clave de firma ejecutando el siguiente comando (cambiar `my-key` y `my-alias` por nombres personalizados):
+   ```bash
+   keytool -genkey -v -keystore my-key.keystore -alias my-alias -keyalg RSA -keysize 2048 -validity 10000
+   ```
+   Este comando creará un archivo `.keystore`. Guarda este archivo en un lugar seguro y colócalo en la carpeta `android/app`.
 
-   - **api/**: Se encarga de la interacción con servicios web mediante solicitudes HTTP, como obtener datos o realizar autenticaciones.
+4. **Configura la clave de firma en `android/app/build.gradle`**:
+   En `android/app/build.gradle`, busca la sección `signingConfigs` y añade tu clave como sigue:
+   ```gradle
+   android {
+       ...
+       signingConfigs {
+           release {
+               storeFile file("my-key.keystore")  // Cambia el nombre por el de tu archivo de clave
+               storePassword "tu-store-password"    // Cambia por tu contraseña del store
+               keyAlias "my-alias"                  // Cambia por el alias de tu clave
+               keyPassword "tu-key-password"        // Cambia por tu contraseña de clave
+           }
+       }
+       buildTypes {
+           release {
+               signingConfig signingConfigs.release
+               minifyEnabled true // O false si quieres desactivar la minificación en release
+               proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+           }
+       }
+   }
+   ```
 
-   - **sockets/**: Configuración y manejo de la comunicación en tiempo real con WebSockets.
+## Construcción del APK en modo release
 
-- **redux/**: Contiene todo el código relacionado con el almacenamiento centralizado de la aplicación usando Redux. Aquí se definen las acciones, reducers y el estado global.
-
-- **ui/**: Contiene todo lo relacionado con la interfaz de usuario.
-
-   - **components/**: Componentes reutilizables en toda la app, como botones, inputs, cards, etc.
-
-   - **screens/**: Pantallas completas que representan las vistas principales de la aplicación.
-
-   - **styles/**: Estilos reutilizables que pueden ser aplicados a diferentes componentes o pantallas.
-
-- **App.js**: El archivo principal que inicializa la aplicación. Aquí se suele configurar el `NavigationContainer`, los `Providers` de Redux, o cualquier otra configuración inicial necesaria para la app.
-
-
-
-
+Es posible compilar el APK ejecutando el siguiente comando desde la raíz del proyecto:
+```bash
+cd android
+./gradlew assembleRelease
+```
+Este proceso generará el archivo APK en modo release. Una vez terminado, podrás encontrar el APK en:
+```bash
+android/app/build/outputs/apk/release/app-release.apk
+```
 
 
 

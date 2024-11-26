@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, Dimensions, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LottieView from 'lottie-react-native';
 
 import I18n from 'assets/localization/i18n';
@@ -11,8 +11,9 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 
-import { NavigateToLogin, NavigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
-import { NavigateToHome }  from 'helper/navigationHandlers/CoreNavigationHandlers';
+import { navigateToLogin, navigateToSignup }  from 'helper/navigationHandlers/AuthNavigationHandlers';
+import { navigateToHome }  from 'helper/navigationHandlers/CoreNavigationHandlers';
+
 
 const WelcomeScreen = ({ navigation }) => {
   const [sliderState, setSliderState] = useState({ currentPage: 0 });
@@ -161,9 +162,8 @@ const FourthPart = ({ styles, theme, navigation }) => {
         </CustomTextNunito>
       </View>
       <View style={{height: 100, alignItems: 'center', justifyContent: 'center', gap: 12}}>
-        <CustomButton title={I18n.t(TextKey.welcomeGotoSignup)} onPress={() => NavigateToSignup(navigation)}/>
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToLogin(navigation)}>{I18n.t(TextKey.welcomeGotoLogin)}</CustomHighlightedTextNunito>
-        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => NavigateToHome(navigation)}>Home (atajo)</CustomHighlightedTextNunito>
+        <CustomButton title={I18n.t(TextKey.welcomeGotoSignup)} onPress={() => navigateToSignup(navigation)}/>
+        <CustomHighlightedTextNunito style={{ textAlign: 'center' }} onPress={() => navigateToLogin(navigation)}>{I18n.t(TextKey.welcomeGotoLogin)}</CustomHighlightedTextNunito>
       </View>
     </View>
   );

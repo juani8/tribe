@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { storeToken, getToken } from 'helper/JWTHelper';
 
-// Establece tu URL base aquí
-const BASE_URL = 'https://your-api-url.com';
+const BASE_URL = 'https://tribe-plp5.onrender.com';
 
 // Obtener el perfil del usuario autenticado
 export const getUserProfile = async () => {
@@ -61,7 +61,12 @@ export const followUser = async (userId) => {
 // Dejar de seguir a un usuario
 export const unfollowUser = async (userId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`);
+    const token = await getToken();
+    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error(`Error al dejar de seguir al usuario ${userId}:`, error);
@@ -72,7 +77,12 @@ export const unfollowUser = async (userId) => {
 // Obtener la lista de seguidores del usuario autenticado
 export const getFollowers = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/followers`);
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/followers`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener la lista de seguidores:', error);
@@ -83,7 +93,12 @@ export const getFollowers = async () => {
 // Obtener la lista de usuarios seguidos por el usuario autenticado
 export const getFollowing = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/following`);
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/following`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener la lista de seguidos:', error);
@@ -120,6 +135,34 @@ export const removeFavorite = async (favoriteId) => {
     return response.data;
   } catch (error) {
     console.error(`Error al eliminar la publicación ${favoriteId} de favoritos:`, error);
+    throw error;
+  }
+};
+
+// Cambiar la contraseña del usuario actual
+export const changeUserPassword = async (passwordData) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}/users/me/passwords`, passwordData);
+    return response.data;
+  } catch (error) {
+    console.error('Error cambiando la contraseña del usuario:', error);
+    throw error;
+  }
+};
+
+// Cerrar sesión del usuario actual
+export const logoutUser = async () => {
+  try {
+    const token = await getToken();
+    const response = await axios.post(`${BASE_URL}/users/me/logout`, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    await storeToken(response.data.token);
+    return response.status;
+  } catch (error) {
+    console.error('Error cerrando sesión del usuario:', error);
     throw error;
   }
 };

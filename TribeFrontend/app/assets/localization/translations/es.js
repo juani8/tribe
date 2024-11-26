@@ -13,6 +13,17 @@ export default {
     notificationsNavegation: 'Notificaciones',
     userProfileNavegation: 'Perfil de Usuario',
     postDetailNavegation: 'Detalle de Publicación',
+    gamificationProgressNavegation: 'Progreso de Gamificación',
+    followersNavegation: 'Seguidores',
+    followingNavegation: 'Siguiendo',
+    gamificationActivityNavegation: 'Actividad de Gamificación',
+    languageSelectionNavegation: 'Selección de Idioma',
+    themeSelectionNavegation: 'Selección de Tema',
+    metricsNavegation: 'Métricas',
+
+    // PopUp
+    settingsTitle: 'Configuración',
+    commentsViewTitle: 'Comentarios',
 
     // Options
     changeLanguage: 'Cambiar Idioma',
@@ -29,36 +40,83 @@ export default {
     welcomeGotoLogin: 'Iniciar sesión',
 
     // Login Screen
-    loginTitle: 'Pantalla de Inicio de Sesión',
+    loginTitle: 'Inicio de Sesión',
     loginMessage: 'Por favor, ingrese sus credenciales',
     loginButton: 'Iniciar sesión',
     goToSignup: 'Ir a Registrarse',
     goToRecoverPassword: 'Ir a Recuperar Contraseña',
+    emailLabel: 'Correo',
+    passwordLabel: 'Contraseña',
+    emailPlaceholder: 'Ingresa tu correo',
+    passwordPlaceholder: 'Ingresa tu contraseña',
+    completeFields: 'Por favor, completa todos los campos.',
+    passwordsDontMatch: 'Las contraseñas no coinciden.',
+    completeFields: 'Por favor, completa todos los campos.',
+    gmailLogin: 'O',
+    gmailButton: 'Inicia sesion con google',
+    gmailButton: 'Inicia sesion con google',
 
     // Signup Screen
-    signupTitle: 'Pantalla de Registro',
-    signupButton: 'Registrarse',
-    goToLoginButton: 'Ir a Iniciar sesión',
+    signupTitle: 'Crea tu cuenta',
+    nameAccount: 'Nombre de fantasía',
+    enterName: 'Ingresa tu nombre de fantasía',
+    emailAccount: 'Email',
+    enterEmail: 'Ingresa tu email',
+    passwordAccount: 'Contraseña',
+    enterPassword: 'Ingresa tu contraseña',
+    confirmPassword: 'Confirmar contraseña',
+    enterConfirmPassword: 'Confirma tu contraseña',
+    createUserButton: 'Crear usuario',
+    logIn: 'Inicia sesion',
+    completeFields: 'Por favor, completa todos los campos.',
+    passwordsDontMatch: 'Las contraseñas no coinciden.',
 
     // Password recovery Screen
-    passwordRecoveryTitle: 'Pantalla de Recuperación de Contraseña',
-    passwordRecoveryButton: 'Verificar',
+    recoverPasswordTitle: 'Recupera tu contraseña',
+    recoverPasswordDescription: 'Ingresa el correo electrónico con el que te registraste, y te enviaremos un enlace para restablecer tu contraseña.',
+    emailLabel: 'Correo electrónico',
+    emailPlaceholder: 'Ingresa tu correo electrónico',
+    verifyButton: 'Enviar enlace',
+    completeFields: 'Por favor, completa todos los campos.',
+    passwordResetSuccessTitle: 'Solicitud enviada',
+    passwordResetSuccessMessage: 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo.',
+    passwordResetErrorMessage: 'Hubo un error al procesar la solicitud. Inténtalo de nuevo.',
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'Pantalla de Configuración Inicial',
-    initialConfigurationButton: 'Continuar',
+    // Verify Identity Screen
+    verifyIdentityTitle: 'Verifica tu identidad',
+    verifyIdentityInstruction: 'Hemos enviado un correo electrónico para confirmar que realmente eres tú.',
+    verifyIdentityCheckInbox: 'Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.',
+    verifyIdentityCheckSpam: 'Si no visualizas el correo, verifica la carpeta de spam.',
+    
+    // Initial Configuration Screen
+    initialConfigTitle: 'Bienvenido a Tribe',
+    initialConfigSubtitle: 'Comencemos completando tu perfil.',
+    firstNameLabel: 'Nombre',
+    lastNameLabel: 'Apellido',
+    genderLabel: 'Género',
+    continueButton: 'Continuar',
+    selectGender: 'Seleccionar',
+    genderMale: 'Masculino',
+    genderFemale: 'Femenino',
+    genderNonBinary: 'No binario',
+    genderOther: 'Otro',
+    genderPreferNotToSay: 'Prefiero no decir',
+    completeFieldsError: 'Por favor completa todos los campos.',
+    profileUpdated: 'Perfil actualizado',
+    profileUpdateSuccess: 'Tu perfil ha sido completado exitosamente.',
 
     // Timeline Screen
     timelineTitle: 'Pantalla de Línea de Tiempo',
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
     timelineSeePostDetail: 'Ver mas',
+    timelineNoMorePosts: 'Has llegado al fin. No hay más publicaciones para mostrar.',
 
     // Timeline Screen (no conection)
-    noConectionTitle: '¡Conexión perdida!',
-    noConectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
-    noConectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
-    noConectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
-    noConectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
+    noConnectionTitle: '¡Conexión perdida!',
+    noConnectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
+    noConnectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
+    noConnectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
+    noConnectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
 
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',
@@ -67,7 +125,7 @@ export default {
     uploadMoreMessage: 'Añadir mas contenido',
     uploadSelectFromGallery: 'Seleccionar de la galería',
     uploadSelectOpenCamera: 'Abrir cámara',
-    uploadDescription: 'Descripción',
+    uploadDescriptionTitle: 'Descripción',
     uploadDescriptionPlaceholder: 'Ingrese una descripción...',
     uploadAddLocation: 'Agregar ubicación actual',
     uploadConfirmation: 'Confirmar',
@@ -76,17 +134,20 @@ export default {
     searchTitle: 'Pantalla de Búsqueda',
     searchMessage: 'Por favor, ingrese su consulta de búsqueda',
 
-    // Post Detail Screen
+    // Pantalla de Detalle de Publicación
     commentsTitle: 'Comentarios',
     commentsViewMore: 'Ver todos los comentarios',
     commentsWriteCommentPlaceholder: 'Escribe un comentario...',
-    commentsMaxCharactersReached: '¡Límite máximo de caracteres alcanzado!',
+    commentsMaxCharactersReached: '¡Límite máximo alcanzado!',
+    sponsored: 'Patrocinado',
+    copyAdvertisement: 'Copiar enlace del anuncio',
+    redirectAdvertisement: 'Toca la publicación para ir a la página web del anunciante.',
 
     // Button Messages
     loginButton: 'Iniciar sesión',
 
     // Header
-    headerTitle: 'Descubre lo nuevo, ',
+    headerTitle: 'Descubre lo nuevo',
 
     // Settings
     settingsTitle: 'Configuración',
@@ -131,5 +192,31 @@ export default {
     multimediaHelperChooseMediaPhoto: 'Tomar foto',
     multimediaHelperChooseMediaVideo: 'Grabar video',
     multimediaHelperChooseMediaCancel: 'Cancelar',
-    multimediaHelperChooseMediaClose: 'Cerrar'
+    multimediaHelperChooseMediaClose: 'Cerrar',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: "Seleccionar Tema",
+    lightTheme: "Tema Claro",
+    darkTheme: "Tema Oscuro",
+    systemTheme: "Predeterminado del Sistema",
+
+    // userProfileScreen
+    followers: "Seguidores",
+    following: "Siguiendo",
+    posts: "Publicaciones",
+    favorites: "Favoritos",
+
+    // GamificationBar
+    level: "Nivel",
+    postsCompleted: "publicaciones realizadas",
+
+    // languageSelectionScreen
+    deviceLanguage: "Idioma del Dispositivo",
+
+    // MetricsScreen
+    userMetricsTitle: "Métricas del Usuario",
+    numberOfFollowers: "Número de Seguidores",
+    numberOfFollowing: "Número de Seguidos",
+    numberOfComments: "Número de Comentarios",
+    numberOfLikes: "Número de Me Gusta"
 };

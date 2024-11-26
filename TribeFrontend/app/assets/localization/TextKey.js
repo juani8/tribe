@@ -13,6 +13,17 @@ const TextKey = {
     notificationsNavegation: 'notificationsNavegation',
     userProfileNavegation: 'userProfileNavegation',
     postDetailNavegation: 'postDetailNavegation',
+    gamificationProgressNavegation: 'gamificationProgressNavegation',
+    followersNavegation: 'followersNavegation',
+    followingNavegation: 'followingNavegation',
+    gamificationActivityNavegation: 'gamificationActivityNavegation',
+    languageSelectionNavegation: 'languageSelectionNavegation',
+    themeSelectionNavegation: 'themeSelectionNavegation',
+    metricsNavegation: 'metricsNavegation',
+
+    // PopUp
+    settingsTitle: 'settingsTitle',
+    commentsViewTitle: 'commentsViewTitle',
 
     // Options
     changeLanguage: 'changeLanguage',
@@ -57,24 +68,75 @@ const TextKey = {
     loginButton: 'loginButton',
     goToSignup: 'goToSignup',
     goToRecoverPassword: 'goToRecoverPassword',
+    emailLabel: 'emailLabel', 
+    passwordLabel: 'passwordLabel', 
+    emailPlaceholder: 'emailPlaceholder', 
+    passwordPlaceholder: 'passwordPlaceholder',
+    completeFields: 'completeFields',
+    passwordsDontMatch: 'passwordsDontMatch',
+    completeFields: 'completeFields',
+    gmailLogin: 'gmailLogin',
+    gmailButton: 'gmailButton',
+    gmailButton: 'gmailButton',
 
     // Signup Screen
     signupTitle: 'signupTitle',
-    signupButton: 'signupButton',
-    goToLoginButton: 'goToLoginButton',
+    nameAccount: 'nameAccount',
+    enterName: 'enterName',
+    emailAccount: 'emailAccount',
+    enterEmail: 'enterEmail',
+    passwordAccount: 'passwordAccount',
+    enterPassword: 'enterPassword',
+    confirmPassword: 'confirmPassword',
+    enterConfirmPassword: 'enterConfirmPassword',
+    createUserButton: 'createUserButton',
+    logIn: 'logIn',
 
     // Password recovery Screen
-    passwordRecoveryTitle: 'passwordRecoveryTitle',
-    passwordRecoveryButton: 'passwordRecoveryButton',
+    recoverPasswordTitle: 'recoverPasswordTitle',
+    recoverPasswordDescription: 'recoverPasswordDescription',
+    emailLabel: 'emailLabel',
+    emailPlaceholder: 'emailPlaceholder',
+    completeFields: 'completeFields',
+    verifyButton: 'verifyButton',
+    passwordResetSuccessTitle: 'passwordResetSuccessTitle',
+    passwordResetSuccessMessage: 'passwordResetSuccessMessage',
+    passwordResetErrorMessage: 'passwordResetErrorMessage',
+    
+    // Verify Identity Screen
+    verifyIdentityTitle: 'verifyIdentityTitle',
+    verifyIdentityInstruction: 'verifyIdentityInstruction',
+    verifyIdentityCheckInbox: 'verifyIdentityCheckInbox',
+    verifyIdentityCheckSpam: 'verifyIdentityCheckSpam',
+    verifyTokenPlaceholder: 'verifyTokenPlaceholder',
+    verifyTokenButton: 'verifyTokenButton',
+    completeTokenFields: 'completeTokenFields',
+    invalidTokenError: 'invalidTokenError',
+        
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'initialConfigurationTitle',
-    initialConfigurationButton: 'initialConfigurationButton',
+    // Initial Configuration Screen
+    initialConfigTitle: 'initialConfigTitle',
+    initialConfigSubtitle: 'initialConfigSubtitle',
+    firstNameLabel: 'firstNameLabel',
+    lastNameLabel: 'lastNameLabel',
+    genderLabel: 'genderLabel',
+    continueButton: 'continueButton',
+    selectGender: 'selectGender',
+    genderMale: 'genderMale',
+    genderFemale: 'genderFemale',
+    genderNonBinary: 'genderNonBinary',
+    genderOther: 'genderOther',
+    genderPreferNotToSay: 'genderPreferNotToSay',
+    completeFieldsError: 'completeFieldsError',
+    profileUpdated: 'profileUpdated',
+    profileUpdateSuccess: 'profileUpdateSuccess',
+
 
     // Timeline Screen
     timelineTitle: 'timelineTitle',
     timelineMessage: 'timelineMessage',
     timelineSeePostDetail: 'timelineSeePostDetail',
+    timelineNoMorePosts: 'timelineNoMorePosts',
 
     // Timeline Screen (no connection)
     noConnectionTitle: 'noConnectionTitle',
@@ -103,7 +165,10 @@ const TextKey = {
     commentsTitle: 'commentsTitle',
     commentsViewMore: 'commentsViewMore',
     commentsWriteCommentPlaceholder: 'commentsWriteCommentPlaceholder',
-    commentsMaxCharactersReached: 'commentsMaxCharactersReached',
+    commentsMaxCharactersReached: 'commentsMaxCharactersReached', 
+    sponsored: 'sponsored',
+    copyAdvertisement: 'copyAdvertisement',
+    redirectAdvertisement: 'redirectAdvertisement',
 
     // Header
     headerTitle: 'headerTitle',
@@ -151,7 +216,33 @@ const TextKey = {
     multimediaHelperChooseMediaPhoto: 'multimediaHelperChooseMediaPhoto',
     multimediaHelperChooseMediaVideo: 'multimediaHelperChooseMediaVideo',
     multimediaHelperChooseMediaCancel: 'multimediaHelperChooseMediaCancel',
-    multimediaHelperChooseMediaClose: 'multimediaHelperChooseMediaClose'
+    multimediaHelperChooseMediaClose: 'multimediaHelperChooseMediaClose',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: 'themeSelectionTitle',
+    darkTheme: 'darkTheme',
+    lightTheme: 'lightTheme',
+    systemTheme: 'systemTheme',
+
+    // userProfileScreen
+    followers: 'followers',
+    following: 'following',
+    posts: 'posts',
+    favorites: 'favorites',
+
+    // GamificationBar
+    level: "level",
+    postsCompleted: "postsCompleted",
+
+    // languageSelectionScreen
+    deviceLanguage: "deviceLanguage",
+
+    // UserMetricsScreen
+    userMetricsTitle: 'userMetricsTitle',
+    numberOfFollowers: 'numberOfFollowers',
+    numberOfFollowing: 'numberOfFollowing',
+    numberOfComments: 'numberOfComments',
+    numberOfLikes: 'numberOfLikes',
 };
 
 export default TextKey;

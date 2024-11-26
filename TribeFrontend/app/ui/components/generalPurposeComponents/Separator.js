@@ -1,7 +1,9 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
+import { useTheme } from 'context/ThemeContext'
 
-const Separator = ({ theme, color, style }) => {
+const Separator = ({ color, style }) => {
+  const { theme } = useTheme();
 
   const colorApplied = color ? color : theme.colors.primary; 
   const styles = createStyles(colorApplied);

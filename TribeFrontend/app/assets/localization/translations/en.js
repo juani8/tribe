@@ -15,6 +15,17 @@ export default {
     notificationsNavegation: 'Notifications',
     userProfileNavegation: 'User Profile',
     postDetailNavegation: 'Post Detail',
+    gamificationProgressNavegation: 'Gamification Progress',
+    followersNavegation: 'Followers',
+    followingNavegation: 'Following',
+    gamificationActivityNavegation: 'Gamification Activity',
+    languageSelectionNavegation: 'Language Selection',
+    themeSelectionNavegation: 'Theme Selection',
+    metricsNavegation: 'Metrics',
+
+    // PopUp
+    settingsTitle: 'Settings',
+    commentsViewTitle: 'Comments',
 
     // Options
     changeLanguage: 'Change Language',
@@ -36,24 +47,71 @@ export default {
     loginButton: 'Login',
     goToSignup: 'Go to Signup',
     goToRecoverPassword: 'Go to Recover Password',
+    emailLabel: 'Email',
+    passwordLabel: 'Password',
+    emailPlaceholder: 'Enter your email',
+    passwordPlaceholder: 'Enter your password',
+    completeFields: 'Please fill in all fields.',
+    passwordsDontMatch: 'Passwords do not match.',
+    completeFields: 'Please fill in all fields.',
+    gmailLogin: 'Or',
+    gmailButton: 'Sign up with Google',
+    gmailButton: 'Sign up with Google',
 
     // Signup Screen
-    signupTitle: 'Signup Screen',
-    signupButton: 'Signup',
-    goToLoginButton: 'Go to Login',
+    signupTitle: 'Create your account',
+    nameAccount: 'Fantasy Name',
+    enterName: 'Enter your fantasy name',
+    emailAccount: 'Email',
+    enterEmail: 'Enter your email',
+    passwordAccount: 'Password',
+    enterPassword: 'Enter your password',
+    confirmPassword: 'Confirm password',
+    enterConfirmPassword: 'Confirm your password',
+    createUserButton: 'Create account',
+    logIn: 'Sign in',
+    completeFields: 'Please fill in all fields.',
+    passwordsDontMatch: 'Passwords do not match.',
 
     // Password recovery Screen
-    passwordRecoveryTitle: 'Password recovery Screen',
-    passwordRecoveryButton: 'Verify',
+    recoverPasswordTitle: 'Recover Your Password',
+    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a link to reset your password.',
+    emailLabel: 'Email',
+    emailPlaceholder: 'Enter your email',
+    completeFields: 'Please fill in all fields.',
+    verifyButton: 'Send Verification',
+    passwordResetSuccessTitle: 'Request Sent',
+    passwordResetSuccessMessage: 'A verification link has been sent to your email.',
+    passwordResetErrorMessage: 'There was an error processing the request. Please try again.',
 
-    // Initial configuration Screen
-    initialConfigurationTitle: 'Initial configuration Screen',
-    initialConfigurationButton: 'Continue',
+    // Verify Identity Screen
+    verifyIdentityTitle: 'Verify your identity',
+    verifyIdentityInstruction: 'We have sent an email to confirm your identity.',
+    verifyIdentityCheckInbox: 'Please check your inbox and click the link to continue.',
+    verifyIdentityCheckSpam: 'If you don’t see the email, check your spam folder.',
+
+    // Initial Configuration Screen
+    initialConfigTitle: 'Welcome to Tribe',
+    initialConfigSubtitle: 'Let’s start by completing your profile.',
+    firstNameLabel: 'First Name',
+    lastNameLabel: 'Last Name',
+    genderLabel: 'Gender',
+    continueButton: 'Continue',
+    selectGender: 'Select',
+    genderMale: 'Male',
+    genderFemale: 'Female',
+    genderNonBinary: 'Non-binary',
+    genderOther: 'Other',
+    genderPreferNotToSay: 'Prefer not to say',
+    completeFieldsError: 'Please complete all fields.',
+    profileUpdated: 'Profile updated',
+    profileUpdateSuccess: 'Your profile has been successfully completed.',
 
     // Timeline Screen
     timelineTitle: 'Timeline Screen',
     timelineMessage: 'This is the Timeline Screen',
     timelineSeePostDetail: 'See more',
+    timelineNoMorePosts: 'You reached the end. No more posts to show.',
 
     // Timeline Screen (no connection)
     noConnectionTitle: 'Connection Lost!',
@@ -77,15 +135,18 @@ export default {
     // Search Screen
     searchTitle: 'Search Screen',
     searchMessage: 'Please enter your search query',
-    
+
     // Post Detail Screen
     commentsTitle: 'Comments',
-    commentsViewMore: 'See all comments',
+    commentsViewMore: 'View all comments',
     commentsWriteCommentPlaceholder: 'Write a comment...',
-    commentsMaxCharactersReached: 'Max limit reached!',
-
+    commentsMaxCharactersReached: 'Maximum character limit reached!',
+    sponsored: 'Sponsored',
+    copyAdvertisement: 'Copy advertisement\'s link',
+    redirectAdvertisement: 'Tap the post to go to the advertiser\'s website.',
+    
     // Header
-    headerTitle: "Discover what's new, ",
+    headerTitle: "Discover what's new",
 
     // Settings
     settingsTitle: 'Settings',
@@ -131,4 +192,30 @@ export default {
     multimediaHelperChooseMediaVideo: 'Record Video',
     multimediaHelperChooseMediaCancel: 'Cancel',
     multimediaHelperChooseMediaClose: 'Close',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: "Select Theme",
+    lightTheme: "Light Theme",
+    darkTheme: "Dark Theme",
+    systemTheme: "System Default",
+
+    // userProfileScreen
+    followers: "Followers",
+    following: "Following",
+    posts: "Posts",
+    favorites: "Favorites",
+
+    // GamificationBar
+    level: "Level",
+    postsCompleted: "posts completed",
+
+    // languageSelectionScreen
+    deviceLanguage: "Device Language",
+
+    // MetricsScreen
+    userMetricsTitle: "User Metrics",
+    numberOfFollowers: "Number of Followers",
+    numberOfFollowing: "Number of Following",
+    numberOfComments: "Number of Comments",
+    numberOfLikes: "Number of Likes",
 };

@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, Animated, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from './CustomTextNunito';
 
-const CustomButton = ({ title, color, normalizedSize, fullSize, onPress, textWeight, locked }) => {
+const CustomButton = ({ title, color, normalizedSize, fullSize, smallHeight, onPress, textWeight, locked, showLoading }) => {
   const { theme } = useTheme();
-  const [scale] = useState(new Animated.Value(1)); 
+  const [scale] = useState(new Animated.Value(1));
+  const [isLoading, setIsLoading] = useState(false);
 
-  const colorApplied = color ? color : theme.colors.primary; 
+  const colorApplied = color ? color : theme.colors.primary;
 
   // Function to handle the press in (shrink effect)
   const handlePressIn = () => {
-    if (!locked) {
+    if (!locked && (!showLoading || !isLoading)) {
       Animated.spring(scale, {
         toValue: 0.95,
         useNativeDriver: true,
@@ -21,12 +22,28 @@ const CustomButton = ({ title, color, normalizedSize, fullSize, onPress, textWei
 
   // Function to handle the press out (grow back effect)
   const handlePressOut = () => {
-    if (!locked) {
+    if (!locked && (!showLoading || !isLoading)) {
       Animated.spring(scale, {
         toValue: 1,
         friction: 3,
         useNativeDriver: true,
       }).start();
+    }
+  };
+
+  // Function to handle the button press
+  const handlePress = async () => {
+    if (!locked && (!showLoading || !isLoading)) {
+      if (showLoading) {
+        setIsLoading(true);
+      }
+      try {
+        await onPress();
+      } finally {
+        if (showLoading) {
+          setIsLoading(false);
+        }
+      }
     }
   };
 
@@ -36,32 +53,28 @@ const CustomButton = ({ title, color, normalizedSize, fullSize, onPress, textWei
         activeOpacity={0.8}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        onPress={!locked ? onPress : null}
-        style={[
-          styles.button,
-          { 
-            minWidth: normalizedSize ? 250 : fullSize ? '100%' : 'auto', 
-            backgroundColor: locked ? theme.colors.disabled : colorApplied
-          }
-        ]}
-        disabled={locked}
+        onPress={handlePress}
+        style={{
+            paddingVertical: smallHeight ? 4 : 15,
+            paddingHorizontal: 25,
+            borderRadius: 14,
+            justifyContent: 'center',
+            alignItems: 'center',
+            minWidth: normalizedSize ? 250 : fullSize ? '100%' : 'auto',
+            backgroundColor: locked || (showLoading && isLoading) ? theme.colors.disabled : colorApplied,
+          }}
+        disabled={locked || (showLoading && isLoading)}
       >
-        <CustomTextNunito weight={textWeight ? textWeight : 'SemiBold'} style={{ color: theme.colors.buttonText }}>
-          {title}
-        </CustomTextNunito>
+        {showLoading && isLoading ? (
+          <ActivityIndicator size="small" color={theme.colors.buttonText} />
+        ) : (
+          <CustomTextNunito weight={textWeight ? textWeight : 'SemiBold'} style={{ color: theme.colors.buttonText }}>
+            {title}
+          </CustomTextNunito>
+        )}
       </TouchableOpacity>
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default CustomButton;

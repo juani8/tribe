@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.tribefrontend">
+    package="com.tribeapp">
 
     <!-- Internet permission -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -52,7 +52,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="tribeapp"/>
+                <data android:scheme="tribeapp" android:host="register"/>
             </intent-filter>
         </activity>
     </application>

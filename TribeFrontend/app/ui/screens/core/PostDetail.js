@@ -1,23 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
 import { useTheme } from 'context/ThemeContext';
-import { Favorite, FavoriteFill, Bookmark, BookmarkFill, Chat, PinAltFill, Send } from 'assets/images';
+import { Send } from 'assets/images';
 import Separator from 'ui/components/generalPurposeComponents/Separator';
-import GetPostById from 'helper/PostHelper';
+import {GetPostById} from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
 import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
+import { createComment } from 'networking/api/postsApi';
+import PostMainContent from 'ui/components/postComponents/PostMainContent';
+import { usePostContext } from 'context/PostContext';
+import PostComments from 'ui/components/postComponents/PostComments';
+import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 
 const PostDetail = ({ route }) => {
-  const { postId } = route.params;
+  const { post } = route.params;
   const [commentText, setCommentText] = useState('');
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const [isCommentViewVisible, setCommentViewVisible] = useState(false);
+  const [isCreatingComment, setIsCreatingComment] = useState(false);
+  const { totalComments, lastComments, handleAddComment } = usePostContext();
+
+  const postTotalComments = totalComments.get(post._id) ?? post.totalComments;
+  const postLastComment = lastComments.get(post._id) ?? post.lastComment;
+
+  // Handlers for menu visibility
+  const openCommentView = () => setCommentViewVisible(true);
+  const closeCommentView = () => setCommentViewVisible(false);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
@@ -33,93 +48,91 @@ const PostDetail = ({ route }) => {
     };
   }, []);
 
-  const post = GetPostById(postId);
+
+  const handleCreateComment = async () => {
+    if (commentText.trim().length > 0) {
+      setIsCreatingComment(true);
+      try {
+        const commentData = { content: commentText };
+        const postDTO = { _id: post._id, totalComments: post.totalComments };
+        await handleAddComment(postDTO, commentData);
+        // Reset the comment text
+        setCommentText('');
+      } catch (error) {
+        console.error('Error creating comment:', error);
+        Alert.alert('There was an error creating your comment.', 'Please try again.');
+      } finally {
+        setIsCreatingComment(false);
+      }
+    } else {
+      Alert.alert('Please enter a comment before submitting.');
+    }
+  };
 
   return (
+    <>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Post content and other elements */}
-        <View style={styles.postHeader}>
-          <Image 
-            source={{ uri: post.userProfilePicture }}
-            style={{ width: 65, height: 65, borderRadius: 100 }}
-            resizeMode="stretch"
-          />
-          <View style={styles.header}>
-            <CustomTextNunito style={styles.username}>{post.userId}</CustomTextNunito>
-            <CustomTextNunito style={styles.timeAgo}>
-              {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-            </CustomTextNunito>
-          </View>
-        </View>
-
-        <CustomTextNunito style={styles.description}>{post.description}</CustomTextNunito>
-        <ContentCarousel multimedia={post.multimedia} />
-
-        <View style={styles.metadata}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}> 
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={post.isLiked ? FavoriteFill : Favorite} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.likes}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
-              <Image source={Chat} style={{ width: 24, height: 24 }} />
-              <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.numberOfComments}</CustomTextNunito>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 6 }}>
-              <Image source={post.isBookmarked ? BookmarkFill : Bookmark} style={{ width: 24, height: 24 }} />
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
-            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>Quilmes</CustomTextNunito>
-          </View>
-        </View>
+        <PostMainContent post={post} viewMore={false} />
 
         <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
         
-        {/* Comment section */}
-        <View>
-          {post.lastComment && (
+          {/* Comment section */}
+          <View>
             <View style={styles.commentSection}>
-              <View style={{marginBottom:10}}>
-                <CustomTextNunito weight={'SemiBold'} style={{fontSize: 18, marginBottom:10}}>
-                  {I18n.t(TextKey.commentsTitle)} ({post.numberOfComments})
+              <View style={{ marginBottom: 10 }}>
+                <CustomTextNunito weight={'SemiBold'} style={{ fontSize: 18, marginBottom: 10 }}>
+                  {I18n.t(TextKey.commentsTitle)} ({postTotalComments})
                 </CustomTextNunito>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View style={{width: '92%'}}>
+                  <View style={{ width: '92%' }}>
                     <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
                   </View>
-                  <View>
-                    <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
-                  </View>
+                  <TouchableOpacity onPress={handleCreateComment}>
+                    {isCreatingComment ? (
+                      <ActivityIndicator size="small" color={theme.colors.primary} style={{ alignSelf: 'center', marginTop: -15, marginLeft: 5  }} />
+                    ) : (
+                      <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
+                    )}
+                  </TouchableOpacity>
                 </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-                    <Image source={{uri: post.lastComment.userProfilePicture}} style={{ width: 24, height: 24, borderRadius: 100 }} />
-                    <CustomTextNunito weight='Bold' style={{marginLeft:8}}>{post.lastComment.userId}</CustomTextNunito>
-                  </View>
-                  <CustomTextNunito style={styles.timeAgo}>
-                    {formatDistanceToNow(new Date(post.createdAt * 1000))} ago
-                  </CustomTextNunito>
-                </View>
-                <CustomTextNunito style={{marginLeft:30}}>{post.lastComment.comment}</CustomTextNunito>
-              </View>
-              <View>
-                <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
+                {postTotalComments > 0 && postLastComment && (
+                  <>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Image source={postLastComment?.userId?.profileImage ? { uri: postLastComment.userId.profileImage } : theme.UserCircleLight}
+                          style={{ width: 24, height: 24, borderRadius: 100 }} />
+                        <CustomTextNunito weight='Bold' style={{ marginLeft: 8 }}>{postLastComment.userId?.nickName ? postLastComment.userId.nickName : 'unknown'}</CustomTextNunito>
+                      </View>
+                      <CustomTextNunito style={styles.timeAgo}>
+                        {formatDistanceToNow(new Date(postLastComment?.createdAt))} ago 
+                      </CustomTextNunito>
+                    </View>
+                    <CustomTextNunito style={{ marginLeft: 30 }}>{postLastComment.comment}</CustomTextNunito>
+                    <TouchableOpacity style={{ marginTop: 6 }} onPress={openCommentView}>
+                      <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
+                    </TouchableOpacity>
+                  </>
+                )}
               </View>
             </View>
-          )}
-        </View>
-      </ScrollView>
-    </TouchableWithoutFeedback>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+      <PopupMenu
+        visible={isCommentViewVisible}
+        onClose={closeCommentView}
+        title={I18n.t(TextKey.commentsViewTitle)}
+      >
+        <PostComments onClose={closeCommentView} postId={post._id} />
+      </PopupMenu>
+    </>
   );
 };
 
 const createStyles = (theme) => StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingTop: 20,
     paddingVertical: 4,
     borderRadius: 8,
     marginBottom: 16,

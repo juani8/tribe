@@ -1,5 +1,5 @@
 {
-  "name": "TribeFrontend",
+  "name": "tribeapp",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,9 +10,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.0",
     "@react-native-community/blur": "^4.4.1",
     "@react-native-community/checkbox": "^0.5.17",
+    "@react-native-community/geolocation": "^3.4.0",
     "@react-native-community/netinfo": "^11.4.1",
+    "@react-native-picker/picker": "^2.9.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
@@ -22,19 +25,26 @@
     "lottie-react-native": "^7.0.0",
     "memoize-one": "^6.0.0",
     "missing-asset-registry-path": "^0.0.0",
+    "moment": "^2.30.1",
+    "node-localstorage": "^3.0.5",
     "react": "18.3.1",
     "react-native": "^0.75.3",
+    "react-native-dropdown-picker": "^5.4.6",
+    "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.20.0",
     "react-native-image-crop-picker": "^0.41.4",
     "react-native-image-picker": "^7.1.2",
-    "react-native-localize": "^3.2.1",
+    "react-native-keychain": "^9.1.0",
+    "react-native-localize": "^3.3.0",
     "react-native-navigation-bar-color": "^2.0.2",
+    "react-native-paper": "^5.12.5",
     "react-native-reanimated": "^3.15.5",
     "react-native-safe-area-context": "^4.11.0",
     "react-native-screens": "^3.34.0",
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg-transformer": "^1.5.0",
-    "react-native-video": "^6.6.4"
+    "react-native-video": "^6.6.4",
+    "react-native-video-controls": "^2.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

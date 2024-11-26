@@ -3,50 +3,70 @@ const bcrypt = require('bcrypt');
 const Post = require('../models/Post');
 const jwt = require('jsonwebtoken');
 
-// Get profile
+/**
+ * Obtiene el perfil del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con el perfil del usuario si se encuentra, o un mensaje de error.
+ */
 exports.getProfile = async (req, res) => {
     try {
         // Check if req.user is populated
         if (!req.user) {
-            return res.status(401).json({ message: 'User not authenticated.' });
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
         }
 
         const user = await User.findById(req.user.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Update profile
+/**
+ * Actualiza el perfil del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con el perfil actualizado del usuario.
+ */
 exports.updateProfile = async (req, res) => {
     try {
-        const { name, lastName, profileImage, coverImage, description } = req.body;
-        const user = await User.findByIdAndUpdate(req.user.id, { name, lastName, profileImage, coverImage, description }, { new: true });
+        const { name, lastName, profileImage, coverImage, description, gender } = req.body;
+        const user = await User.findByIdAndUpdate(req.user.id, { name, lastName, profileImage, coverImage, description, gender }, { new: true });
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Delete authenticated user
+/**
+ * Elimina el perfil del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un código de estado 204 si el perfil se elimina correctamente.
+ */
 exports.deleteProfile = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.user.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
         res.status(204).send(); // No content
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Get users with search, pagination
+/**
+ * Obtiene una lista de usuarios con búsqueda y paginación.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de búsqueda y paginación.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con la lista de usuarios encontrados.
+ */
 exports.getUsers = async (req, res) => {
     const { input = '', offset = 0, limit = 10 } = req.query;
 
@@ -62,23 +82,25 @@ exports.getUsers = async (req, res) => {
             .limit(parseInt(limit));
 
         if (!users.length) {
-            return res.status(404).json({ message: 'No users found.' });
+            return res.status(404).json({ message: 'No se encontraron usuarios.' });
         }
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Follow a user
+/**
+ * Sigue a un usuario.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del usuario a seguir.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con el ID del usuario seguido.
+ */
 exports.followUser = async (req, res) => {
-    console.log('Requesting to follow user ID:', req.params.userId);
-    console.log('Authenticated user:', req.user);
     try {
         const userToFollow = await User.findById(req.params.userId);
         if (!userToFollow) {
-            console.log('User not found in database');
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         // Add user to following list
@@ -95,16 +117,21 @@ exports.followUser = async (req, res) => {
 
         res.status(200).json({ followedUserId: userToFollow._id });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Unfollow a user
+/**
+ * Deja de seguir a un usuario.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del usuario a dejar de seguir.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un código de estado 204 si se deja de seguir al usuario correctamente.
+ */
 exports.unfollowUser = async (req, res) => {
     try {
         const userToUnfollow = await User.findById(req.params.userId);
         if (!userToUnfollow) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         // Remove user from following list
@@ -117,11 +144,16 @@ exports.unfollowUser = async (req, res) => {
 
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Get followers list
+/**
+ * Obtiene la lista de seguidores del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con la lista de seguidores.
+ */
 exports.getFollowers = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate('followers', 'name lastName nickName profileImage');
@@ -131,72 +163,46 @@ exports.getFollowers = async (req, res) => {
     }
 };
 
-// Get following list
+/**
+ * Obtiene la lista de usuarios seguidos por el usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con la lista de usuarios seguidos.
+ */
 exports.getFollowing = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate('following', 'name lastName nickName profileImage');
         res.status(200).json(user.following);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
-// Get favorite posts
-exports.getFavorites = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).populate('favorites', 'description multimedia location likes');
-        res.status(200).json(user.favorites);
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
-
-// Save post to favorites
-exports.saveFavorite = async (req, res) => {
-    try {
-        const post = await Post.findById(req.params.favoriteId);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found.' });
-        }
-
-        if (!req.user.favorites.includes(post._id)) {
-            req.user.favorites.push(post._id);
-            await req.user.save();
-        }
-
-        res.status(200).json({ message: 'Post added to favorites.' });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
-
-// Remove post from favorites
-exports.removeFavorite = async (req, res) => {
-    try {
-        req.user.favorites = req.user.favorites.filter(id => id.toString() !== req.params.favoriteId);
-        await req.user.save();
-
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
-
-// Change password for authenticated user
+/**
+ * Cambia la contraseña del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP que contiene la contraseña actual y la nueva contraseña.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un mensaje de éxito si la contraseña se cambia correctamente.
+ */
 exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: 'User not found.' });
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) return res.status(403).json({ message: 'Incorrect current password.' });
+    if (!isMatch) return res.status(403).json({ message: 'Contraseña actual incorrecta.' });
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
-    res.status(200).json({ message: 'Password changed successfully.' });
+    res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
 };
 
-// Logout
+/**
+ * Cierra la sesión del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con un token JWT con una validez mínima.
+ */
 exports.logout = async (req, res) => {
     try {
         // Generar un token con una validez mínima (por ejemplo, 1 segundo)
@@ -214,4 +220,3 @@ exports.logout = async (req, res) => {
         res.status(500).json({ error: 'Hubo un error al procesar el logout' });
     }
 };
-
