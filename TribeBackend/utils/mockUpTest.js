@@ -59,8 +59,8 @@ async function getRandomPixabayUrl(type) {
 
   if (type === 'video') {
     params.video_type = 'film'; 
-    params.max_width = 1280;
-    params.max_height = 720;
+    params.max_width = 256;
+    params.max_height = 144;
   }
 
   try {
