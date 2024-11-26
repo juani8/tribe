@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const Bookmark = require('../models/Bookmark');
 const { getMonthlyAds } = require('../utils/adsService');
+const User = require('../models/User'); // Añadir esta línea
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -15,52 +16,12 @@ const { getMonthlyAds } = require('../utils/adsService');
  */
 exports.getTimeline = async (req, res) => {
     const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
-    const userId = req.user.id; 
-
-    try {
-        const posts = await Post.find()
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .populate('userId', 'nickName profileImage')
-            .populate({
-                path: 'lastComment',
-                populate: {
-                    path: 'userId',
-                    select: 'nickName profileImage'
-                }
-            })
-            .lean();
-
-        const postSummary = await Promise.all(posts.map(async post => {
-            const isLiked = await Like.exists({ userId, postId: post._id });
-            const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
- 
-            return {
-              ...post,
-              isLiked: !!isLiked,
-              isBookmarked: !!isBookmarked
-          };
-        }));
-
-        res.status(200).json(postSummary);
-    } catch (error) {
-        console.error("Error en getTimeline:", error);
-        res.status(500).json({ message: 'Error interno del servidor. Por favor, inténtalo de nuevo más tarde.' });
-    }
-};
-/**
- * 
-exports.getTimeline = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
     const userId = req.user.id;
 
     try {
-        // Obtén la lista de usuarios que el usuario autenticado sigue
         const user = await User.findById(userId).populate('following', '_id');
         const followingIds = user.following.map(followingUser => followingUser._id);
 
-        // Filtra los posts para incluir solo aquellos cuyo userId esté en la lista de usuarios seguidos
         const posts = await Post.find({ userId: { $in: followingIds } })
             .skip(parseInt(offset))
             .limit(parseInt(limit))
@@ -92,7 +53,6 @@ exports.getTimeline = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor. Por favor, inténtalo de nuevo más tarde.' });
     }
 };
- */
 
 /**
  * Obtiene los anuncios desde la API externa y los devuelve en la respuesta.
