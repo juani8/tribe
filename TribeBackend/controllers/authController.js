@@ -12,8 +12,6 @@ const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
 exports.register = async (req, res) => {
     try {
         const { nickName, email, password } = req.body;
-        const userExists = await User.findOne({ email });
-        if (userExists) return res.status(409).json({ message: 'Usuario ya registrado.' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ nickName, email, password: hashedPassword });
@@ -23,6 +21,11 @@ exports.register = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token, message: 'Registro exitoso.' });
     } catch (error) {
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue)[0];
+            const message = field === 'email' ? 'Correo electrónico ya registrado.' : 'Nombre de usuario ya registrado.';
+            return res.status(409).json({ message });
+        }
         console.error('Error en el registro:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
@@ -123,18 +126,12 @@ exports.resetPasswordWithToken = async (req, res) => {
  * @returns {Promise<void>} - Responde con un mensaje de éxito si el token es válido.
  */
 exports.validateToken = async (req, res) => {
-    const token = req.body.token;
-  
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password');
-  
-      if (!user) {
-        return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
-      }
-  
-      res.status(200).json({ valid: true, user });
-    } catch (error) {
-      res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
-    }
+  const token = req.body.token;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
+  }
 };
