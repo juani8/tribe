@@ -22,9 +22,20 @@ export const createPost = async (postData) => {
 };
 
 // Obtener todas las publicaciones del usuario actual
-export const getUserPosts = async () => {
+export const getUserPosts = async (offset = 0, limit = 10, sort = 'createdAt', order = 'desc') => {
     try {
-        const response = await axios.get(`${BASE_URL}/users/me/posts`);
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/posts/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
+                sort,
+                order
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error al obtener las publicaciones del usuario:', error);
