@@ -9,12 +9,6 @@ const Bookmark = require('../models/Bookmark');
 const { getCityFromCoordinates } = require('./osmGeocoder');
 const { faker } = require('@faker-js/faker');
 
-// Verificar la disponibilidad de la variable de entorno
-if (!process.env.MONGODB_URI) {
-  console.error('Error: La variable MONGODB_URI no está definida en el archivo .env');
-  process.exit(1);
-}
-
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -334,10 +328,14 @@ async function establishBookmarkRelationships(user, posts) {
 // Function to connect to MongoDB
 async function connectToDatabase() {
   try {
-    console.log('MONGODB_URI:', process.env.MONGODB_URI);
-    await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 900000, // 30 seconds
-      socketTimeoutMS: 900000, // 30 seconds
+    const uri = process.env.NODE_ENV === 'Production' 
+      ? process.env.MONGODB_URI 
+      : process.env.MONGODB_URI_LOCAL;
+
+    console.log('MONGODB_URI:', uri);
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 900000, // 15 minutes
+      socketTimeoutMS: 900000, // 15 minutes
     });
     console.log('Conectado a MongoDB');
   } catch (error) {

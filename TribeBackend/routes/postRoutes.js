@@ -5,6 +5,7 @@ const postController = require('../controllers/postController');
 router.get('/timeline', postController.getTimeline);
 router.get('/ads', postController.fetchAds);
 router.post('/', postController.createPost);
+router.get('/me', postController.getUserPosts);
 router.get('/:postId', postController.getPostById);
 router.get('/:postId/comments', postController.getCommentsByPostId);
 router.post('/:postId/comments', postController.createComment);
