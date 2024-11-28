@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const Like = require('../models/Like');
+const Bookmark = require('../models/Bookmark');
 const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
-const Bookmark = require('../models/Bookmark');
 const { getMonthlyAds } = require('../utils/adsService');
-const User = require('../models/User'); // Añadir esta línea
+const User = require('../models/User');
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -398,5 +398,38 @@ exports.unbookmarkPost = async (req, res) => {
     } catch (error) {
         console.error("Error en unbookmarkPost:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
+};
+
+/**
+ * Obtiene los bookmarks del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con los bookmarks del usuario autenticado.
+ */
+exports.getUserBookmarks = async (req, res) => {
+    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
+    const userId = req.user.id;
+
+    try {
+        const bookmarks = await Bookmark.find({ userId })
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .populate({
+                path: 'postId',
+                populate: {
+                    path: 'userId',
+                    select: 'nickName profileImage'
+                }
+            })
+            .lean();
+
+        const posts = bookmarks.map(bookmark => bookmark.postId);
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error en getUserBookmarks:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };

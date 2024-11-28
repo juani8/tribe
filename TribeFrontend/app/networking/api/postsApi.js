@@ -191,6 +191,28 @@ export const unbookmarkPost = async (postId) => {
     }
 };
 
+// Obtener publicaciones favoritas del usuario actual
+export const getUserBookmarks = async (offset = 0, limit = 10, sort = 'createdAt', order = 'desc') => {
+    try {
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/posts/me/bookmarks`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
+                sort,
+                order
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener las publicaciones favoritas del usuario:', error);
+        throw error;
+    }
+};
+
 export const checkServerStatus = async () => {
     try {
       const response = await axios.get(BASE_URL);
@@ -202,7 +224,6 @@ export const checkServerStatus = async () => {
     }
 }; 
 
-// Agregado por mrosariopresedo para la integración de los anuncios.
 export const getAds = async () => {
     try {
         const token = await getToken();
