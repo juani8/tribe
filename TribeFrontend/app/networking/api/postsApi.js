@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
+import { HOST, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = 'https://tribe-plp5.onrender.com';
+const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
 
 // Crear una nueva publicación
 export const createPost = async (postData) => {
@@ -21,9 +22,20 @@ export const createPost = async (postData) => {
 };
 
 // Obtener todas las publicaciones del usuario actual
-export const getUserPosts = async () => {
+export const getUserPosts = async (offset = 0, limit = 10, sort = 'createdAt', order = 'desc') => {
     try {
-        const response = await axios.get(`${BASE_URL}/users/me/posts`);
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/posts/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
+                sort,
+                order
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error al obtener las publicaciones del usuario:', error);
@@ -175,6 +187,28 @@ export const unbookmarkPost = async (postId) => {
         return response.data;
     } catch (error) {
         console.error(`Error al quitar la publicación con ID ${postId} de las favoritas:`, error);
+        throw error;
+    }
+};
+
+// Obtener publicaciones favoritas del usuario actual
+export const getUserBookmarks = async (offset = 0, limit = 10, sort = 'createdAt', order = 'desc') => {
+    try {
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/posts/me/bookmarks`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
+                sort,
+                order
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener las publicaciones favoritas del usuario:', error);
         throw error;
     }
 };
