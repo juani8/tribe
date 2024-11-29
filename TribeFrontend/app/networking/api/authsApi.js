@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
+import { HOST, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = 'https://tribe-plp5.onrender.com';
+const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
 
 // Registro de usuario
 export const registerUser = async (registrationData) => {
@@ -76,7 +77,7 @@ export const checkToken = async () => {
       const token = await getToken();
       if (token) {
           const response = await axios.post(`${BASE_URL}/auths/validate-token`, { token });
-          return response.data;
+          return response.data.valid;
       } else {
           return false;
       }
