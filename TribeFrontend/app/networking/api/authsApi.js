@@ -74,6 +74,7 @@ export const verifyPasswordToken = async (token) => {
 export const checkToken = async () => {
   try {
       const token = await getToken();
+      console.log(token);
       if (token) {
           const response = await axios.post(`${BASE_URL}/auths/validate-token`, { token });
           return response.data;

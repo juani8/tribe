@@ -123,22 +123,11 @@ function MainStack() {
         const checkSession = async () => {
             try {
                 const { valid, user } = await checkToken();
-                if (false) {
+                if (valid) {
                     setInitialRoute('Main');
                     setUser(user);
                 } else {
-                    const { valid, user } = await checkRefreshToken();
-                    console.log('valid', valid);
-                    if (valid) {
-                        try {
-                            setInitialRoute('Login');
-                            setUser(user);
-                            setShowBioPrompt(true);
-                        } catch (error) {
-                            console.error('Error checking refresh token:', error);
-                            setInitialRoute('Welcome');
-                        }
-                    }
+                    setInitialRoute('Welcome');
                 }
             } catch (error) {
                 console.error('Error checking session:', error);
