@@ -10,19 +10,34 @@ const jwt = require('jsonwebtoken');
  * @returns {Promise<void>} - Responde con el perfil del usuario si se encuentra, o un mensaje de error.
  */
 exports.getProfile = async (req, res) => {
+    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
+
     try {
-        // Check if req.user is populated
         if (!req.user) {
             return res.status(401).json({ message: 'Usuario no autenticado.' });
         }
 
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id)
+            .select('name lastName nickName email gender profileImage coverImage description gamificationLevel following followers')
+            .populate('following', 'name lastName nickName profileImage')
+            .populate('followers', 'name lastName nickName profileImage');
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
+        const posts = await Post.find({ userId: req.user.id })
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .select('description multimedia location likes totalComments createdAt');
 
-        res.status(200).json(user);
+        const response = {
+            ...user.toObject(),
+            posts,
+        };
+
+        res.status(200).json(response);
     } catch (error) {
+        console.error('Error en getProfile:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
@@ -36,9 +51,27 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const { name, lastName, profileImage, coverImage, description, gender } = req.body;
-        const user = await User.findByIdAndUpdate(req.user.id, { name, lastName, profileImage, coverImage, description, gender }, { new: true });
-        res.status(200).json(user);
+
+        // Validar los campos obligatorios para la finalización del perfil inicial
+        if (!req.user.name || !req.user.lastName || !req.user.gender) {
+            // Verificar si es la primera vez que se completa el perfil
+            if (!name || !lastName || !gender) {
+                return res.status(400).json({
+                    message: 'Por favor, complete los campos obligatorios: nombre, apellido y género.',
+                });
+            }
+        }
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.id,
+            { name, lastName, profileImage, coverImage, description, gender },
+            { new: true }
+        );
+        res.status(200).json({
+                message: 'Perfil actualizado con éxito.',
+                user: updatedUser,
+        });
     } catch (error) {
+        console.error('Error al actualizar el perfil:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
