@@ -75,51 +75,38 @@ exports.fetchAds = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-exports.createPost = [
-    check('multimedia').notEmpty().withMessage('El contenido multimedia es obligatorio.'),
-    check('description').optional(),
-    check('latitude').optional(),
-    check('longitude').optional(),
+exports.createPost = async (req, res) => {
+    const { description, multimedia, latitude, longitude } = req.body;
+    const userId = req.user.id;
 
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.', errors: errors.array() });
+    try {
+        let city;
+        if (latitude !== undefined && longitude !== undefined) {
+            city = await getCityFromCoordinates(latitude, longitude);
         }
 
-        const { description, multimedia, latitude, longitude } = req.body;
-
-        try {
-            let city;
-            if (latitude !== undefined && longitude !== undefined) {
-                city = await getCityFromCoordinates(latitude, longitude);
+        const newPost = new Post({
+            userId,
+            description,
+            multimedia,
+            location: {
+                latitude, 
+                longitude, 
+                city
             }
+        });
 
-            const newPost = new Post({
-                userId: req.user.id,
-                description,
-                multimedia,
-                location: {
-                    latitude, 
-                    longitude, 
-                    city
-                }
-            });
+        const savedPost = await newPost.save();
 
-            const savedPost = await newPost.save();
+        // Actualizar el contador de posts del usuario
+        await User.findByIdAndUpdate(userId, { $inc: { numberOfPosts: 1 } });
 
-            res.status(201).send({ data: savedPost, message: 'Post creado exitosamente' });
-        } catch (error) {
-            console.error("Error en createPost:", error);
-            
-            if (error.message.includes('Coordenadas inválidas')) {
-                return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
-            }
-            
-            res.status(500).json({ message: 'Error interno del servidor', error: error.message });
-        }
+        res.status(201).json({ data: savedPost, message: 'Post creado exitosamente' });
+    } catch (error) {
+        console.error("Error en createPost:", error);
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
-];
+};
 
 /**
  * Obtiene los posts del usuario autenticado.
@@ -233,6 +220,7 @@ exports.getCommentsByPostId = async (req, res) => {
 exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
+    const userId = req.user.id;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -268,6 +256,8 @@ exports.createComment = async (req, res) => {
         post.lastComment = savedComment._id;
         post.totalComments += 1;
         await post.save();
+
+        await User.findByIdAndUpdate(userId, { $inc: { numberOfComments: 1 } });
 
         res.status(201).json(savedComment);
     } catch (error) {
@@ -365,6 +355,8 @@ exports.bookmarkPost = async (req, res) => {
         const bookmark = new Bookmark({ postId, userId });
         await bookmark.save();
 
+        await User.findByIdAndUpdate(userId, { $inc: { numberOfFavorites: 1 } });
+
         res.status(200).json({ message: 'Post marcado como bookmark' });
     } catch (error) {
         console.error("Error en bookmarkPost:", error);
@@ -393,6 +385,8 @@ exports.unbookmarkPost = async (req, res) => {
         }
 
         await Bookmark.deleteOne({ _id: bookmark._id });
+
+        await User.findByIdAndUpdate(userId, { $inc: { numberOfFavorites: -1 } });
 
         res.status(204).send();
     } catch (error) {

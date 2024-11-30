@@ -1,11 +1,11 @@
 const express = require('express');
-const { register, login, requestPasswordReset, resetPasswordWithToken, validateToken } = require('../controllers/authController');
+const authController = require('../controllers/authController');
 const router = express.Router();
 
-router.post('/registrations', register);
-router.post('/sessions', login);
-router.post('/sessions/passwords', requestPasswordReset);
-router.patch('/sessions/passwords', resetPasswordWithToken);
-router.post('/validate-token', validateToken);
+router.post('/registrations', authController.register);
+router.post('/sessions', authController.login);
+router.post('/sessions/passwords', authController.requestPasswordReset);
+router.patch('/sessions/passwords', authController.resetPasswordWithToken);
+router.post('/validate-token', authController.validateToken);
 
 module.exports = router;

@@ -92,39 +92,6 @@ export const getFollowing = async () => {
   }
 };
 
-// Obtener la lista de publicaciones favoritas del usuario autenticado
-export const getFavorites = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/users/me/favorites`);
-    return response.data;
-  } catch (error) {
-    console.error('Error al obtener la lista de favoritos:', error);
-    throw error;
-  }
-};
-
-// Agregar una publicación a favoritos
-export const addFavorite = async (favoriteId) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/users/me/favorites/${favoriteId}`);
-    return response.data;
-  } catch (error) {
-    console.error(`Error al agregar la publicación ${favoriteId} a favoritos:`, error);
-    throw error;
-  }
-};
-
-// Eliminar una publicación de favoritos
-export const removeFavorite = async (favoriteId) => {
-  try {
-    const response = await axios.delete(`${BASE_URL}/users/me/favorites/${favoriteId}`);
-    return response.data;
-  } catch (error) {
-    console.error(`Error al eliminar la publicación ${favoriteId} de favoritos:`, error);
-    throw error;
-  }
-};
-
 // Cambiar la contraseña del usuario actual
 export const changeUserPassword = async (passwordData) => {
   try {
@@ -133,6 +100,22 @@ export const changeUserPassword = async (passwordData) => {
   } catch (error) {
     console.error('Error cambiando la contraseña del usuario:', error);
     throw error;
+  }
+};
+
+// Obtener las métricas del usuario
+export const getUserMetrics = async () => {
+  try {
+      const token = await getToken();
+      const response = await axios.get(`${BASE_URL}/users/me/metrics`, {
+          headers: {
+              'Authorization': `Bearer ${token}`
+          }
+      });
+      return response.data;
+  } catch (error) {
+      console.error('Error al obtener las métricas del usuario:', error);
+      throw error;
   }
 };
 

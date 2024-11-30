@@ -197,6 +197,38 @@ exports.changePassword = async (req, res) => {
 };
 
 /**
+ * Obtiene las métricas del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con las métricas del usuario.
+ */
+exports.getUserMetrics = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
+        }
+
+        const user = await User.findById(req.user.id, 'numberOfFollowers numberOfFollowing numberOfPosts numberOfFavorites numberOfComments');
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        const metrics = {
+            numberOfFollowers: user.numberOfFollowers,
+            numberOfFollowing: user.numberOfFollowing,
+            numberOfPosts: user.numberOfPosts,
+            numberOfFavorites: user.numberOfFavorites,
+            numberOfComments: user.numberOfComments
+        };
+
+        res.status(200).json(metrics);
+    } catch (error) {
+        console.error('Error en getUserMetrics:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+/**
  * Cierra la sesión del usuario autenticado.
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.
