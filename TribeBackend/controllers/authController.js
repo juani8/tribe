@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
         await user.save();
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         
         res.status(200).json({ token, refreshToken, message: 'Registro exitoso.' });
     } catch (error) {
@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.status(200).json({ token, refreshToken, user });
     } catch (error) {
@@ -142,7 +142,7 @@ exports.validateToken = async (req, res) => {
         user = await User.findById(decoded.id).select('-password');
       } catch (error) {
         // If verification with access token secret fails, try with the refresh token secret
-        decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
         user = await User.findById(decoded.id).select('-password');
       }
   
