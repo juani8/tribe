@@ -18,8 +18,11 @@ exports.register = async (req, res) => {
         // Esto, cuando haya verificación, debería ser user.isVerified = false;
         user.isVerified = true;
         await user.save();
+
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token, message: 'Registro exitoso.' });
+        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+        
+        res.status(200).json({ token, refreshToken, message: 'Registro exitoso.' });
     } catch (error) {
         if (error.code === 11000) {
             const field = Object.keys(error.keyValue)[0];
@@ -52,12 +55,13 @@ exports.login = async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token, user });
+        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+
+        res.status(200).json({ token, refreshToken, user });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
-
 /**
  * Solicita el restablecimiento de contraseña (envía un magic link).
  * @param {Object} req - Objeto de solicitud HTTP.
@@ -129,8 +133,18 @@ exports.validateToken = async (req, res) => {
     const token = req.body.token;
   
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password');
+      let decoded;
+      let user;
+  
+      // Try to verify the token with the access token secret
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+        user = await User.findById(decoded.id).select('-password');
+      } catch (error) {
+        // If verification with access token secret fails, try with the refresh token secret
+        decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+        user = await User.findById(decoded.id).select('-password');
+      }
   
       if (!user) {
         return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
@@ -140,4 +154,4 @@ exports.validateToken = async (req, res) => {
     } catch (error) {
       res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
     }
-};
+  };
