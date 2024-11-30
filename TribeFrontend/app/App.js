@@ -123,12 +123,12 @@ function MainStack() {
         const checkSession = async () => {
             try {
                 const { valid, user } = await checkToken();
-                if (valid) {
+                if (false) {
                     setInitialRoute('Main');
                     setUser(user);
                 } else {
                     const refreshToken = await AsyncStorage.getItem('refreshToken');
-                    if (true) {
+                    if (refreshToken) {
                         try {
                             const { valid, user } = await checkRefreshToken();
                             setInitialRoute('Login');

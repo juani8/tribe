@@ -30,7 +30,10 @@ const SignupScreen = ({ navigation }) => {
       // Llamada al backend para registrar al usuario y enviar el magic link
       const registrationData = { nickName: fantasyName, email, password };
       const response = await registerUser(registrationData);
-      {response.token && await storeToken(response.token)};
+      {response.token &&  
+        await Keychain.setGenericPassword('accessToken', response.token);
+        await Keychain.setGenericPassword('refreshToken', response.refreshToken);
+      };
       navigation.navigate('InitialConfiguration');
       // Si la respuesta es exitosa, navega a VerifyIdentity;
     } catch (error) {

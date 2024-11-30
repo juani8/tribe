@@ -31,7 +31,8 @@ const LoginScreen = ({ navigation, showBioPrompt }) => {
       const response = await loginUser(loginData);
       setUser(response.user);
       // Guarda el token usando Keychain
-      await storeToken(response.token);
+      await Keychain.setGenericPassword('accessToken', response.token);
+      await Keychain.setGenericPassword('refreshToken', response.refreshToken);
       
       Alert.alert(
         'Inicio de sesión exitoso.',
