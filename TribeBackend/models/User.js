@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema({
         enum: ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'],
     },
     gamificationLevel: {
-        type: String,
+        type: Object,
+        default: { level: 1, description: 'usuario nuevo' },
     },
     following: [{
         type: mongoose.Schema.Types.ObjectId,

@@ -229,6 +229,28 @@ exports.getUserMetrics = async (req, res) => {
 };
 
 /**
+ * Actualiza el nivel de gamificación del usuario.
+ * @param {Object} user - Objeto del usuario.
+ * @returns {Promise<void>} - Actualiza el nivel de gamificación del usuario si corresponde.
+ */
+exports.updateGamificationLevel = async (user) => {
+    const levels = [
+        { level: 1, description: 'usuario nuevo', minPosts: 0, minComments: 0 },
+        { level: 2, description: 'usuario activo', minPosts: 5, minComments: 10 },
+        { level: 3, description: 'usuario avanzado', minPosts: 10, minComments: 15 },
+        { level: 4, description: 'usuario experto', minPosts: 15, minComments: 20 },
+    ];
+
+    const currentLevel = user.gamificationLevel.level;
+    const nextLevel = levels.find(level => level.level === currentLevel + 1);
+
+    if (nextLevel && user.numberOfPosts >= nextLevel.minPosts && user.numberOfComments >= nextLevel.minComments) {
+        user.gamificationLevel = { level: nextLevel.level, description: nextLevel.description };
+        await user.save();
+    }
+};
+
+/**
  * Cierra la sesión del usuario autenticado.
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.

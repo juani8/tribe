@@ -7,6 +7,7 @@ const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const { getMonthlyAds } = require('../utils/adsService');
 const User = require('../models/User');
+const userController = require('./userController');
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -98,8 +99,8 @@ exports.createPost = async (req, res) => {
 
         const savedPost = await newPost.save();
 
-        // Actualizar el contador de posts del usuario
-        await User.findByIdAndUpdate(userId, { $inc: { numberOfPosts: 1 } });
+        const user = await User.findByIdAndUpdate(userId, { $inc: { numberOfPosts: 1 } }, { new: true });
+        await userController.updateGamificationLevel(user);
 
         res.status(201).json({ data: savedPost, message: 'Post creado exitosamente' });
     } catch (error) {
@@ -210,7 +211,6 @@ exports.getCommentsByPostId = async (req, res) => {
     }
 };
 
-
 /**
  * Crea un comentario en un post específico.
  * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post y el contenido del comentario.
@@ -257,7 +257,8 @@ exports.createComment = async (req, res) => {
         post.totalComments += 1;
         await post.save();
 
-        await User.findByIdAndUpdate(userId, { $inc: { numberOfComments: 1 } });
+        const user = await User.findByIdAndUpdate(userId, { $inc: { numberOfComments: 1 } }, { new: true });
+        await userController.updateGamificationLevel(user);
 
         res.status(201).json(savedComment);
     } catch (error) {

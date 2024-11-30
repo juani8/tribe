@@ -284,13 +284,7 @@ async function createTestUser() {
     profileImage: await getRandomPixabayUrl('image'),
     coverImage: await getRandomPixabayUrl('image'),
     description: '¡Hola! Me dicen Juani y me gusta la música alternativa.',
-    gender: 'masculino',
-    gamificationLevel: 2,
-    numberOfFollowers: 0,
-    numberOfFollowing: 0,
-    numberOfComments: 0,
-    numberOfPosts: 0,
-    numberOfFavorites: 0
+    gender: 'masculino'
   });
 
   await testUser.save();
@@ -323,6 +317,27 @@ async function establishBookmarkRelationships(user, posts) {
     console.log(`Bookmark creado: ${JSON.stringify(bookmark)}`);
   }
   await user.save();
+}
+
+async function updateAllUsersGamificationLevels() {
+  const levels = [
+    { level: 1, description: 'usuario nuevo', minPosts: 0, minComments: 0 },
+    { level: 2, description: 'usuario activo', minPosts: 10, minComments: 20 },
+    { level: 3, description: 'usuario avanzado', minPosts: 50, minComments: 100 },
+    { level: 4, description: 'usuario experto', minPosts: 100, minComments: 200 },
+  ];
+
+  const users = await User.find();
+
+  for (const user of users) {
+    const currentLevel = user.gamificationLevel.level;
+    const nextLevel = levels.find(level => level.level === currentLevel + 1);
+
+    if (nextLevel && user.numberOfPosts >= nextLevel.minPosts && user.numberOfComments >= nextLevel.minComments) {
+      user.gamificationLevel = { level: nextLevel.level, description: nextLevel.description };
+      await user.save();
+    }
+  }
 }
 
 // Function to connect to MongoDB
@@ -397,6 +412,10 @@ async function generateMockupData() {
     // Establish bookmark relationships for test user
     await establishBookmarkRelationships(testUser, insertedPosts);
     console.log('Relaciones de favoritos establecidas para el usuario de prueba');
+
+    // Actualizar niveles de gamificación para todos los usuarios
+    await updateAllUsersGamificationLevels();
+    console.log('Niveles de gamificación actualizados para todos los usuarios');
 
     // Close the MongoDB connection
     await closeDatabaseConnection();
