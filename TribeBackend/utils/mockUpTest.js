@@ -76,7 +76,7 @@ async function generateMockupUsers() {
   const usedNickNames = new Set();
   const genders = ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'];
 
-  for (let i = 1; i <= 20; i++) {
+  for (let i = 1; i <= 9; i++) {
     let nickName;
     do {
       nickName = faker.internet.username();
@@ -95,11 +95,6 @@ async function generateMockupUsers() {
       coverImage: await getRandomPixabayUrl('image'),
       description: faker.lorem.sentence(),
       gender: genders[Math.floor(Math.random() * genders.length)],
-      numberOfFollowers: 0,
-      numberOfFollowing: 0,
-      numberOfComments: 0,
-      numberOfPosts: 0,
-      numberOfFavorites: 0
     });
 
     console.log(`Usuario generado: ${JSON.stringify(user)}`);
@@ -114,15 +109,13 @@ async function generateMockupPosts(users) {
   for (let i = 0; i < users.length; i++) {
     const user = users[i];
     const numberOfPosts = Math.floor(Math.random() * 5) + 1; // Each user has between 1 and 5 posts
-    user.numberOfPosts += numberOfPosts; // Increment the number of posts for the user
     for (let j = 0; j < numberOfPosts; j++) {
       const numberOfMultimedia = Math.floor(Math.random() * 5) + 1; // Each post has between 1 and 5 multimedia items
       const multimedia = [];
       for (let k = 0; k < numberOfMultimedia; k++) {
-        const type = Math.random() > 0.5 ? 'image' : 'video';
         multimedia.push({
-          url: await getRandomPixabayUrl(type),
-          type: type
+          url: await getRandomPixabayUrl('image'),
+          type: 'image'
         });
       }
       const post = new Post({
@@ -135,15 +128,11 @@ async function generateMockupPosts(users) {
           city: await getCityFromCoordinates(Math.random() * 180 - 90, Math.random() * 360 - 180)
         },
         likes: Math.floor(Math.random() * 100),
-        lastComment: null,
-        totalComments: 0,
-        createdAt: new Date(),
       });
 
       console.log(`Post generado: ${JSON.stringify(post)}`);
       postData.push(post);
     }
-    await user.save(); // Save the user after updating the number of posts
   }
   return postData;
 }
@@ -156,7 +145,6 @@ async function generateMockupComments(users, posts) {
     const numberOfComments = Math.floor(Math.random() * 5); // Each post has between 0 and 5 comments
     for (let j = 0; j < numberOfComments; j++) {
       const user = users[Math.floor(Math.random() * users.length)];
-      user.numberOfComments++; // Increment the number of comments for the user
       const comment = new Comment({
         userId: user._id,
         postId: post._id,
@@ -167,11 +155,7 @@ async function generateMockupComments(users, posts) {
 
       console.log(`Comentario generado: ${JSON.stringify(comment)}`);
       commentData.push(comment);
-      post.totalComments++;
-      post.lastComment = comment._id;
-      await user.save(); // Save the user after updating the number of comments
     }
-    await post.save(); // Save the post after updating the comments
   }
 
   try {
@@ -191,7 +175,6 @@ async function generateMockupCommentsForTestUser(testUser, posts) {
   const numberOfComments = Math.floor(Math.random() * 5) + 1; // Test user makes between 1 and 5 comments
   for (let i = 0; i < numberOfComments; i++) {
     const post = posts[Math.floor(Math.random() * posts.length)];
-    testUser.numberOfComments++; // Increment the number of comments for the test user
     const comment = new Comment({
       userId: testUser._id,
       postId: post._id,
@@ -202,8 +185,6 @@ async function generateMockupCommentsForTestUser(testUser, posts) {
 
     console.log(`Comentario generado por usuario de prueba: ${JSON.stringify(comment)}`);
     commentData.push(comment);
-    post.totalComments++;
-    post.lastComment = comment._id;
     await post.save(); // Save the post after updating the comments
   }
   await testUser.save(); // Save the test user after updating the number of comments
@@ -226,7 +207,6 @@ async function generateMockupCommentsForTestUserPosts(testUserPosts, users) {
     const numberOfComments = Math.floor(Math.random() * 5); // Each post has between 0 and 5 comments
     for (let j = 0; j < numberOfComments; j++) {
       const user = users[Math.floor(Math.random() * users.length)];
-      user.numberOfComments++; // Increment the number of comments for the user
       const comment = new Comment({
         userId: user._id,
         postId: post._id,
@@ -237,8 +217,6 @@ async function generateMockupCommentsForTestUserPosts(testUserPosts, users) {
 
       console.log(`Comentario generado en post de usuario de prueba: ${JSON.stringify(comment)}`);
       commentData.push(comment);
-      post.totalComments++;
-      post.lastComment = comment._id;
       await user.save(); // Save the user after updating the number of comments
     }
     await post.save(); // Save the post after updating the comments
@@ -264,8 +242,6 @@ async function establishFollowRelationships(users) {
       if (user._id !== userToFollow._id && !user.following.includes(userToFollow._id)) {
         user.following.push(userToFollow._id);
         userToFollow.followers.push(user._id);
-        user.numberOfFollowing++;
-        userToFollow.numberOfFollowers++;
       }
     }
   }
@@ -303,8 +279,6 @@ async function establishBookmarkRelationships(user, posts) {
     if (!user.following.includes(postOwner._id)) {
       user.following.push(postOwner._id);
       postOwner.followers.push(user._id);
-      user.numberOfFollowing++;
-      postOwner.numberOfFollowers++;
       await postOwner.save();
     }
 
@@ -313,7 +287,6 @@ async function establishBookmarkRelationships(user, posts) {
       postId: postToBookmark._id
     });
     await bookmark.save();
-    user.numberOfFavorites++;
     console.log(`Bookmark creado: ${JSON.stringify(bookmark)}`);
   }
   await user.save();
@@ -321,10 +294,10 @@ async function establishBookmarkRelationships(user, posts) {
 
 async function updateAllUsersGamificationLevels() {
   const levels = [
-    { level: 1, description: 'usuario nuevo', minPosts: 0, minComments: 0 },
-    { level: 2, description: 'usuario activo', minPosts: 10, minComments: 20 },
-    { level: 3, description: 'usuario avanzado', minPosts: 50, minComments: 100 },
-    { level: 4, description: 'usuario experto', minPosts: 100, minComments: 200 },
+    { level: 1, description: 'usuario nuevo', minPosts: 0 },
+    { level: 2, description: 'usuario activo', minPosts: 5 },
+    { level: 3, description: 'usuario avanzado', minPosts: 10 },
+    { level: 4, description: 'usuario experto', minPosts: 15 },
   ];
 
   const users = await User.find();
@@ -333,7 +306,9 @@ async function updateAllUsersGamificationLevels() {
     const currentLevel = user.gamificationLevel.level;
     const nextLevel = levels.find(level => level.level === currentLevel + 1);
 
-    if (nextLevel && user.numberOfPosts >= nextLevel.minPosts && user.numberOfComments >= nextLevel.minComments) {
+    const numberOfPosts = await Post.countDocuments({ userId: user._id });
+
+    if (nextLevel && numberOfPosts >= nextLevel.minPosts) {
       user.gamificationLevel = { level: nextLevel.level, description: nextLevel.description };
       await user.save();
     }

@@ -42,7 +42,9 @@ exports.login = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(401).json({ message: 'Credenciales inválidas.' });
+        if (!user || user.isDeleted) {
+            return res.status(401).json({ message: 'Credenciales inválidas.' });
+        }
 
         if (!user.isVerified) {
             return res.status(403).json({ message: 'Por favor, verifica tu correo electrónico antes de iniciar sesión.' });
@@ -67,8 +69,11 @@ exports.login = async (req, res) => {
 exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
+
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+        if (!user || user.isDeleted) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
 
         await sendRecoveryLink(user.email, user._id); // Send password reset link
         res.status(200).json({ message: 'Magic link enviado.' });

@@ -9,7 +9,7 @@ router.get('/', userController.getUsers);
 router.post('/me/following/:userId', userController.followUser);
 router.delete('/me/following/:userId', userController.unfollowUser);
 router.get('/me/followers', userController.getFollowers);
-router.get('/me/following', userController.getFollowing);
+router.get('/me/following', userController.getFollowings);
 router.patch('/me/passwords', userController.changePassword);
 router.get('/me/metrics', userController.getUserMetrics);
 router.post('/me/logout', userController.logout);

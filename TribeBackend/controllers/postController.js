@@ -27,24 +27,37 @@ exports.getTimeline = async (req, res) => {
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .populate('userId', 'nickName profileImage')
             .populate({
-                path: 'lastComment',
-                populate: {
-                    path: 'userId',
-                    select: 'nickName profileImage'
-                }
+                path: 'userId',
+                select: 'nickName profileImage isDeleted',
+                match: { isDeleted: false }
             })
             .lean();
 
-        const postSummary = await Promise.all(posts.map(async post => {
+        const filteredPosts = posts.filter(post => post.userId !== null);
+
+        const postSummary = await Promise.all(filteredPosts.map(async post => {
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
+            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
+                path: 'userId',
+                match: { isDeleted: false }
+            });
+            const lastComment = await Comment.findOne({ postId: post._id })
+                .sort({ createdAt: -1 })
+                .populate({
+                    path: 'userId',
+                    select: 'nickName profileImage',
+                    match: { isDeleted: false }
+                })
+                .lean();
 
             return {
                 ...post,
                 isLiked: !!isLiked,
-                isBookmarked: !!isBookmarked
+                isBookmarked: !!isBookmarked,
+                totalComments,
+                lastComment
             };
         }));
 
@@ -98,8 +111,7 @@ exports.createPost = async (req, res) => {
         });
 
         const savedPost = await newPost.save();
-
-        const user = await User.findByIdAndUpdate(userId, { $inc: { numberOfPosts: 1 } }, { new: true });
+        
         await userController.updateGamificationLevel(user);
 
         res.status(201).json({ data: savedPost, message: 'Post creado exitosamente' });
@@ -124,17 +136,40 @@ exports.getUserPosts = async (req, res) => {
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .populate('userId', 'nickName profileImage')
             .populate({
-                path: 'lastComment',
-                populate: {
-                    path: 'userId',
-                    select: 'nickName profileImage'
-                }
+                path: 'userId',
+                select: 'nickName profileImage',
             })
             .lean();
 
-        res.status(200).json(posts);
+        const filteredPosts = posts.filter(post => post.userId !== null);
+
+        const postSummary = await Promise.all(filteredPosts.map(async post => {
+            const isLiked = await Like.exists({ userId, postId: post._id });
+            const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
+            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
+                path: 'userId',
+                match: { isDeleted: false }
+            });
+            const lastComment = await Comment.findOne({ postId: post._id })
+                .sort({ createdAt: -1 })
+                .populate({
+                    path: 'userId',
+                    select: 'nickName profileImage',
+                    match: { isDeleted: false }
+                })
+                .lean();
+
+            return {
+                ...post,
+                isLiked: !!isLiked,
+                isBookmarked: !!isBookmarked,
+                totalComments,
+                lastComment
+            };
+        }));
+
+        res.status(200).json(postSummary);
     } catch (error) {
         console.error('Error en getUserPosts:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -157,20 +192,30 @@ exports.getPostById = async (req, res) => {
     try {
         const post = await Post.findById(postId)
             .populate('userId', 'nickName profileImage')
-            .populate({
-                path: 'lastComment',
-                populate: {
-                    path: 'userId',
-                    select: 'nickName profileImage'
-                }
-            })
             .lean();
-        
+
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
-        res.status(200).json(post);
+        const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
+            path: 'userId',
+            match: { isDeleted: false }
+        });
+        const lastComment = await Comment.findOne({ postId: post._id })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'userId',
+                select: 'nickName profileImage',
+                match: { isDeleted: false }
+            })
+            .lean();
+
+        res.status(200).json({
+            ...post,
+            totalComments,
+            lastComment
+        });
     } catch (error) {
         console.error("Error en getPostById:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -186,11 +231,6 @@ exports.getPostById = async (req, res) => {
  */
 exports.getCommentsByPostId = async (req, res) => {
     const { postId } = req.params;
-    /**
-     * Los valores 0 y 10 son valores por defecto, en caso de que no sean proporcionados en la query. 
-     * El frontend es responsable de calcular y enviar el offset correcto en cada solicitud para obtener la página deseada. 
-     * El offset se incrementa en función del limit cada vez que se navega a una nueva página (offset + limit)
-     */
     const { offset = 0, limit = 10 } = req.query;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
@@ -202,12 +242,19 @@ exports.getCommentsByPostId = async (req, res) => {
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .sort({ createdAt: -1 })
-            .populate('userId', 'nickName profileImage');
+            .populate({
+                path: 'userId',
+                select: 'nickName profileImage isDeleted',
+                match: { isDeleted: false }
+            })
+            .lean();
 
-        res.status(200).json(comments);
+        const filteredComments = comments.filter(comment => comment.userId !== null);
+
+        res.status(200).json(filteredComments);
     } catch (error) {
         console.error("Error en getCommentsByPostId:", error);
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -243,22 +290,7 @@ exports.createComment = async (req, res) => {
             comment: content
         });
 
-        // Intenta guardar el comentario y maneja cualquier error que ocurra
-        let savedComment;
-        try {
-            savedComment = await newComment.save();
-        } catch (error) {
-            console.error("Error al guardar el comentario:", error);
-            return res.status(500).json({ message: 'No se pudo crear el comentario', error: error.message });
-        }
-
-        // Solo actualiza el post si el comentario se creó correctamente
-        post.lastComment = savedComment._id;
-        post.totalComments += 1;
-        await post.save();
-
-        const user = await User.findByIdAndUpdate(userId, { $inc: { numberOfComments: 1 } }, { new: true });
-        await userController.updateGamificationLevel(user);
+        const savedComment = await newComment.save();
 
         res.status(201).json(savedComment);
     } catch (error) {
@@ -356,8 +388,6 @@ exports.bookmarkPost = async (req, res) => {
         const bookmark = new Bookmark({ postId, userId });
         await bookmark.save();
 
-        await User.findByIdAndUpdate(userId, { $inc: { numberOfFavorites: 1 } });
-
         res.status(200).json({ message: 'Post marcado como bookmark' });
     } catch (error) {
         console.error("Error en bookmarkPost:", error);
@@ -387,8 +417,6 @@ exports.unbookmarkPost = async (req, res) => {
 
         await Bookmark.deleteOne({ _id: bookmark._id });
 
-        await User.findByIdAndUpdate(userId, { $inc: { numberOfFavorites: -1 } });
-
         res.status(204).send();
     } catch (error) {
         console.error("Error en unbookmarkPost:", error);
@@ -415,14 +443,41 @@ exports.getUserBookmarks = async (req, res) => {
                 path: 'postId',
                 populate: {
                     path: 'userId',
-                    select: 'nickName profileImage'
+                    select: 'nickName profileImage isDeleted',
+                    match: { isDeleted: false }
                 }
             })
             .lean();
 
-        const posts = bookmarks.map(bookmark => bookmark.postId);
+        const filteredBookmarks = bookmarks.filter(bookmark => bookmark.postId.userId !== null);
 
-        res.status(200).json(posts);
+        const bookmarkSummary = await Promise.all(filteredBookmarks.map(async bookmark => {
+            const post = bookmark.postId;
+            const isLiked = await Like.exists({ userId, postId: post._id });
+            const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
+            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
+                path: 'userId',
+                match: { isDeleted: false }
+            });
+            const lastComment = await Comment.findOne({ postId: post._id })
+                .sort({ createdAt: -1 })
+                .populate({
+                    path: 'userId',
+                    select: 'nickName profileImage',
+                    match: { isDeleted: false }
+                })
+                .lean();
+
+            return {
+                ...post,
+                isLiked: !!isLiked,
+                isBookmarked: !!isBookmarked,
+                totalComments,
+                lastComment
+            };
+        }));
+
+        res.status(200).json(bookmarkSummary);
     } catch (error) {
         console.error('Error en getUserBookmarks:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
