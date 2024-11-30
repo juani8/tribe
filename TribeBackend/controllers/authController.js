@@ -41,11 +41,11 @@ exports.register = async (req, res) => {
         
         res.status(200).json({ token, refreshToken, message: 'Registro exitoso.' });
     } catch (error) {
-        // if (error.code === 11000) {
-        //     const field = Object.keys(error.keyValue)[0];
-        //     const message = field === 'email' ? 'Correo electrónico ya registrado.' : 'Nombre de usuario ya registrado.';
-        //     return res.status(409).json({ message });
-        // }
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue)[0];
+            const message = field === 'email' ? 'Correo electrónico ya registrado.' : 'Nombre de usuario ya registrado.';
+            return res.status(409).json({ message });
+        }
         console.error('Error en el registro:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
