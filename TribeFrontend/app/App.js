@@ -127,10 +127,10 @@ function MainStack() {
                     setInitialRoute('Main');
                     setUser(user);
                 } else {
-                    const refreshToken = await AsyncStorage.getItem('refreshToken');
-                    if (refreshToken) {
+                    const { valid, user } = await checkRefreshToken();
+                    console.log('valid', valid);
+                    if (valid) {
                         try {
-                            const { valid, user } = await checkRefreshToken();
                             setInitialRoute('Login');
                             setUser(user);
                             setShowBioPrompt(true);
@@ -153,19 +153,12 @@ function MainStack() {
 
     useMagicLinkListener();
 
-    if (!isSessionChecked) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" />
-            </View>
-        );
-    }
-
-
     return (
         <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: theme.colors.background } }} initialRouteName={initialRoute}>
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} showBioPrompt={showBioPrompt} />
+            <Stack.Screen name="Login">
+                {props => <LoginScreen {...props} showBioPrompt={showBioPrompt} />}
+            </Stack.Screen>
             <Stack.Screen name="Signup" component={SignupScreen} />
             <Stack.Screen name="RecoverPassword" component={RecoverPasswordScreen} />
             <Stack.Screen name="VerifyIdentity" component={VerifyIdentityScreen} />

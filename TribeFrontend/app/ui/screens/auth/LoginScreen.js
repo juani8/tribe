@@ -9,6 +9,7 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import {useUserContext} from 'context/UserContext';
 import BiometricPrompt from 'ui/components/authComponents/BiometricPrompt';
 import { authenticateWithBiometrics } from 'helper/BiometricsHelper';
+import Keychain from 'react-native-keychain';
 
 
 const LoginScreen = ({ navigation, showBioPrompt }) => {
