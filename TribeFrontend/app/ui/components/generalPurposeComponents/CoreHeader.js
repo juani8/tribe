@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Lamp, Aa, SettingFill, ChartPin, SignInSquare } from 'assets/images';
-import { navigateToNotifications, navigateToUserProfile, navigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
-import CustomTextNunito from './CustomTextNunito';
-import { useTheme } from 'context/ThemeContext';
+import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from 'context/ThemeContext';
+import { useUserContext } from 'context/UserContext';
+import { navigateToUserProfile, navigateToNotifications } from 'helper/navigationHandlers/CoreNavigationHandlers';
+import CustomTextNunito from './CustomTextNunito';
+import Separator from 'ui/components/generalPurposeComponents/Separator';
 import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 import CoreMenuOptionsList from 'ui/components/generalPurposeComponents/CoreMenuOptionsList';
-import Separator from 'ui/components/generalPurposeComponents/Separator';
-import {useUserContext} from 'context/UserContext';
-
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 const CoreHeader = () => {
-    const { theme, isDarkMode } = useTheme();
+    const { theme } = useTheme();
     const { user } = useUserContext();
     const [isMenuVisible, setMenuVisible] = useState(false);
     const navigation = useNavigation();
@@ -22,7 +20,6 @@ const CoreHeader = () => {
     // Handlers for menu visibility
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
-  
 
     const styles = createStyles(theme);
 
@@ -62,22 +59,14 @@ const CoreHeader = () => {
                 <CoreMenuOptionsList onClose={closeMenu} />
             </PopupMenu>
         </View>
-
-
     );
 };
 
 const createStyles = (theme) => StyleSheet.create({
     headerContainer: {
-
-        paddingHorizontal: 16,
-        paddingVertical: 10,
- 
+        paddingHorizontal: 20,
         backgroundColor: theme.colors.background,
-    },
-    backButton: {
-        fontSize: 18,
-        color: '#007AFF',
+        paddingTop: 10,
     },
     itemsLeft: {
         flexDirection: 'row',

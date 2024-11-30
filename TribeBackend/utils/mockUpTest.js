@@ -1,376 +1,341 @@
 require('dotenv').config({ path: '../.env' });
 const mongoose = require('mongoose');
+const axios = require('axios');
 const bcrypt = require('bcrypt');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
+const Bookmark = require('../models/Bookmark');
 const { getCityFromCoordinates } = require('./osmGeocoder');
+const { faker } = require('@faker-js/faker');
 
-// Verificar la disponibilidad de la variable de entorno
-if (!process.env.MONGODB_URI) {
-  console.error('Error: La variable MONGODB_URI no está definida en el archivo .env');
-  process.exit(1);
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Function to get random Picsum URL
-function getRandomPicsumUrl() {
-  return `https://picsum.photos/200/300?random=${Math.floor(Math.random() * 1000)}`;
+const keywords = ['nature', 'animals', 'technology', 'cityscape', 'food', 'sports', 'travel', 'people', 'party', 'art'];
+
+function getRandomKeyword() {
+  const randomIndex = Math.floor(Math.random() * keywords.length);
+  return keywords[randomIndex];
+}
+
+async function fetchPixabayData(baseUrl, params) {
+  try {
+    const response = await axios.get(baseUrl, { params });
+    return response.data.hits;
+  } catch (error) {
+    if (error.response && error.response.status === 429) {
+      const resetTime = error.response.headers['x-ratelimit-reset'];
+      const waitTime = resetTime * 1000;
+      console.warn(`Límite de solicitudes alcanzado. Esperando ${waitTime / 1000} segundos antes de reintentar.`);
+      await sleep(waitTime);
+      return fetchPixabayData(baseUrl, params); // Reintentar después de esperar
+    } else {
+      console.error('Error fetching media from Pixabay:', error);
+      throw error;
+    }
+  }
+}
+
+async function getRandomPixabayUrl(type) {
+  const apiKey = process.env.PIXABAY_KEY;
+  const baseUrl = type === 'video' ? 'https://pixabay.com/api/videos/' : 'https://pixabay.com/api/';
+  const query = getRandomKeyword();
+  
+  await sleep(600);
+  const params = {
+    key: apiKey,
+    q: query,
+    order: 'latest',
+    per_page: 3
+  };
+
+  if (type === 'video') {
+    params.video_type = 'film'; 
+    params.max_width = 256;
+    params.max_height = 144;
+  }
+
+  try {
+    const hits = await fetchPixabayData(baseUrl, params);
+    if (hits.length === 0) {
+      throw new Error('No se encontraron resultados.');
+    }
+
+    const randomIndex = Math.floor(Math.random() * hits.length);
+    return type === 'video' ? hits[randomIndex].videos.medium.url : hits[randomIndex].webformatURL;
+  } catch (error) {
+    return null;
+  }
 }
 
 // Function to generate mockup users
 async function generateMockupUsers() {
-  const userData = [
-    {
-      name: 'John',
-      lastName: 'Doe',
-      nickName: 'SunsetLover',
-      email: 'john.doe@example.com',
+  const userData = [];
+  const usedNickNames = new Set();
+  const genders = ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'];
+
+  for (let i = 1; i <= 20; i++) {
+    let nickName;
+    do {
+      nickName = faker.internet.username();
+    } while (usedNickNames.has(nickName));
+
+    usedNickNames.add(nickName);
+
+    const user = new User({
+      name: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      nickName: nickName,
+      email: faker.internet.email(),
       password: await bcrypt.hash('password123', 10),
       isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Lover of sunsets and nature.',
-    },
-    {
-      name: 'Jane',
-      lastName: 'Smith',
-      nickName: 'FoodLover',
-      email: 'jane.smith@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Food enthusiast and traveler.',
-    },
-    {
-      name: 'Alice',
-      lastName: 'Johnson',
-      nickName: 'NatureExplorer',
-      email: 'alice.johnson@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Explorer of nature and wildlife.',
-    },
-    {
-      name: 'Bob',
-      lastName: 'Brown',
-      nickName: 'TechGuru',
-      email: 'bob.brown@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Tech enthusiast and gadget lover.',
-      gamificationLevel: 'Expert',
-      following: [],
-      followers: [],
+      profileImage: await getRandomPixabayUrl('image'),
+      coverImage: await getRandomPixabayUrl('image'),
+      description: faker.lorem.sentence(),
+      gender: genders[Math.floor(Math.random() * genders.length)],
       numberOfFollowers: 0,
       numberOfFollowing: 0,
       numberOfComments: 0,
-      numberOfFavorites: 0,
-    },
-    {
-      name: 'Charlie',
-      lastName: 'Davis',
-      nickName: 'FitnessFreak',
-      email: 'charlie.davis@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Fitness enthusiast and health nut.',
-    },
-    {
-      name: 'Diana',
-      lastName: 'Evans',
-      nickName: 'BookWorm',
-      email: 'diana.evans@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Avid reader and book lover.',
-    },
-    {
-      name: 'Eve',
-      lastName: 'Foster',
-      nickName: 'TravelBug',
-      email: 'eve.foster@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Travel enthusiast and globetrotter.',
-    },
-    {
-      name: 'Frank',
-      lastName: 'Green',
-      nickName: 'MusicLover',
-      email: 'frank.green@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Music enthusiast and concert goer.',
-    },
-    {
-      name: 'Grace',
-      lastName: 'Harris',
-      nickName: 'ArtLover',
-      email: 'grace.harris@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Art enthusiast and gallery visitor.',
-    },
-    {
-      name: 'Henry',
-      lastName: 'Irvine',
-      nickName: 'ChefMaster',
-      email: 'henry.irvine@example.com',
-      password: await bcrypt.hash('password123', 10),
-      isVerified: true,
-      profileImage: getRandomPicsumUrl(),
-      coverImage: getRandomPicsumUrl(),
-      description: 'Master chef and food critic.',
-    },
-  ];
+      numberOfPosts: 0,
+      numberOfFavorites: 0
+    });
 
+    console.log(`Usuario generado: ${JSON.stringify(user)}`);
+    userData.push(user);
+  }
   return userData;
 }
 
+// Function to generate mockup posts
+async function generateMockupPosts(users) {
+  const postData = [];
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const numberOfPosts = Math.floor(Math.random() * 5) + 1; // Each user has between 1 and 5 posts
+    user.numberOfPosts += numberOfPosts; // Increment the number of posts for the user
+    for (let j = 0; j < numberOfPosts; j++) {
+      const numberOfMultimedia = Math.floor(Math.random() * 5) + 1; // Each post has between 1 and 5 multimedia items
+      const multimedia = [];
+      for (let k = 0; k < numberOfMultimedia; k++) {
+        const type = Math.random() > 0.5 ? 'image' : 'video';
+        multimedia.push({
+          url: await getRandomPixabayUrl(type),
+          type: type
+        });
+      }
+      const post = new Post({
+        userId: user._id,
+        description: faker.lorem.sentence(), // Generate random description using Faker
+        multimedia: multimedia,
+        location: {
+          latitude: Math.random() * 180 - 90,
+          longitude: Math.random() * 360 - 180,
+          city: await getCityFromCoordinates(Math.random() * 180 - 90, Math.random() * 360 - 180)
+        },
+        likes: Math.floor(Math.random() * 100),
+        lastComment: null,
+        totalComments: 0,
+        createdAt: new Date(),
+      });
+
+      console.log(`Post generado: ${JSON.stringify(post)}`);
+      postData.push(post);
+    }
+    await user.save(); // Save the user after updating the number of posts
+  }
+  return postData;
+}
+
 // Function to generate mockup comments
-async function generateMockupComments(users, postIds) {
-  const commentData = [
-    {
-      userId: users[0]._id,
-      postId: postIds[0],
-      comment: "Stunning view!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: users[1]._id,
-      postId: postIds[1],
-      comment: "Looks yummy!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: users[2]._id,
-      postId: postIds[2],
-      comment: "Amazing experience!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: users[3]._id,
-      postId: postIds[3],
-      comment: "Great review!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: users[4]._id,
-      postId: postIds[4],
-      comment: "Inspiring workout!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: users[5]._id,
-      postId: postIds[5],
-      comment: "Loved the book recommendations!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: users[6]._id,
-      postId: postIds[6],
-      comment: "Beautiful travel photos!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: users[7]._id,
-      postId: postIds[7],
-      comment: "Fantastic concert!",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
+async function generateMockupComments(users, posts) {
+  const commentData = [];
+  for (let i = 0; i < posts.length; i++) {
+    const post = posts[i];
+    const numberOfComments = Math.floor(Math.random() * 5); // Each post has between 0 and 5 comments
+    for (let j = 0; j < numberOfComments; j++) {
+      const user = users[Math.floor(Math.random() * users.length)];
+      user.numberOfComments++; // Increment the number of comments for the user
+      const comment = new Comment({
+        userId: user._id,
+        postId: post._id,
+        comment: faker.lorem.sentence(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      console.log(`Comentario generado: ${JSON.stringify(comment)}`);
+      commentData.push(comment);
+      post.totalComments++;
+      post.lastComment = comment._id;
+      await user.save(); // Save the user after updating the number of comments
+    }
+    await post.save(); // Save the post after updating the comments
+  }
+
+  try {
+    await Comment.deleteMany({}); // Limpia la colección
+    await Comment.insertMany(commentData); // Inserta los datos de mockup
+    console.log('Datos de mockup insertados correctamente');
+  } catch (error) {
+    console.error('Error al insertar datos de mockup:', error);
+  }
 
   return commentData;
 }
 
-// Function to generate mockup posts
-async function generateMockupPosts(users, commentIds, postIds) {
-  const postData = [
-    {
-      _id: postIds[0],
-      userId: users[0]._id,
-      description: "A beautiful sunset over the mountains.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl(), getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: -34.6037,
-        longitude: -58.3816,
-        city: await getCityFromCoordinates(-34.6037, -58.3816)
-      },
-      likes: 150,
-      lastComment: commentIds[0],
-      totalComments: 1,
+// Function to generate mockup comments for test user
+async function generateMockupCommentsForTestUser(testUser, posts) {
+  const commentData = [];
+  const numberOfComments = Math.floor(Math.random() * 5) + 1; // Test user makes between 1 and 5 comments
+  for (let i = 0; i < numberOfComments; i++) {
+    const post = posts[Math.floor(Math.random() * posts.length)];
+    testUser.numberOfComments++; // Increment the number of comments for the test user
+    const comment = new Comment({
+      userId: testUser._id,
+      postId: post._id,
+      comment: faker.lorem.sentence(),
       createdAt: new Date(),
-    },
-    {
-      _id: postIds[1],
-      userId: users[1]._id,
-      description: "Delicious homemade pizza!",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 40.7128,
-        longitude: -74.0060,
-        city: await getCityFromCoordinates(40.7128, -74.0060)
-      },
-      likes: 200,
-      lastComment: commentIds[1],
-      totalComments: 1,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[2],
-      userId: users[2]._id,
-      description: "Exploring the wild forest.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 36.7783,
-        longitude: -119.4179,
-        city: await getCityFromCoordinates(36.7783, -119.4179)
-      },
-      likes: 120,
-      lastComment: commentIds[2],
-      totalComments: 1,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[3],
-      userId: users[3]._id,
-      description: "Latest tech gadgets review.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 34.0522,
-        longitude: -118.2437,
-        city: await getCityFromCoordinates(34.0522, -118.2437)
-      },
-      likes: 95,
-      lastComment: commentIds[3],
-      totalComments: 1,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[4],
-      userId: users[4]._id,
-      description: "Morning workout routine.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 51.5074,
-        longitude: -0.1278,
-        city: await getCityFromCoordinates(51.5074, -0.1278)
-      },
-      likes: 180,
-      lastComment: commentIds[4],
-      totalComments: 1,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[5],
-      userId: users[5]._id,
-      description: "Top 10 books to read this year.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 48.8566,
-        longitude: 2.3522,
-        city: await getCityFromCoordinates(48.8566, 2.3522)
-      },
-      likes: 210,
-      lastComment: commentIds[5],
-      totalComments: 1,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[6],
-      userId: users[6]._id,
-      description: "Traveling to the Alps.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 46.6034,
-        longitude: 1.8883,
-        city: await getCityFromCoordinates(46.6034, 1.8883)
-      },
-      likes: 130,
-      lastComment: commentIds[6],
-      totalComments: 1,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[7],
-      userId: users[7]._id,
-      description: "Live concert experience.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 40.7306,
-        longitude: -73.9352,
-        city: await getCityFromCoordinates(40.7306, -73.9352)
-      },
-      likes: 175,
-      lastComment: commentIds[7],
-      totalComments: 1,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[8],
-      userId: users[8]._id,
-      description: "Visiting the art gallery.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 35.6895,
-        longitude: 139.6917,
-        city: await getCityFromCoordinates(35.6895, 139.6917)
-      },
-      likes: 85,
-      lastComment: null,
-      totalComments: 0,
-      createdAt: new Date(),
-    },
-    {
-      _id: postIds[9],
-      userId: users[9]._id,
-      description: "Cooking masterclass.",
-      multimedia: [getRandomPicsumUrl(), getRandomPicsumUrl()],
-      location: {
-        latitude: 37.7749,
-        longitude: -122.4194,
-        city: await getCityFromCoordinates(37.7749, -122.4194)
-      },
-      likes: 140,
-      lastComment: null,
-      totalComments: 0,
-      createdAt: new Date(),
-    },
-  ];
+      updatedAt: new Date(),
+    });
 
-  return postData;
+    console.log(`Comentario generado por usuario de prueba: ${JSON.stringify(comment)}`);
+    commentData.push(comment);
+    post.totalComments++;
+    post.lastComment = comment._id;
+    await post.save(); // Save the post after updating the comments
+  }
+  await testUser.save(); // Save the test user after updating the number of comments
+
+  try {
+    await Comment.insertMany(commentData); // Inserta los datos de mockup
+    console.log('Comentarios de prueba insertados correctamente');
+  } catch (error) {
+    console.error('Error al insertar comentarios de prueba:', error);
+  }
+
+  return commentData;
+}
+
+// Function to generate mockup comments for test user's posts
+async function generateMockupCommentsForTestUserPosts(testUserPosts, users) {
+  const commentData = [];
+  for (let i = 0; i < testUserPosts.length; i++) {
+    const post = testUserPosts[i];
+    const numberOfComments = Math.floor(Math.random() * 5); // Each post has between 0 and 5 comments
+    for (let j = 0; j < numberOfComments; j++) {
+      const user = users[Math.floor(Math.random() * users.length)];
+      user.numberOfComments++; // Increment the number of comments for the user
+      const comment = new Comment({
+        userId: user._id,
+        postId: post._id,
+        comment: faker.lorem.sentence(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      console.log(`Comentario generado en post de usuario de prueba: ${JSON.stringify(comment)}`);
+      commentData.push(comment);
+      post.totalComments++;
+      post.lastComment = comment._id;
+      await user.save(); // Save the user after updating the number of comments
+    }
+    await post.save(); // Save the post after updating the comments
+  }
+
+  try {
+    await Comment.insertMany(commentData); // Inserta los datos de mockup
+    console.log('Comentarios en posts de prueba insertados correctamente');
+  } catch (error) {
+    console.error('Error al insertar comentarios en posts de prueba:', error);
+  }
+
+  return commentData;
+}
+
+// Function to establish follow relationships
+async function establishFollowRelationships(users) {
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const numberOfFollows = Math.floor(Math.random() * users.length / 2); // Each user follows up to half of the other users
+    for (let j = 0; j < numberOfFollows; j++) {
+      const userToFollow = users[Math.floor(Math.random() * users.length)];
+      if (user._id !== userToFollow._id && !user.following.includes(userToFollow._id)) {
+        user.following.push(userToFollow._id);
+        userToFollow.followers.push(user._id);
+        user.numberOfFollowing++;
+        userToFollow.numberOfFollowers++;
+      }
+    }
+  }
+  await Promise.all(users.map(user => user.save()));
+}
+
+// Function to create a test user for the frontend developer
+async function createTestUser() {
+  const testUser = new User({
+    name: 'Juan Ignacio',
+    lastName: 'Sosa',
+    nickName: 'jsosa',
+    email: 'juasosa@uade.edu.ar',
+    password: await bcrypt.hash('1234', 10),
+    isVerified: true,
+    profileImage: await getRandomPixabayUrl('image'),
+    coverImage: await getRandomPixabayUrl('image'),
+    description: '¡Hola! Me dicen Juani y me gusta la música alternativa.',
+    gender: 'masculino',
+    gamificationLevel: 2,
+    numberOfFollowers: 0,
+    numberOfFollowing: 0,
+    numberOfComments: 0,
+    numberOfPosts: 0,
+    numberOfFavorites: 0
+  });
+
+  await testUser.save();
+  console.log(`Usuario de prueba creado: ${JSON.stringify(testUser)}`);
+  return testUser;
+}
+
+// Function to establish bookmark relationships
+async function establishBookmarkRelationships(user, posts) {
+  const numberOfBookmarks = Math.floor(Math.random() * posts.length / 2); // User bookmarks up to half of the posts
+  for (let i = 0; i < numberOfBookmarks; i++) {
+    const postToBookmark = posts[Math.floor(Math.random() * posts.length)];
+    const postOwner = await User.findById(postToBookmark.userId);
+
+    // Ensure the user follows the owner of the post
+    if (!user.following.includes(postOwner._id)) {
+      user.following.push(postOwner._id);
+      postOwner.followers.push(user._id);
+      user.numberOfFollowing++;
+      postOwner.numberOfFollowers++;
+      await postOwner.save();
+    }
+
+    const bookmark = new Bookmark({
+      userId: user._id,
+      postId: postToBookmark._id
+    });
+    await bookmark.save();
+    user.numberOfFavorites++;
+    console.log(`Bookmark creado: ${JSON.stringify(bookmark)}`);
+  }
+  await user.save();
 }
 
 // Function to connect to MongoDB
 async function connectToDatabase() {
   try {
-    console.log('MONGODB_URI:', process.env.MONGODB_URI);
-    await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 900000, // 30 seconds
-      socketTimeoutMS: 900000, // 30 seconds
+    const uri = process.env.NODE_ENV === 'Production' 
+      ? process.env.MONGODB_URI 
+      : process.env.MONGODB_URI_LOCAL;
+
+    console.log('MONGODB_URI:', uri);
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 900000, // 15 minutes
+      socketTimeoutMS: 900000, // 15 minutes
     });
     console.log('Conectado a MongoDB');
   } catch (error) {
@@ -400,21 +365,38 @@ async function generateMockupData() {
     const insertedUsers = await User.insertMany(userData);
     console.log('Los datos de usuario de mockup se insertaron correctamente');
 
-    // Generate post IDs first
-    const postIds = Array.from({ length: 10 }, () => new mongoose.Types.ObjectId());
-
-    // Generate mockup comments
-    const commentData = await generateMockupComments(insertedUsers, postIds);
-    const insertedComments = await Comment.insertMany(commentData);
-    console.log('Los datos de comentario de mockup se insertaron correctamente');
-
-    // Extract the ObjectIds of the inserted comments
-    const commentIds = insertedComments.map(comment => comment._id);
+    // Establish follow relationships
+    await establishFollowRelationships(insertedUsers);
 
     // Generate mockup posts
-    const postData = await generateMockupPosts(insertedUsers, commentIds, postIds);
-    await Post.insertMany(postData);
+    const postData = await generateMockupPosts(insertedUsers);
+    const insertedPosts = await Post.insertMany(postData);
     console.log('Los datos de post de mockup se insertaron correctamente');
+
+    // Generate mockup comments
+    const commentData = await generateMockupComments(insertedUsers, insertedPosts);
+    console.log('Los datos de comentario de mockup se generaron correctamente');
+
+    // Create test user
+    const testUser = await createTestUser();
+    console.log('Usuario de prueba creado correctamente');
+
+    // Generate mockup posts for test user
+    const testUserPosts = await generateMockupPosts([testUser]);
+    const insertedTestUserPosts = await Post.insertMany(testUserPosts);
+    console.log('Posts de prueba generados correctamente');
+
+    // Generate mockup comments for test user
+    const testUserComments = await generateMockupCommentsForTestUser(testUser, insertedPosts);
+    console.log('Comentarios de prueba generados correctamente');
+
+    // Generate mockup comments for test user's posts
+    const testUserPostsComments = await generateMockupCommentsForTestUserPosts(insertedTestUserPosts, insertedUsers);
+    console.log('Comentarios en posts de prueba generados correctamente');
+
+    // Establish bookmark relationships for test user
+    await establishBookmarkRelationships(testUser, insertedPosts);
+    console.log('Relaciones de favoritos establecidas para el usuario de prueba');
 
     // Close the MongoDB connection
     await closeDatabaseConnection();

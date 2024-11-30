@@ -1,46 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
 import PostMainContent from 'ui/components/postComponents/PostMainContent';
 import { useTheme } from 'context/ThemeContext';
-import { getTimelinePosts } from 'networking/api/postsApi';
+import { getUserPosts, getUserBookmarks } from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 
-export default function ProfilePosts({postView}) {
+export default function ProfilePosts({ postView, setIsFetching }) {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
   const { theme } = useTheme();
-  const styles = createStyles(theme);
+  const isFetching = useRef(false);
 
   const pageSize = 10;
+  const styles = createStyles(theme);
 
-  const fetchData = async (nextPage = 1, refreshing = false) => {
-    if (!hasMorePosts && !refreshing) return;
+  const fetchData = async (nextPage = 1, isRefresh = false) => {
+    if (isFetching.current || (!hasMorePosts && !isRefresh)) return;
 
-    const offset = (nextPage - 1) * pageSize;
+    isFetching.current = true;
+    setIsFetching(true); // Notifica al componente padre que está cargando
 
     try {
-      const newPosts = await getTimelinePosts(offset, pageSize);
-      setData(prevData => (refreshing ? newPosts : [...prevData, ...newPosts]));
+      const offset = (nextPage - 1) * pageSize;
+      let newPosts = [];
+
+      if (postView === 'UserPosts') {
+        newPosts = await getUserPosts(offset, pageSize);
+      } else if (postView === 'UserBookmarks') {
+        newPosts = await getUserBookmarks(offset, pageSize);
+      }
+
+      setData(prevData => (isRefresh ? newPosts : [...prevData, ...newPosts]));
       setPage(nextPage);
       setHasMorePosts(newPosts.length === pageSize);
     } catch (error) {
-      console.error('Error fetching timeline posts:', error);
+      console.error('Error fetching posts:', error);
     } finally {
-      setIsLoadingNextPage(false);
+      isFetching.current = false;
+      setIsFetching(false); // Notifica que ha terminado la carga
       setRefreshing(false);
-      setIsLoading(false);
     }
   };
 
   const fetchNextPage = () => {
-    if (!isLoadingNextPage && hasMorePosts) {
-      setIsLoadingNextPage(true);
+    if (!isFetching.current && hasMorePosts) {
       fetchData(page + 1);
     }
   };
@@ -52,37 +59,36 @@ export default function ProfilePosts({postView}) {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
-  }
+    setData([]);
+    setPage(1);
+    setHasMorePosts(true);
+    fetchData(1, true);
+  }, [postView]);
 
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
-        renderItem={({ item }) => <PostMainContent post={item} renderingPostsFromUser={postView === 'UserPosts'} />}
-        keyExtractor={(item, index) => `${item.userId}-${index}`}
+        renderItem={({ item }) => (
+          <PostMainContent post={item} renderingPostsFromUser={postView === 'UserPosts'} />
+        )}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={fetchNextPage}
         onEndReachedThreshold={0.8}
         ListFooterComponent={
           <>
-            {isLoadingNextPage && (
+            {isFetching.current && hasMorePosts && (
               <View style={styles.loader}>
                 <ActivityIndicator size="large" color={theme.colors.primary} />
               </View>
             )}
-            {!hasMorePosts && (
+            {!hasMorePosts && data.length > 0 && (
               <>
                 <View style={styles.bottomSpacing} />
-                <CustomTextNunito style={{ textAlign: 'center', color: theme.colors.detailText }}>{I18n.t(TextKey.timelineNoMorePosts)}</CustomTextNunito>
+                <CustomTextNunito style={styles.noMorePostsText}>
+                  {I18n.t(TextKey.timelineNoMorePosts)}
+                </CustomTextNunito>
                 <View style={styles.bottomSpacing} />
               </>
             )}
@@ -93,19 +99,23 @@ export default function ProfilePosts({postView}) {
   );
 }
 
-const createStyles = (theme) => StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    backgroundColor: theme.colors.background,
-  },
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background,
-    paddingVertical: 40,
-  },
-  bottomSpacing: {
-    height: 25,
-  },
-});
+const createStyles = theme =>
+  StyleSheet.create({
+    container: {
+      paddingHorizontal: 20,
+      backgroundColor: theme.colors.background,
+      flex: 1,
+    },
+    loader: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 40,
+    },
+    bottomSpacing: {
+      height: 25,
+    },
+    noMorePostsText: {
+      textAlign: 'center',
+      color: theme.colors.detailText,
+    },
+  });

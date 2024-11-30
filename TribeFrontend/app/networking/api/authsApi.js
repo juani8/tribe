@@ -84,3 +84,17 @@ export const checkToken = async () => {
       return false;
   }
 };
+
+export const checkRefreshToken = async () => {
+  try {
+      const refreshToken = await getToken();
+      if (refreshToken) {
+          const response = await axios.post(`${BASE_URL}/auths/validate-token`, { refreshToken });
+          return response.data;
+      } else {
+          return false;
+      }
+  } catch (error) {
+      return false;
+  }
+}

@@ -7,8 +7,11 @@ import { loginUser } from 'networking/api/authsApi';
 import { getToken, storeToken } from 'helper/JWTHelper'; 
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import {useUserContext} from 'context/UserContext';
+import BiometricPrompt from 'ui/components/authComponents/BiometricPrompt';
+import { authenticateWithBiometrics } from 'helper/BiometricsHelper';
 
-const LoginScreen = ({ navigation }) => {
+
+const LoginScreen = ({ navigation, showBioPrompt }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const { setUser } = useUserContext();
@@ -60,6 +63,37 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  const handleBiometricAuthSuccess = async () => {
+    try {
+      const loginData = { email, password };
+      const response = await loginUser(loginData);
+      setUser(response.user);
+      // Guarda el token usando Keychain
+      await storeToken(response.token);
+      
+      Alert.alert(
+        'Inicio de sesión exitoso.',
+        'Has iniciado sesión correctamente.',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Main'),
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      console.error('Error en el inicio de sesión:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (showBioPrompt) {
+      authenticateWithBiometrics(handleBiometricAuthSuccess);
+    }
+  }, [showBioPrompt]);
+
+
   return (
     <View style={styles.container}>
       <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
@@ -96,6 +130,8 @@ const LoginScreen = ({ navigation }) => {
       <TouchableOpacity style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} onPress={handleLogin}>
         <Text style={[styles.loginButtonText, { color: '#FFF' }]}>{I18n.t(TextKey.loginButton)}</Text>
       </TouchableOpacity>
+      
+      <BiometricPrompt onAuthenticated={handleBiometricAuthSuccess} />
 
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
