@@ -16,6 +16,7 @@ async function connection() {
       socketTimeoutMS: 45000,
     });
     console.log(`Conexión exitosa a MongoDB en el entorno ${env}!`);
+    console.log(uri);
   } catch (error) {
     console.error(`Error al conectar con MongoDB en el entorno ${env}:`, error);
     process.exit(1);
