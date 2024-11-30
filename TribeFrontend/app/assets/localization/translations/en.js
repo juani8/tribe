@@ -15,6 +15,13 @@ export default {
     notificationsNavegation: 'Notifications',
     userProfileNavegation: 'User Profile',
     postDetailNavegation: 'Post Detail',
+    gamificationProgressNavegation: 'Gamification Progress',
+    followersNavegation: 'Followers',
+    followingNavegation: 'Following',
+    gamificationActivityNavegation: 'Gamification Activity',
+    languageSelectionNavegation: 'Language Selection',
+    themeSelectionNavegation: 'Theme Selection',
+    metricsNavegation: 'Metrics',
 
     // PopUp
     settingsTitle: 'Settings',
@@ -67,23 +74,21 @@ export default {
     passwordsDontMatch: 'Passwords do not match.',
 
     // Password recovery Screen
-    recoverPasswordTitle: 'Recover your password',
-    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a code to change your password.',
+    recoverPasswordTitle: 'Recover Your Password',
+    recoverPasswordDescription: 'Enter the email you registered with, and we will send you a link to reset your password.',
     emailLabel: 'Email',
-    eemailPlaceholder: 'Enter your email',
-    verifyButton: 'Verify',
-    completeFields: "Please complete all fields",
-    completeFields: "Please complete all fields",
+    emailPlaceholder: 'Enter your email',
+    completeFields: 'Please fill in all fields.',
+    verifyButton: 'Send Verification',
+    passwordResetSuccessTitle: 'Request Sent',
+    passwordResetSuccessMessage: 'A verification link has been sent to your email.',
+    passwordResetErrorMessage: 'There was an error processing the request. Please try again.',
 
     // Verify Identity Screen
     verifyIdentityTitle: 'Verify your identity',
     verifyIdentityInstruction: 'We have sent an email to confirm your identity.',
     verifyIdentityCheckInbox: 'Please check your inbox and click the link to continue.',
     verifyIdentityCheckSpam: 'If you don’t see the email, check your spam folder.',
-    verifyTokenPlaceholder: 'Enter the verification token',
-    verifyTokenButton: 'Verify Token',
-    completeTokenFields: 'Please enter the verification token.',
-    invalidTokenError: 'Invalid or expired token. Please try again.',
 
     // Initial Configuration Screen
     initialConfigTitle: 'Welcome to Tribe',
@@ -106,7 +111,7 @@ export default {
     timelineTitle: 'Timeline Screen',
     timelineMessage: 'This is the Timeline Screen',
     timelineSeePostDetail: 'See more',
-    timelineNoMorePosts: 'You reached the end of the timeline. No more posts to show.',
+    timelineNoMorePosts: 'You reached the end. No more posts to show.',
 
     // Timeline Screen (no connection)
     noConnectionTitle: 'Connection Lost!',
@@ -141,7 +146,7 @@ export default {
     redirectAdvertisement: 'Tap the post to go to the advertiser\'s website.',
     
     // Header
-    headerTitle: "Discover what's new, ",
+    headerTitle: "Discover what's new",
 
     // Settings
     settingsTitle: 'Settings',
@@ -187,4 +192,30 @@ export default {
     multimediaHelperChooseMediaVideo: 'Record Video',
     multimediaHelperChooseMediaCancel: 'Cancel',
     multimediaHelperChooseMediaClose: 'Close',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: "Select Theme",
+    lightTheme: "Light Theme",
+    darkTheme: "Dark Theme",
+    systemTheme: "System Default",
+
+    // userProfileScreen
+    followers: "Followers",
+    following: "Following",
+    posts: "Posts",
+    favorites: "Favorites",
+
+    // GamificationBar
+    level: "Level",
+    postsCompleted: "posts completed",
+
+    // languageSelectionScreen
+    deviceLanguage: "Device Language",
+
+    // MetricsScreen
+    userMetricsTitle: "User Metrics",
+    numberOfFollowers: "Number of Followers",
+    numberOfFollowing: "Number of Following",
+    numberOfComments: "Number of Comments",
+    numberOfLikes: "Number of Likes",
 };

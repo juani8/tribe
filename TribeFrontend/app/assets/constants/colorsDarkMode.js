@@ -3,6 +3,7 @@ export default {
   secondary: '#674188',
   tertiary: '#E5D9F2',
   text: '#F5EFFF',
+  textAlternative: '#1A1A1A',
   uploadButtons: '#E5D9F2',
   buttonText: '#000000',
   detailText: '#5D5D5D',

@@ -61,8 +61,6 @@ const captureMedia = (mediaType, selectedMedia, setSelectedMedia) => {
         : { mediaType: 'video', videoQuality: 'low', durationLimit: 30 }; // Try lowering the quality and duration
 
     launchCamera(options, (response) => {
-        console.log('Response:', response); // Log the response to inspect issues
-        
         if (response.didCancel) {
             console.log('User cancelled camera');
         } else if (response.errorCode) {

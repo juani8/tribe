@@ -10,16 +10,20 @@ const userSchema = new mongoose.Schema({
     nickName: {
         type: String,
         required: true,
-        unique: true, 
+        unique: true,
     },
     email: {
         type: String,
         required: true,
-        unique: true, 
+        unique: true,
     },
     password: {
         type: String,
         required: true,
+    },
+    totpSecret: {
+        type: String,
+        required: true
     },
     isVerified: {
         type: Boolean,
@@ -39,7 +43,8 @@ const userSchema = new mongoose.Schema({
         enum: ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'],
     },
     gamificationLevel: {
-        type: String,
+        type: Object,
+        default: { level: 1, description: 'usuario nuevo' },
     },
     following: [{
         type: mongoose.Schema.Types.ObjectId,

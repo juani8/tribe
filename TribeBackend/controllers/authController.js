@@ -1,7 +1,10 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { sendMagicLink, sendRecoveryLink} = require('../utils/magicLink');
+const {sendRecoveryLink, sendTotpEmail, generateTotpCode, generateTotpSecret} = require('../utils/magicLink');
+const {authenticator} = require("otplib");
+const speakeasy = require('speakeasy');
+
 
 /**
  * Registro de usuario.
@@ -13,26 +16,75 @@ exports.register = async (req, res) => {
     try {
         const { nickName, email, password } = req.body;
 
+        const userExists = await User.findOne({ email });
+        if (userExists) return res.status(409).json({ message: 'Usuario ya registrado.' });
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ nickName, email, password: hashedPassword });
-        // Esto, cuando haya verificación, debería ser user.isVerified = false;
-        user.isVerified = true;
+        const totpSecret = generateTotpSecret();
+        const user = new User({
+            nickName,
+            email,
+            password: hashedPassword,
+            isVerified: false,
+            totpSecret,
+        });
         await user.save();
+
+        const totpCode = generateTotpCode(totpSecret);
+        await sendTotpEmail(email, totpCode);
+
+        //res.status(200).json({ message: 'Registro exitoso. Verifica tu correo electrónico con el código recibido.' });
+
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         
         res.status(200).json({ token, refreshToken, message: 'Registro exitoso.' });
     } catch (error) {
-        if (error.code === 11000) {
-            const field = Object.keys(error.keyValue)[0];
-            const message = field === 'email' ? 'Correo electrónico ya registrado.' : 'Nombre de usuario ya registrado.';
-            return res.status(409).json({ message });
-        }
+        // if (error.code === 11000) {
+        //     const field = Object.keys(error.keyValue)[0];
+        //     const message = field === 'email' ? 'Correo electrónico ya registrado.' : 'Nombre de usuario ya registrado.';
+        //     return res.status(409).json({ message });
+        // }
+        // console.error('Error en el registro:', error);
+        // res.status(500).json({ message: 'Error interno del servidor.' });
         console.error('Error en el registro:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
+
+exports.verifyTotp = async (req, res) => {
+    try {
+        const { email, totpCode } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+
+        if (user.isVerified) return res.status(400).json({ message: 'Usuario ya verificado.' });
+
+        const totpSecret = user.totpSecret;
+        const isValid = speakeasy.totp.verify({
+            secret: totpSecret,
+            encoding: 'base32',
+            token: totpCode,
+            window: 3
+        });
+
+        if (!isValid) return res.status(400).json({ message: 'Código de verificación inválido o expirado.' });
+
+        user.isVerified = true;
+        await user.save();
+
+        //const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        //res.status(200).json({token, message: 'Verificación exitosa. Bienvenido a Tribe!'});
+        res.status(200).json({message: 'Verificación exitosa. Bienvenido a Tribe!'});
+    } catch (error) {
+        console.error('Error al verificar TOTP:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
 
 /**
  * Inicio de sesión de usuario.

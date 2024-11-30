@@ -13,6 +13,13 @@ export default {
     notificationsNavegation: 'Notificaciones',
     userProfileNavegation: 'Perfil de Usuario',
     postDetailNavegation: 'Detalle de Publicación',
+    gamificationProgressNavegation: 'Progreso de Gamificación',
+    followersNavegation: 'Seguidores',
+    followingNavegation: 'Siguiendo',
+    gamificationActivityNavegation: 'Actividad de Gamificación',
+    languageSelectionNavegation: 'Selección de Idioma',
+    themeSelectionNavegation: 'Selección de Tema',
+    metricsNavegation: 'Métricas',
 
     // PopUp
     settingsTitle: 'Configuración',
@@ -66,23 +73,21 @@ export default {
 
     // Password recovery Screen
     recoverPasswordTitle: 'Recupera tu contraseña',
-    recoverPasswordDescription: 'Ingresa el email con el que te registraste, te enviaremos un código para cambiar tu contraseña.',
-    emailLabel: 'Correo',
-    emailPlaceholder: 'Ingresa tu correo',
-    verifyButton: 'Verificar',
-    completeFields: "Por favor, completa todos los campos.",
-    completeFields: "Por favor, completa todos los campos.",
+    recoverPasswordDescription: 'Ingresa el correo electrónico con el que te registraste, y te enviaremos un enlace para restablecer tu contraseña.',
+    emailLabel: 'Correo electrónico',
+    emailPlaceholder: 'Ingresa tu correo electrónico',
+    verifyButton: 'Enviar enlace',
+    completeFields: 'Por favor, completa todos los campos.',
+    passwordResetSuccessTitle: 'Solicitud enviada',
+    passwordResetSuccessMessage: 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo.',
+    passwordResetErrorMessage: 'Hubo un error al procesar la solicitud. Inténtalo de nuevo.',
 
     // Verify Identity Screen
     verifyIdentityTitle: 'Verifica tu identidad',
     verifyIdentityInstruction: 'Hemos enviado un correo electrónico para confirmar que realmente eres tú.',
     verifyIdentityCheckInbox: 'Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.',
     verifyIdentityCheckSpam: 'Si no visualizas el correo, verifica la carpeta de spam.',
-    verifyTokenPlaceholder: 'Ingresa el token de verificación',
-    verifyTokenButton: 'Verificar Token',
-    completeTokenFields: 'Por favor, ingresa el token de verificación.',
-    invalidTokenError: 'Token inválido o expirado. Por favor, inténtalo de nuevo.',
-
+    
     // Initial Configuration Screen
     initialConfigTitle: 'Bienvenido a Tribe',
     initialConfigSubtitle: 'Comencemos completando tu perfil.',
@@ -104,14 +109,14 @@ export default {
     timelineTitle: 'Pantalla de Línea de Tiempo',
     timelineMessage: 'Esta es la Pantalla de Línea de Tiempo',
     timelineSeePostDetail: 'Ver mas',
-    timelineNoMorePosts: 'Has llegado al fin de la linea de tiempo. No hay más publicaciones para mostrar.',
+    timelineNoMorePosts: 'Has llegado al fin. No hay más publicaciones para mostrar.',
 
     // Timeline Screen (no conection)
-    noConectionTitle: '¡Conexión perdida!',
-    noConectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
-    noConectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
-    noConectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
-    noConectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
+    noConnectionTitle: '¡Conexión perdida!',
+    noConnectionFirstMessage: 'Parece que no estás conectado a Internet.Para disfrutar de todas las funciones de Tribe, asegúrate de tener una conexión activa.',
+    noConnectionFirstMessageFirstItem: 'Verifica tu conexión Wi-Fi o datos móviles',
+    noConnectionFirstMessageSecondItem: 'Intenta reiniciar la app.',
+    noConnectionSecondMessage: '¡Estamos aquí para ayudarte a volver a conectarte!',
 
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',
@@ -142,7 +147,7 @@ export default {
     loginButton: 'Iniciar sesión',
 
     // Header
-    headerTitle: 'Descubre lo nuevo, ',
+    headerTitle: 'Descubre lo nuevo',
 
     // Settings
     settingsTitle: 'Configuración',
@@ -188,4 +193,30 @@ export default {
     multimediaHelperChooseMediaVideo: 'Grabar video',
     multimediaHelperChooseMediaCancel: 'Cancelar',
     multimediaHelperChooseMediaClose: 'Cerrar',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: "Seleccionar Tema",
+    lightTheme: "Tema Claro",
+    darkTheme: "Tema Oscuro",
+    systemTheme: "Predeterminado del Sistema",
+
+    // userProfileScreen
+    followers: "Seguidores",
+    following: "Siguiendo",
+    posts: "Publicaciones",
+    favorites: "Favoritos",
+
+    // GamificationBar
+    level: "Nivel",
+    postsCompleted: "publicaciones realizadas",
+
+    // languageSelectionScreen
+    deviceLanguage: "Idioma del Dispositivo",
+
+    // MetricsScreen
+    userMetricsTitle: "Métricas del Usuario",
+    numberOfFollowers: "Número de Seguidores",
+    numberOfFollowing: "Número de Seguidos",
+    numberOfComments: "Número de Comentarios",
+    numberOfLikes: "Número de Me Gusta"
 };

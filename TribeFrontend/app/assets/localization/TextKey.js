@@ -13,6 +13,13 @@ const TextKey = {
     notificationsNavegation: 'notificationsNavegation',
     userProfileNavegation: 'userProfileNavegation',
     postDetailNavegation: 'postDetailNavegation',
+    gamificationProgressNavegation: 'gamificationProgressNavegation',
+    followersNavegation: 'followersNavegation',
+    followingNavegation: 'followingNavegation',
+    gamificationActivityNavegation: 'gamificationActivityNavegation',
+    languageSelectionNavegation: 'languageSelectionNavegation',
+    themeSelectionNavegation: 'themeSelectionNavegation',
+    metricsNavegation: 'metricsNavegation',
 
     // PopUp
     settingsTitle: 'settingsTitle',
@@ -90,9 +97,12 @@ const TextKey = {
     recoverPasswordDescription: 'recoverPasswordDescription',
     emailLabel: 'emailLabel',
     emailPlaceholder: 'emailPlaceholder',
+    completeFields: 'completeFields',
     verifyButton: 'verifyButton',
-    completeFields: 'completeFields',    completeFields: 'completeFields',
-
+    passwordResetSuccessTitle: 'passwordResetSuccessTitle',
+    passwordResetSuccessMessage: 'passwordResetSuccessMessage',
+    passwordResetErrorMessage: 'passwordResetErrorMessage',
+    
     // Verify Identity Screen
     verifyIdentityTitle: 'verifyIdentityTitle',
     verifyIdentityInstruction: 'verifyIdentityInstruction',
@@ -206,7 +216,33 @@ const TextKey = {
     multimediaHelperChooseMediaPhoto: 'multimediaHelperChooseMediaPhoto',
     multimediaHelperChooseMediaVideo: 'multimediaHelperChooseMediaVideo',
     multimediaHelperChooseMediaCancel: 'multimediaHelperChooseMediaCancel',
-    multimediaHelperChooseMediaClose: 'multimediaHelperChooseMediaClose'
+    multimediaHelperChooseMediaClose: 'multimediaHelperChooseMediaClose',
+
+    // ThemeSelectionScreen
+    themeSelectionTitle: 'themeSelectionTitle',
+    darkTheme: 'darkTheme',
+    lightTheme: 'lightTheme',
+    systemTheme: 'systemTheme',
+
+    // userProfileScreen
+    followers: 'followers',
+    following: 'following',
+    posts: 'posts',
+    favorites: 'favorites',
+
+    // GamificationBar
+    level: "level",
+    postsCompleted: "postsCompleted",
+
+    // languageSelectionScreen
+    deviceLanguage: "deviceLanguage",
+
+    // UserMetricsScreen
+    userMetricsTitle: 'userMetricsTitle',
+    numberOfFollowers: 'numberOfFollowers',
+    numberOfFollowing: 'numberOfFollowing',
+    numberOfComments: 'numberOfComments',
+    numberOfLikes: 'numberOfLikes',
 };
 
 export default TextKey;

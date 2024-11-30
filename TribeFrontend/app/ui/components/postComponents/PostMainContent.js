@@ -13,7 +13,7 @@ import { navigateToSpecificPost } from 'helper/navigationHandlers/CoreNavigation
 import { useNavigation } from '@react-navigation/native';
 import { usePostContext } from 'context/PostContext';
 
-const PostMainContent = ({ post, viewMore = true }) => {
+const PostMainContent = ({ post, viewMore = true, renderingPostsFromUser }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation();
@@ -24,21 +24,24 @@ const PostMainContent = ({ post, viewMore = true }) => {
   const isBookmarked = bookmarkStatus.get(post._id) ?? post.isBookmarked;
 
   return (
-    <View style={styles.container}>
-      {/* User info */}
-      <View style={styles.postHeader}>
-        <Image
-          source={post.userId.profileImage ? { uri: post.userId.profileImage } : theme.UserCircleLight}
-          style={{ width: 65, height: 65, borderRadius: 100 }}
-          resizeMode="stretch"
-        />
-        <View style={styles.header}>
-          <CustomTextNunito style={styles.username}>{post.userId.nickName}</CustomTextNunito>
-          <CustomTextNunito style={styles.timeAgo}>
-            {formatDistanceToNow(new Date(post.createdAt))} ago
-          </CustomTextNunito>
+    <View style={styles.container}>        
+
+    {/* User info */}
+      {!renderingPostsFromUser && (
+        <View style={styles.postHeader}>
+          <Image
+            source={post.userId.profileImage ? { uri: post.userId.profileImage } : theme.UserCircleLight}
+            style={{ width: 65, height: 65, borderRadius: 100 }}
+            resizeMode="stretch"
+          />
+          <View style={styles.header}>
+            <CustomTextNunito style={styles.username}>{post.userId.nickName}</CustomTextNunito>
+            <CustomTextNunito style={styles.timeAgo}>
+              {formatDistanceToNow(new Date(post.createdAt))} ago
+            </CustomTextNunito>
+          </View>
         </View>
-      </View>
+      )}
 
       <TouchableOpacity onPress={() => navigateToSpecificPost(navigation, post)}>
         {/* Post description */}
@@ -74,6 +77,13 @@ const PostMainContent = ({ post, viewMore = true }) => {
             />
           </TouchableOpacity>
         </View>
+        {/* Location */}
+        {post.location && post.location.city && (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={PinAltFill} style={{ width: 24, height: 24 }} />
+            <CustomTextNunito weight={'Bold'} style={styles.textOfMetadata}>{post.location.city}</CustomTextNunito>
+          </View>
+        )}
       </View>
     </View>
   );

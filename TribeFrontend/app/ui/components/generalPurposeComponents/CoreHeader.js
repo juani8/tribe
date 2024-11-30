@@ -15,6 +15,7 @@ import TextKey from 'assets/localization/TextKey';
 const CoreHeader = () => {
     const { theme, isDarkMode } = useTheme();
     const [isMenuVisible, setMenuVisible] = useState(false);
+    const navigation = useNavigation();
 
     // Handlers for menu visibility
     const openMenu = () => setMenuVisible(true);
@@ -36,7 +37,7 @@ const CoreHeader = () => {
                         <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
                             <Image source={theme.UserCircleLight} style={{ width: 50, height: 50 }} />
                         </TouchableOpacity>
-                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}John</CustomTextNunito>
+                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}</CustomTextNunito>
                     </View>
                     <View style={styles.itemsRight}>
                         <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>
@@ -48,7 +49,7 @@ const CoreHeader = () => {
                     </View>
                 </View>
 
-                <Separator style={{marginHorizontal: -2}} theme={theme} />
+                <Separator style={{marginHorizontal: -2}} />
             </View>
 
             <PopupMenu
