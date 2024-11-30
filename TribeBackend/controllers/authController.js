@@ -33,13 +33,13 @@ exports.register = async (req, res) => {
         const totpCode = generateTotpCode(totpSecret);
         await sendTotpEmail(email, totpCode);
 
-        //res.status(200).json({ message: 'Registro exitoso. Verifica tu correo electrónico con el código recibido.' });
+        // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        // const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        //
+        // res.status(200).json({ token, refreshToken, message: 'Registro exitoso. Verifica tu correo electrónico con el código recibido.' });
 
+        res.status(200).json({ message: 'Registro exitoso. Verifica tu correo electrónico con el código recibido.' });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        
-        res.status(200).json({ token, refreshToken, message: 'Registro exitoso.' });
     } catch (error) {
         if (error.code === 11000) {
             const field = Object.keys(error.keyValue)[0];
@@ -73,10 +73,10 @@ exports.verifyTotp = async (req, res) => {
         user.isVerified = true;
         await user.save();
 
-        //const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        //res.status(200).json({token, message: 'Verificación exitosa. Bienvenido a Tribe!'});
-        res.status(200).json({message: 'Verificación exitosa. Bienvenido a Tribe!'});
+        res.status(200).json({ token, refreshToken, message: 'Verificación exitosa. Bienvenido a Tribe!'});
     } catch (error) {
         console.error('Error al verificar TOTP:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
