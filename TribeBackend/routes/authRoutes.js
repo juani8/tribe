@@ -1,8 +1,10 @@
 const express = require('express');
-const { register, login, requestPasswordReset, resetPasswordWithToken, validateToken } = require('../controllers/authController');
+const { register, verifyTotp, sendTotp, login, requestPasswordReset, resetPasswordWithToken, validateToken } = require('../controllers/authController');
 const router = express.Router();
 
 router.post('/registrations', register);
+router.post('/verify-totp', verifyTotp);
+router.post('/send-totp', sendTotp);
 router.post('/sessions', login);
 router.post('/sessions/passwords', requestPasswordReset);
 router.patch('/sessions/passwords', resetPasswordWithToken);

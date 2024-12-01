@@ -14,6 +14,7 @@ import UploadScreen from 'ui/screens/core/UploadScreen';
 import SearchScreen from 'ui/screens/core/SearchScreen';
 import LoginScreen from 'ui/screens/auth/LoginScreen';
 import SignupScreen from 'ui/screens/auth/SignupScreen';
+import SignupScreenSecondPart from 'ui/screens/auth/SignupScreenSecondPart';
 import RecoverPasswordScreen from 'ui/screens/auth/RecoverPasswordScreen';
 import VerifyIdentityRegisterScreen from 'ui/screens/auth/VerifyIdentityRegisterScreen';
 import VerifyIdentityScreen from 'ui/screens/auth/VerifyIdentityScreen';
@@ -51,7 +52,7 @@ const Tab = createBottomTabNavigator();
 
 function TabBar({ navigation }) {
     const { theme, isDarkMode } = useTheme();
-    const flatListRef = useRef(null); // Add a ref to the FlatList
+    const flatListRef = useRef(null);
 
     return (
         <Tab.Navigator
@@ -143,7 +144,7 @@ function MainStack() {
     useMagicLinkListener();
 
     if (!isSessionChecked) {
-        return null; // or a loading spinner
+        return null;
     }
 
     return (
@@ -151,6 +152,7 @@ function MainStack() {
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="SignupSecondPart" component={SignupScreenSecondPart} />
             <Stack.Screen name="RecoverPassword" component={RecoverPasswordScreen} />
             <Stack.Screen name="VerifyIdentityRegister" component={VerifyIdentityRegisterScreen} />
             <Stack.Screen name="VerifyIdentity" component={VerifyIdentityScreen} />

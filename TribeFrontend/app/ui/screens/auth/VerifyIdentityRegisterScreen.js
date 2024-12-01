@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, TouchableOpacity, StyleSheet, Image, TextInput, Alert } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Image, TextInput, Alert } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import LottieView from 'lottie-react-native';
@@ -7,11 +7,13 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import Back from 'assets/images/icons/Back.png';
 import BackNight from 'assets/images/iconsNight/Back_night.png';
-
+import { useRoute } from '@react-navigation/native';
+import { navigateToSignupSecondPart } from 'helper/navigationHandlers/AuthNavigationHandlers';
 
 const VerifyIdentityRegisterScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
   const styles = createStyles(theme);
+  const route = useRoute();
 
   const [code, setCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -27,11 +29,13 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
           const verificationData = { email, totpCode: text };
   
           const response = await verifyTotp(verificationData);
+          console.log('response', response);
   
           Alert.alert(I18n.t(TextKey.verificationSuccessTitle), response.message);
   
-          navigation.navigate('InitialConfiguration');
+          navigateToSignupSecondPart(navigation, route.params?.fantasyName, route.params?.email);
         } catch (error) {
+          console.log('error', error);
           if (error.response && error.response.status === 400) {
             setErrorMessage(I18n.t(TextKey.invalidTokenMessage));
           } else {
@@ -43,7 +47,7 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
@@ -95,19 +99,7 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
 
       {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
 
-      <TouchableOpacity
-        style={styles.verifyButton}
-        onPress={() => {
-          if (code.length !== 6) {
-            Alert.alert(I18n.t(TextKey.errorTitle), I18n.t(TextKey.incompleteCodeMessage));
-          }
-        }}
-      >
-        <CustomTextNunito style={styles.verifyButtonText} weight="Bold">
-          {I18n.t(TextKey.continueButton)}
-        </CustomTextNunito>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 

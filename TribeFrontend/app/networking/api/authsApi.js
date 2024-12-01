@@ -36,6 +36,17 @@ export const verifyTotp = async (verificationData) => {
   }
 };
 
+// Verificación del código TOTP
+export const sendTotp = async (email) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auths/send-totp`, email);
+    return response.data; 
+  } catch (error) {
+    console.error('Error verificando TOTP:', error);
+    throw error; 
+  }
+};
+
 // Inicio de sesión de usuario
 export const loginUser = async (loginData) => {
   try {

@@ -5,8 +5,9 @@ import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
-import { registerUser } from 'networking/api/authsApi';
+import { sendTotp } from 'networking/api/authsApi';
 import { storeToken } from 'helper/JWTHelper';
+import { navigateToVerifyIdentityRegister } from 'helper/navigationHandlers/AuthNavigationHandlers';
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -14,31 +15,19 @@ const SignupScreen = ({ navigation }) => {
 
   const [fantasyName, setFantasyName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!fantasyName || !email || !password || !confirmPassword) {
+    if (!fantasyName || !email) {
       setErrorMessage(I18n.t(TextKey.completeFields));
-      return;
-    } else if (password !== confirmPassword) {
-      setErrorMessage(I18n.t(TextKey.passwordsDontMatch));
       return;
     }
 
     try {
+      await sendTotp({ email });
       setIsLoading(true); 
-      const registrationData = { nickName: fantasyName, email, password };
-
-
-
-      const response = await registerUser(registrationData);
-      if (response.token) {
-        await storeToken(response.token);
-      }
-      navigation.navigate('VerifyIdentityRegister', { email });
+      navigateToVerifyIdentityRegister(navigation, fantasyName, email);
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setErrorMessage(I18n.t(TextKey.userAlreadyExists));
@@ -75,24 +64,6 @@ const SignupScreen = ({ navigation }) => {
         onChangeText={setEmail}
       />
 
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterPassword)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterConfirmPassword)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
-
       {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
 
       <CustomButton
@@ -119,7 +90,6 @@ const createStyles = (theme) => StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     paddingHorizontal: 40,
-    paddingTop: 40,
     backgroundColor: theme.colors.background,
   },
   logo: {
@@ -140,6 +110,8 @@ const createStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
+    // borderWidth: 1,
+    // borderColor: theme.colors.primary,
   },
   loader: {
     marginBottom: 15, 

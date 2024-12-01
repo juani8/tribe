@@ -21,7 +21,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    totpSecret: {
+        type: String,
+        required: true
+    },
     isVerified: {
+        type: Boolean,
+        default: false,
+    },
+    isDeleted: {
         type: Boolean,
         default: false,
     },
@@ -39,7 +47,8 @@ const userSchema = new mongoose.Schema({
         enum: ['masculino', 'femenino', 'no binario', 'otro', 'prefiero no decir'],
     },
     gamificationLevel: {
-        type: String,
+        type: Object,
+        default: { level: 1, description: 'usuario nuevo' },
     },
     following: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -48,27 +57,7 @@ const userSchema = new mongoose.Schema({
     followers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    }],
-    numberOfFollowers: {
-        type: Number,
-        default: 0,
-    },
-    numberOfFollowing: {
-        type: Number,
-        default: 0,
-    },
-    numberOfComments: {
-        type: Number,
-        default: 0,
-    },
-    numberOfPosts: {
-        type: Number,
-        default: 0,
-    },
-    numberOfFavorites: {
-        type: Number,
-        default: 0,
-    },
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

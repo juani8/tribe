@@ -7,10 +7,13 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import { registerUser } from 'networking/api/authsApi';
 import { storeToken } from 'helper/JWTHelper';
+import { useRoute } from '@react-navigation/native';
+import { navigateToInitialConfiguration } from 'helper/navigationHandlers/AuthNavigationHandlers';
 
 const SignupScreenSecondPart = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const route = useRoute();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,7 +21,7 @@ const SignupScreenSecondPart = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!fantasyName || !email || !password || !confirmPassword) {
+    if (!password || !confirmPassword) {
       setErrorMessage(I18n.t(TextKey.completeFields));
       return;
     } else if (password !== confirmPassword) {
@@ -28,15 +31,17 @@ const SignupScreenSecondPart = ({ navigation }) => {
 
     try {
       setIsLoading(true); 
-      const registrationData = { nickName: fantasyName, email, password };
-
-
+      const registrationData = { 
+        nickName: route.params?.fantasyName, 
+        email: route.params?.email, 
+        password 
+      };
 
       const response = await registerUser(registrationData);
       if (response.token) {
         await storeToken(response.token);
       }
-      navigation.navigate('VerifyIdentityRegister', { email });
+      navigateToInitialConfiguration();
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setErrorMessage(I18n.t(TextKey.userAlreadyExists));
@@ -55,23 +60,6 @@ const SignupScreenSecondPart = ({ navigation }) => {
       <CustomTextNunito style={[styles.title, { color: theme.colors.text }]} weight="Bold">
         {I18n.t(TextKey.signupTitle)}
       </CustomTextNunito>
-
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterName)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        value={fantasyName}
-        onChangeText={setFantasyName}
-      />
-
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterEmail)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
 
       <TextInput
         style={[styles.input, { color: theme.colors.text }]}
@@ -117,7 +105,6 @@ const createStyles = (theme) => StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     paddingHorizontal: 40,
-    paddingTop: 40,
     backgroundColor: theme.colors.background,
   },
   logo: {
