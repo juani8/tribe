@@ -60,6 +60,10 @@ exports.verifyTotp = async (req, res) => {
 
         if (user.isVerified) return res.status(400).json({ message: 'Usuario ya verificado.' });
 
+        if (user.totpAttempts >= 3) {
+            return res.status(400).json({ message: 'Demasiados intentos fallidos. Por favor, intente más tarde.' });
+        }
+
         const totpSecret = user.totpSecret;
         const isValid = speakeasy.totp.verify({
             secret: totpSecret,
@@ -68,9 +72,14 @@ exports.verifyTotp = async (req, res) => {
             window: 3
         });
 
-        if (!isValid) return res.status(400).json({ message: 'Código de verificación inválido o expirado.' });
+        if (!isValid){
+            user.totpAttempts += 1;
+            await user.save();
+            return res.status(400).json({ message: 'Código de verificación inválido o expirado.' });
+        }
 
         user.isVerified = true;
+        user.totpAttempts = 0;
         await user.save();
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });

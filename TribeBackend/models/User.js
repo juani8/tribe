@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    totpAttempts: {
+        type: Number,
+        default: 0,
+    },
     isVerified: {
         type: Boolean,
         default: false,
