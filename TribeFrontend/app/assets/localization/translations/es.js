@@ -55,11 +55,10 @@ export default {
     emailPlaceholder: 'Ingresa tu correo',
     passwordPlaceholder: 'Ingresa tu contraseña',
     completeFields: 'Por favor, completa todos los campos.',
-    passwordsDontMatch: 'Las contraseñas no coinciden.',
-    completeFields: 'Por favor, completa todos los campos.',
+    invalidPassword: 'Contraseña incorrecta',
     gmailLogin: 'O',
     gmailButton: 'Inicia sesion con google',
-    gmailButton: 'Inicia sesion con google',
+    loginSuccessTitle: 'Has iniciado sesion correctamente',
 
     // Signup Screen
     signupTitle: 'Crea tu cuenta',
@@ -72,7 +71,7 @@ export default {
     confirmPassword: 'Confirmar contraseña',
     enterConfirmPassword: 'Confirma tu contraseña',
     createUserButton: 'Crear usuario',
-    logIn: 'Inicia sesion',
+    logIn: 'Inicia sesión',
     completeFields: 'Por favor, completa todos los campos.',
     passwordsDontMatch: 'Las contraseñas no coinciden.',
 
@@ -92,12 +91,18 @@ export default {
     verifyIdentityInstruction: 'Hemos enviado un correo electrónico para confirmar que realmente eres tú.',
     verifyIdentityCheckInbox: 'Por favor, revisa tu bandeja de entrada y haz clic en el enlace para continuar.',
     verifyIdentityCheckSpam: 'Si no visualizas el correo, verifica la carpeta de spam.',
+
+     // Verify Identity Screen
+     verifyIdentityRegisterCheckInbox: 'Por favor, revisa tu bandeja de entrada y copia el codigo de 6 digitos para continuar',
+     verificationSuccessTitle: 'Código exitoso',
     
-    // Initial Configuration Screen
+   // Initial Configuration Screen
     initialConfigTitle: 'Bienvenido a Tribe',
     initialConfigSubtitle: 'Comencemos completando tu perfil.',
     firstNameLabel: 'Nombre',
+    firstNamePlaceholder: 'Ingresa tu nombre', 
     lastNameLabel: 'Apellido',
+    lastNamePlaceholder: 'Ingresa tu apellido', 
     genderLabel: 'Género',
     continueButton: 'Continuar',
     selectGender: 'Seleccionar',
@@ -107,8 +112,7 @@ export default {
     genderOther: 'Otro',
     genderPreferNotToSay: 'Prefiero no decir',
     completeFieldsError: 'Por favor completa todos los campos.',
-    profileUpdated: 'Perfil actualizado',
-    profileUpdateSuccess: 'Tu perfil ha sido completado exitosamente.',
+    profileUpdateSuccess: 'Tu cuenta ha sido creada exitosamente.',
 
     // Timeline Screen
     timelineTitle: 'Pantalla de Línea de Tiempo',
@@ -136,8 +140,7 @@ export default {
     uploadConfirmation: 'Confirmar',
 
     // Search Screen
-    searchTitle: 'Pantalla de Búsqueda',
-    searchMessage: 'Por favor, ingrese su consulta de búsqueda',
+    searchPlaceholder: 'Buscar...',
 
     // Pantalla de Detalle de Publicación
     commentsTitle: 'Comentarios',

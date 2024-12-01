@@ -78,11 +78,12 @@ const TextKey = {
     emailPlaceholder: 'emailPlaceholder', 
     passwordPlaceholder: 'passwordPlaceholder',
     completeFields: 'completeFields',
-    passwordsDontMatch: 'passwordsDontMatch',
+    invalidPassword: 'invalidPassword',
     completeFields: 'completeFields',
     gmailLogin: 'gmailLogin',
     gmailButton: 'gmailButton',
     gmailButton: 'gmailButton',
+    loginSuccessTitle: 'loginSuccessTitle',
 
     // Signup Screen
     signupTitle: 'signupTitle',
@@ -96,6 +97,11 @@ const TextKey = {
     enterConfirmPassword: 'enterConfirmPassword',
     createUserButton: 'createUserButton',
     logIn: 'logIn',
+    completeFields: 'completeFields',
+    passwordsDontMatch: 'passwordsDontMatch',
+    signupSuccessTitle: 'signupSuccessTitle',
+    signupSuccessMessage: 'signupSuccessMessage',
+
 
     // Password recovery Screen
     recoverPasswordTitle: 'recoverPasswordTitle',
@@ -118,12 +124,17 @@ const TextKey = {
     completeTokenFields: 'completeTokenFields',
     invalidTokenError: 'invalidTokenError',
         
+    // Verify Identity Register Screen
+    verifyIdentityRegisterCheckInbox: 'verifyIdentityRegisterCheckInbox',
+    verificationSuccessTitle: 'verificationSuccessTitle',
 
     // Initial Configuration Screen
     initialConfigTitle: 'initialConfigTitle',
     initialConfigSubtitle: 'initialConfigSubtitle',
     firstNameLabel: 'firstNameLabel',
+    firstNamePlaceholder: 'firstNamePlaceholder', 
     lastNameLabel: 'lastNameLabel',
+    lastNamePlaceholder: 'lastNamePlaceholder', 
     genderLabel: 'genderLabel',
     continueButton: 'continueButton',
     selectGender: 'selectGender',
@@ -133,7 +144,6 @@ const TextKey = {
     genderOther: 'genderOther',
     genderPreferNotToSay: 'genderPreferNotToSay',
     completeFieldsError: 'completeFieldsError',
-    profileUpdated: 'profileUpdated',
     profileUpdateSuccess: 'profileUpdateSuccess',
 
 
@@ -161,10 +171,12 @@ const TextKey = {
     uploadDescriptionPlaceholder: 'uploadDescriptionPlaceholder',
     uploadAddLocation: 'uploadAddLocation',
     uploadConfirmation: 'uploadConfirmation',
+    
 
+    
     // Search Screen
     searchTitle: 'searchTitle',
-    searchMessage: 'searchMessage',
+    searchPlaceholder: 'searchPlaceholder',
 
     // Post Detail Screen
     commentsTitle: 'commentsTitle',

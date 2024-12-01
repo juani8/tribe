@@ -1,26 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Alert, ScrollView, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import { storeToken } from 'helper/JWTHelper'; 
+import React, { useState } from 'react';
+import { View, Alert, ScrollView, TextInput, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { useTheme } from 'context/ThemeContext';
 
 const InitialConfigurationScreen = ({ navigation }) => {
-  const route = useRoute();
   const { theme } = useTheme();
   const styles = createStyles(theme);
+
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [gender, setGender] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleContinue = () => {
-    // proceso para completar la configuración inicial si es necesario
-    Alert.alert('Continuar', 'Se han guardado tus preferencias.');
-    navigation.navigate('Main');
+  const handleContinue = async () => {
+    if (!name || !surname || !gender) {
+      setErrorMessage(I18n.t(TextKey.completeFieldsError));
+      return;
+    }
+
+    try {
+      setIsLoading(true); 
+      await new Promise((resolve) => setTimeout(resolve, 1500)); 
+      Alert.alert(I18n.t(TextKey.profileUpdateSuccess));
+      navigation.navigate('Main'); 
+    } catch (error) {
+      console.error('Error guardando preferencias:', error);
+    } finally {
+      setIsLoading(false); 
+    }
   };
 
   return (
@@ -37,7 +49,7 @@ const InitialConfigurationScreen = ({ navigation }) => {
       <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.firstNameLabel)}</CustomTextNunito>
       <TextInput
         style={styles.input}
-        placeholder={I18n.t('firstNameLabel')}
+        placeholder={I18n.t(TextKey.firstNamePlaceholder)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={name}
         onChangeText={setName}
@@ -46,7 +58,7 @@ const InitialConfigurationScreen = ({ navigation }) => {
       <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.lastNameLabel)}</CustomTextNunito>
       <TextInput
         style={styles.input}
-        placeholder={I18n.t(TextKey.lastNameLabel)}
+        placeholder={I18n.t(TextKey.lastNamePlaceholder)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         value={surname}
         onChangeText={setSurname}
@@ -68,11 +80,16 @@ const InitialConfigurationScreen = ({ navigation }) => {
         </Picker>
       </View>
 
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+      {errorMessage ? <CustomTextNunito style={styles.errorText}>{errorMessage}</CustomTextNunito> : null}
 
-      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-        <CustomTextNunito style={styles.continueButtonText} weight="Bold">{I18n.t(TextKey.continueButton)}</CustomTextNunito>
-      </TouchableOpacity>
+      {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
+
+      <CustomButton
+        title={I18n.t(TextKey.continueButton)}
+        onPress={handleContinue}
+        showLoading={isLoading}
+        locked={isLoading}
+      />
     </ScrollView>
   );
 };
@@ -80,9 +97,9 @@ const InitialConfigurationScreen = ({ navigation }) => {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'flex-start', 
+    justifyContent: 'flex-start',
     paddingHorizontal: 40,
-    paddingTop: 100, 
+    paddingTop: 100,
     backgroundColor: theme.colors.background,
   },
   logo: {
@@ -96,9 +113,6 @@ const createStyles = (theme) => StyleSheet.create({
     color: theme.colors.text,
     marginBottom: 10,
     alignSelf: 'flex-start',
-  },
-  highlight: {
-    color: theme.colors.primary,
   },
   subtitle: {
     fontSize: 16,
@@ -135,29 +149,17 @@ const createStyles = (theme) => StyleSheet.create({
     height: '100%',
     color: theme.colors.text,
   },
+  loader: {
+    marginBottom: 15, 
+  },
   errorText: {
     color: 'red',
     fontSize: 14,
     marginBottom: 10,
     textAlign: 'center',
   },
-  continueButton: {
-    width: '100%',
-    height: 50,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.colors.primary,
-    marginBottom: 10,
-  },
-  continueButtonText: {
-    fontSize: 18,
-    color: '#FFF',
-    fontFamily: 'Nunito-Bold',
-  },
 });
 
 export default InitialConfigurationScreen;
-
 
 

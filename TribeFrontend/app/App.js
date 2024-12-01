@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Image, Pressable, View, ActivityIndicator } from 'react-native';
+import { Image, Pressable } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -15,6 +15,7 @@ import SearchScreen from 'ui/screens/core/SearchScreen';
 import LoginScreen from 'ui/screens/auth/LoginScreen';
 import SignupScreen from 'ui/screens/auth/SignupScreen';
 import RecoverPasswordScreen from 'ui/screens/auth/RecoverPasswordScreen';
+import VerifyIdentityRegisterScreen from 'ui/screens/auth/VerifyIdentityRegisterScreen';
 import VerifyIdentityScreen from 'ui/screens/auth/VerifyIdentityScreen';
 import InitialConfigurationScreen from 'ui/screens/auth/InitialConfigurationScreen';
 import NotificationsScreen from 'ui/screens/core/NotificationsScreen';
@@ -39,12 +40,11 @@ import { ThemeProvider, useTheme } from 'context/ThemeContext';
 import { PostProvider } from 'context/PostContext';
 import { UserProvider, useUserContext } from 'context/UserContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import { checkToken, checkRefreshToken } from 'networking/api/authsApi';
+import { checkToken } from 'networking/api/authsApi';
 import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
 import { AddSquareSelectedNight, HomeSelectedNight, SearchAltSelectedNight, AddSquareNight, HomeNight, SearchAltNight } from 'assets/images';
 import useMagicLinkListener from 'hooks/useMagicLinkListener';
 import { navigateToHome } from 'helper/navigationHandlers/CoreNavigationHandlers';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -117,28 +117,17 @@ function MainStack() {
     const { setUser } = useUserContext();
     const [initialRoute, setInitialRoute] = useState('Welcome');
     const [isSessionChecked, setIsSessionChecked] = useState(false);
-    const [showBioPrompt, setShowBioPrompt] = useState(false);
 
     useEffect(() => {
         const checkSession = async () => {
             try {
                 const { valid, user } = await checkToken();
-                if (false) {
+                if (valid) {
                     setInitialRoute('Main');
+                    console.log(user)
                     setUser(user);
                 } else {
-                    const { valid, user } = await checkRefreshToken();
-                    console.log('valid', valid);
-                    if (valid) {
-                        try {
-                            setInitialRoute('Login');
-                            setUser(user);
-                            setShowBioPrompt(true);
-                        } catch (error) {
-                            console.error('Error checking refresh token:', error);
-                            setInitialRoute('Welcome');
-                        }
-                    }
+                    setInitialRoute('Welcome');
                 }
             } catch (error) {
                 console.error('Error checking session:', error);
@@ -153,14 +142,17 @@ function MainStack() {
 
     useMagicLinkListener();
 
+    if (!isSessionChecked) {
+        return null; // or a loading spinner
+    }
+
     return (
         <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: theme.colors.background } }} initialRouteName={initialRoute}>
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen name="Login">
-                {props => <LoginScreen {...props} showBioPrompt={showBioPrompt} />}
-            </Stack.Screen>
+            <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
             <Stack.Screen name="RecoverPassword" component={RecoverPasswordScreen} />
+            <Stack.Screen name="VerifyIdentityRegister" component={VerifyIdentityRegisterScreen} />
             <Stack.Screen name="VerifyIdentity" component={VerifyIdentityScreen} />
             <Stack.Screen name="InitialConfiguration" component={InitialConfigurationScreen} />
             <Stack.Screen name="Main" component={TabBar} />

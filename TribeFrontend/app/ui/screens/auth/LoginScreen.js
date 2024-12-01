@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import { loginUser } from 'networking/api/authsApi';
-import { getToken, storeToken } from 'helper/JWTHelper'; 
+import { storeToken } from 'helper/JWTHelper'; 
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import {useUserContext} from 'context/UserContext';
-import BiometricPrompt from 'ui/components/authComponents/BiometricPrompt';
-import { authenticateWithBiometrics } from 'helper/BiometricsHelper';
-import Keychain from 'react-native-keychain';
+import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
+import { useUserContext } from 'context/UserContext';
+import { TouchableOpacity } from 'react-native';
 
-
-const LoginScreen = ({ navigation, showBioPrompt }) => {
+const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const { setUser } = useUserContext();
@@ -20,20 +18,21 @@ const LoginScreen = ({ navigation, showBioPrompt }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  
+  const [isLoading, setIsLoading] = useState(false); 
+
   const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMessage(I18n.t(TextKey.loginMessage));
+      setErrorMessage(I18n.t(TextKey.completeFields));
       return;
     }
 
     try {
+      setIsLoading(true); 
       const loginData = { email, password };
       const response = await loginUser(loginData);
       setUser(response.user);
       // Guarda el token usando Keychain
-      await Keychain.setGenericPassword('accessToken', response.token);
-      await Keychain.setGenericPassword('refreshToken', response.refreshToken);
+      await storeToken(response.token);
       
       Alert.alert(
         'Inicio de sesión exitoso.',
@@ -53,48 +52,19 @@ const LoginScreen = ({ navigation, showBioPrompt }) => {
 
       if (error.response) {
         if (error.response.status === 401) {
-          setErrorMessage('Credenciales inválidas. Inténtalo de nuevo.');
+            setErrorMessage(I18n.t(TextKey.invalidPassword)); 
         } else if (error.response.status === 403) {
-          setErrorMessage('Por favor verifica tu email antes de iniciar sesión.');
+          setErrorMessage(I18n.t(TextKey.verifyEmailMessage));
         } else {
-          setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+          setErrorMessage(I18n.t(TextKey.loginErrorMessage));
         }
       } else {
-        setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+        setErrorMessage(I18n.t(TextKey.loginErrorMessage));
       }
+    } finally {
+      setIsLoading(false); 
     }
   };
-
-  const handleBiometricAuthSuccess = async () => {
-    try {
-      const loginData = { email, password };
-      const response = await loginUser(loginData);
-      setUser(response.user);
-      // Guarda el token usando Keychain
-      await storeToken(response.token);
-      
-      Alert.alert(
-        'Inicio de sesión exitoso.',
-        'Has iniciado sesión correctamente.',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('Main'),
-          },
-        ],
-        { cancelable: false }
-      );
-    } catch (error) {
-      console.error('Error en el inicio de sesión:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (showBioPrompt) {
-      authenticateWithBiometrics(handleBiometricAuthSuccess);
-    }
-  }, [showBioPrompt]);
-
 
   return (
     <View style={styles.container}>
@@ -104,10 +74,10 @@ const LoginScreen = ({ navigation, showBioPrompt }) => {
       <Text style={styles.loginMessage}>{I18n.t(TextKey.loginMessage)}</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('emailLabel')}</Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.emailLabel)}</Text>
         <TextInput
           style={[styles.input, { color: theme.colors.text }]}
-          placeholder={I18n.t('emailPlaceholder')}
+          placeholder={I18n.t(TextKey.emailPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           keyboardType="email-address"
           value={email}
@@ -116,10 +86,10 @@ const LoginScreen = ({ navigation, showBioPrompt }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('passwordLabel')}</Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.passwordLabel)}</Text>
         <TextInput
           style={[styles.input, { color: theme.colors.text }]}
-          placeholder={I18n.t('passwordPlaceholder')}
+          placeholder={I18n.t(TextKey.passwordPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           secureTextEntry
           value={password}
@@ -129,11 +99,14 @@ const LoginScreen = ({ navigation, showBioPrompt }) => {
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-      <TouchableOpacity style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} onPress={handleLogin}>
-        <Text style={[styles.loginButtonText, { color: '#FFF' }]}>{I18n.t(TextKey.loginButton)}</Text>
-      </TouchableOpacity>
-      
-      <BiometricPrompt onAuthenticated={handleBiometricAuthSuccess} />
+      {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
+
+      <CustomButton
+        title={I18n.t(TextKey.loginButton)}
+        onPress={handleLogin}
+        showLoading={isLoading}
+        locked={isLoading}
+      />
 
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
@@ -154,7 +127,6 @@ const LoginScreen = ({ navigation, showBioPrompt }) => {
     </View>
   );
 };
-
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
@@ -201,18 +173,8 @@ const createStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
   },
-  loginButton: {
-    width: '85%',
-    height: 50,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  loginButtonText: {
-    fontSize: 18,
-    fontFamily: 'Nunito-Bold',
-    color: '#FFF',
+  loader: {
+    marginBottom: 15, // Espaciado entre el loader y el botón
   },
   linksContainer: {
     alignItems: 'flex-start',
@@ -250,6 +212,7 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default LoginScreen;
+
 
 
 

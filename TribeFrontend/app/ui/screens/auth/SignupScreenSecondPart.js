@@ -8,12 +8,10 @@ import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import { registerUser } from 'networking/api/authsApi';
 import { storeToken } from 'helper/JWTHelper';
 
-const SignupScreen = ({ navigation }) => {
+const SignupScreenSecondPart = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
-  const [fantasyName, setFantasyName] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -157,4 +155,4 @@ const createStyles = (theme) => StyleSheet.create({
   },
 });
 
-export default SignupScreen;
+export default SignupScreenSecondPart;

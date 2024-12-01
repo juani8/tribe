@@ -57,11 +57,12 @@ export default {
     emailPlaceholder: 'Enter your email',
     passwordPlaceholder: 'Enter your password',
     completeFields: 'Please fill in all fields.',
-    passwordsDontMatch: 'Passwords do not match.',
+    invalidPassword: 'Wrong password',
     completeFields: 'Please fill in all fields.',
     gmailLogin: 'Or',
     gmailButton: 'Sign up with Google',
     gmailButton: 'Sign up with Google',
+    loginSuccessTitle: 'You have logged in successfully',
 
     // Signup Screen
     signupTitle: 'Create your account',
@@ -95,11 +96,17 @@ export default {
     verifyIdentityCheckInbox: 'Please check your inbox and click the link to continue.',
     verifyIdentityCheckSpam: 'If you don’t see the email, check your spam folder.',
 
-    // Initial Configuration Screen
+    // Verify Identity Screen
+    verifyIdentityRegisterCheckInbox: 'Please check your inbox and copy the 6 digit code to continue',
+    verificationSuccessTitle: 'Succesful code',
+
+   // Initial Configuration Screen
     initialConfigTitle: 'Welcome to Tribe',
     initialConfigSubtitle: 'Let’s start by completing your profile.',
     firstNameLabel: 'First Name',
+    firstNamePlaceholder: 'Enter your first name', 
     lastNameLabel: 'Last Name',
+    lastNamePlaceholder: 'Enter your last name', 
     genderLabel: 'Gender',
     continueButton: 'Continue',
     selectGender: 'Select',
@@ -109,8 +116,7 @@ export default {
     genderOther: 'Other',
     genderPreferNotToSay: 'Prefer not to say',
     completeFieldsError: 'Please complete all fields.',
-    profileUpdated: 'Profile updated',
-    profileUpdateSuccess: 'Your profile has been successfully completed.',
+    profileUpdateSuccess: 'Your account has been successfully created',
 
     // Timeline Screen
     timelineTitle: 'Timeline Screen',
@@ -137,9 +143,8 @@ export default {
     uploadAddLocation: 'Add actual location',
     uploadConfirmation: 'Confirm',
 
-    // Search Screen
-    searchTitle: 'Search Screen',
-    searchMessage: 'Please enter your search query',
+    // Search Screen,
+    searchPlaceholder: 'Search...',
 
     // Post Detail Screen
     commentsTitle: 'Comments',
