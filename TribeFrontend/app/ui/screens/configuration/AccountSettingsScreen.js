@@ -4,10 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import { navigateToChangePassword, navigateToDeleteAccount, navigateToEditPersonalData, navigateToEnableBiometrics } from 'helper/navigationHandlers/AccountSettingsNavigationHandlers'
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
+import { useUserContext } from 'context/UserContext';
 import {Trash} from 'assets/images';
 
 const AccountSettingsScreen = () => {
   const { theme } = useTheme();
+  const { user } = useUserContext();
   const navigation = useNavigation();
   
   return (
