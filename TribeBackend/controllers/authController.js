@@ -112,7 +112,8 @@ exports.register = async (req, res) => {
         const newUser = new User({
             email,
             nickName,
-            password: hashedPassword
+            password: hashedPassword,
+            isVerified: true,
         });
 
         await newUser.save();
