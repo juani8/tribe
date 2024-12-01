@@ -131,21 +131,37 @@ exports.getUsers = async (req, res) => {
  */
 exports.followUser = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
+        }
+
+        const user = await User.findById(req.user._id);
         const userToFollow = await User.findById(req.params.userId);
+        
         if (!userToFollow) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-
-        // Add user to following list
-        if (!req.user.following.includes(userToFollow._id)) {
-            req.user.following.push(userToFollow._id);
-            await req.user.save();
+        if (user._id.toString() === userToFollow._id.toString()) {
+            return res.status(400).json({ message: 'No puedes seguirte a ti mismo.' });
         }
 
-        // Add follower to the followed user
-        if (!userToFollow.followers.includes(req.user._id)) {
-            userToFollow.followers.push(req.user._id);
-            await userToFollow.save();
+        const isAlreadyFollowing = user.following.includes(userToFollow._id);
+        const isAlreadyFollowedBy = userToFollow.followers.includes(user._id);
+
+        if (isAlreadyFollowing && isAlreadyFollowedBy) {
+            return res.status(400).json({ message: 'Ya sigues a este usuario.' });
+        }
+
+        if (!isAlreadyFollowing) {
+            user.following.push(userToFollow._id);
+            user.numberOfFollowing = user.following.length;
+            await user.save({ validateModifiedOnly: true });
+        }
+
+        if (!isAlreadyFollowedBy) {
+            userToFollow.followers.push(user._id);
+            userToFollow.numberOfFollowers = userToFollow.followers.length;
+            await userToFollow.save({ validateModifiedOnly: true });
         }
 
         res.status(200).json({ followedUserId: userToFollow._id });
@@ -162,20 +178,37 @@ exports.followUser = async (req, res) => {
  */
 exports.unfollowUser = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
+        }
+
+        const user = await User.findById(req.user._id);
         const userToUnfollow = await User.findById(req.params.userId);
+
         if (!userToUnfollow) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        // Remove user from following list
-        req.user.following = req.user.following.filter(id => id.toString() !== req.params.userId);
-        await req.user.save();
+        if (user._id.toString() === userToUnfollow._id.toString()) {
+            return res.status(400).json({ message: 'No puedes dejar de seguirte a ti mismo.' });
+        }
 
-        // Remove follower from the unfollowed user
-        userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== req.user._id.toString());
-        await userToUnfollow.save();
+        const isFollowing = user.following.includes(userToUnfollow._id);
+        const isFollowedBy = userToUnfollow.followers.includes(user._id);
 
-        res.status(204).send();
+        if (!isFollowing || !isFollowedBy) {
+            return res.status(400).json({ message: 'No sigues a este usuario.' });
+        }
+
+        user.following = user.following.filter(id => id.toString() !== userToUnfollow._id.toString());
+        user.numberOfFollowing = user.following.length;
+        await user.save({ validateModifiedOnly: true });
+
+        userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== user._id.toString());
+        userToUnfollow.numberOfFollowers = userToUnfollow.followers.length;
+        await userToUnfollow.save({ validateModifiedOnly: true });
+
+        res.status(200).json({ message: 'Usuario dejado de seguir con éxito.', unfollowedUserId: userToUnfollow._id });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
