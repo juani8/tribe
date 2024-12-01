@@ -34,6 +34,8 @@ import ChangePasswordScreen from 'ui/screens/accountSettings/ChangePasswordScree
 import DeleteAccountScreen from 'ui/screens/accountSettings/DeleteAccountScreen';
 import EditPersonalDataScreen from 'ui/screens/accountSettings/EditPersonalDataScreen';
 import EnableBiometricsScreen from 'ui/screens/accountSettings/EnableBiometricsScreen';
+import ChangeProfilePhotoScreen from 'ui/screens/accountSettings/ChangeProfilePhotoScreen';
+import ChangeCoverPhotoScreen from 'ui/screens/accountSettings/ChangeCoverPhotoScreen';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -173,6 +175,8 @@ function MainStack() {
             <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.deleteAccountNavegation)} /> }} />
             <Stack.Screen name="EditPersonalData" component={EditPersonalDataScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.editPersonalDataNavegation)} /> }} />
             <Stack.Screen name="EnableBiometrics" component={EnableBiometricsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.enableBiometricsNavegation)} /> }} />
+            <Stack.Screen name="ChangeProfilePicture" component={ChangeProfilePhotoScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.changeProfilePictureNavegation)} /> }} />
+            <Stack.Screen name="ChangeCoverPhoto" component={ChangeCoverPhotoScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.changeCoverPictureNavegation)}/> }} />
         </Stack.Navigator>
     );
 }

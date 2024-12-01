@@ -25,6 +25,8 @@ export default {
     deleteAccountNavegation: 'Eliminar Cuenta',
     editPersonalDataNavegation: 'Editar Datos Personales',
     enableBiometricsNavegation: 'Habilitar Biométricos',
+    changeCoverPictureNavegation: 'Cambiar Foto de Portada',
+    changeProfilePictureNavegation: 'Cambiar Foto de Perfil',
 
     // PopUp
     settingsTitle: 'Configuración',
@@ -226,5 +228,48 @@ export default {
     numberOfFollowers: "Número de Seguidores",
     numberOfFollowing: "Número de Seguidos",
     numberOfComments: "Número de Comentarios",
-    numberOfLikes: "Número de Me Gusta"
+    numberOfLikes: "Número de Me Gusta",
+
+    // Editar info personal
+    changeProfilePicture: 'Cambiar foto de perfil',
+    changeCoverPhoto: 'Cambiar foto de portada',
+    nicknameLabel: 'Nombre de fantasía',
+    nicknamePlaceholder: 'Ingresa tu nombre de fantasía',
+    firstNameLabel: 'Nombre',
+    firstNamePlaceholder: 'Ingresa tu nombre',
+    lastNameLabel: 'Apellido',
+    lastNamePlaceholder: 'Ingresa tu apellido',
+    descriptionLabel: 'Descripción',
+    descriptionPlaceholder: 'Escribe algo sobre ti',
+    genderLabel: 'Género',
+    selectGender: 'Selecciona tu género',
+    genderMale: 'Masculino',
+    genderFemale: 'Femenino',
+    genderNonBinary: 'No binario',
+    genderOther: 'Otro',
+    genderPreferNotToSay: 'Prefiero no decirlo',
+
+    //Change profile and banner pic
+    noImageSelected: 'Ninguna imagen seleccionada',
+    selectImageFromGallery: 'Selecciona una imagen de tu galería',
+    saveButton: 'Guardar',
+
+    //Cambiar contraseña
+    changePasswordTitle: 'Cambia tu contraseña',
+    currentPasswordLabel: 'Contraseña actual',
+    currentPasswordPlaceholder: 'Ingresa tu contraseña actual',
+    newPasswordLabel: 'Nueva contraseña',
+    newPasswordPlaceholder: 'Ingresa tu nueva contraseña', 
+    confirmPasswordLabel: 'Confirmar nueva contraseña',
+    confirmPasswordPlaceholder: 'Confirma tu nueva contraseña',
+    confirmButton: 'Confirmar',
+
+    //Borrar cuenta
+    deleteAccountTitle: 'Baja de cuenta',
+    deleteAccountMessage: 'Lamentamos mucho que te vayas. ¿Estás seguro de que quieres eliminar tu cuenta?',
+    deleteAccountDetails: 'Una vez que confirmes, tus datos desaparecerán.',
+    deleteAccountButton: 'Borrar cuenta',
+    confirmationTitle: '¿Estás seguro de que quieres eliminar tu cuenta?',
+    confirmButton: 'Confirmar',
+    cancelButton: 'Cancelar',
 };

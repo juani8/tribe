@@ -25,6 +25,8 @@ const TextKey = {
     deleteAccountNavegation: 'deleteAccountNavegation',
     editPersonalDataNavegation: 'editPersonalDataNavegation',
     enableBiometricsNavegation: 'enableBiometricsNavegation',
+    changeCoverPictureNavegation: 'changeCoverPictureNavegation',
+    changeProfilePictureNavegation: 'changeProfilePictureNavegation',
 
     // PopUp
     settingsTitle: 'settingsTitle',
@@ -260,6 +262,49 @@ const TextKey = {
     numberOfFollowing: 'numberOfFollowing',
     numberOfComments: 'numberOfComments',
     numberOfLikes: 'numberOfLikes',
+
+    //Editar info personal
+    changeProfilePicture: 'changeProfilePicture',
+    changeCoverPhoto: 'changeCoverPhoto',
+    nicknameLabel: 'nicknameLabel',
+    nicknamePlaceholder: 'nicknamePlaceholder',
+    firstNameLabel: 'firstNameLabel',
+    firstNamePlaceholder: 'firstNamePlaceholder',
+    lastNameLabel: 'lastNameLabel',
+    lastNamePlaceholder: 'lastNamePlaceholder',
+    descriptionLabel: 'descriptionLabel',
+    descriptionPlaceholder: 'descriptionPlaceholder',
+    genderLabel: 'genderLabel',
+    selectGender: 'selectGender',
+    genderMale: 'genderMale',
+    genderFemale: 'genderFemale',
+    genderNonBinary: 'genderNonBinary',
+    genderOther: 'genderOther',
+    genderPreferNotToSay: 'genderPreferNotToSay',
+
+    //Cambiar foto de perfil y portada
+    noImageSelected: 'noImageSelected',
+    selectImageFromGallery: 'selectImageFromGallery',
+    saveButton: 'saveButton',
+
+    //Cambiar contraseña
+    changePasswordTitle: 'changePasswordTitle',
+    currentPasswordLabel: 'currentPasswordLabel',
+    currentPasswordPlaceholder: 'currentPasswordPlaceholder',
+    newPasswordLabel: 'newPasswordLabel',
+    newPasswordPlaceholder: 'newPasswordPlaceholder', 
+    confirmPasswordLabel: 'confirmPasswordLabel',
+    confirmPasswordPlaceholder: 'confirmPasswordPlaceholder', 
+    confirmButton: 'confirmButton',
+
+    //Borrar cuenta
+    deleteAccountTitle: 'deleteAccountTitle',
+    deleteAccountMessage: 'deleteAccountMessage',
+    deleteAccountDetails: 'deleteAccountDetails',
+    deleteAccountButton: 'deleteAccountButton',
+    confirmationTitle: 'confirmationTitle',
+    confirmButton: 'confirmButton',
+    cancelButton: 'cancelButton',
 };
 
 export default TextKey;

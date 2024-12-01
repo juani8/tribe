@@ -27,6 +27,8 @@ export default {
     deleteAccountNavegation: 'Delete Account',
     editPersonalDataNavegation: 'Edit Personal Data',
     enableBiometricsNavegation: 'Enable Biometrics',
+    changeCoverPictureNavegation: 'Change Cover Picture',
+    changeProfilePictureNavegation: 'Change Profile Picture',
 
     // PopUp
     settingsTitle: 'Settings',
@@ -228,4 +230,48 @@ export default {
     numberOfFollowing: "Number of Following",
     numberOfComments: "Number of Comments",
     numberOfLikes: "Number of Likes",
+
+    //Edit Personal Screen
+    changeProfilePicture: 'Change profile picture',
+    changeCoverPhoto: 'Change cover photo',
+    nicknameLabel: 'Nickname',
+    nicknamePlaceholder: 'Enter your nickname',
+    firstNameLabel: 'First Name',
+    firstNamePlaceholder: 'Enter your first name',
+    lastNameLabel: 'Last Name',
+    lastNamePlaceholder: 'Enter your last name',
+    descriptionLabel: 'Description',
+    descriptionPlaceholder: 'Write something about yourself',
+    genderLabel: 'Gender',
+    selectGender: 'Select your gender',
+    genderMale: 'Male',
+    genderFemale: 'Female',
+    genderNonBinary: 'Non-binary',
+    genderOther: 'Other',
+    genderPreferNotToSay: 'Prefer not to say',
+
+    //Change profile and banner pic
+    noImageSelected: 'No image selected',
+    selectImageFromGallery: 'Select an image from the gallery',
+    saveButton: 'Save',
+
+    //Change your password
+    changePasswordTitle: 'Change your password',
+    currentPasswordLabel: 'Current Password',
+    currentPasswordPlaceholder: 'Enter your current password',
+    newPasswordLabel: 'New Password',
+    newPasswordPlaceholder: 'Enter your new password', 
+    confirmPasswordLabel: 'Confirm New Password',
+    confirmPasswordPlaceholder: 'Confirm your new password',
+    confirmButton: 'Confirm',
+
+    //Delete account
+    deleteAccountTitle: 'Delete your account',
+    deleteAccountMessage: 'We’re sorry to see you go. Are you sure you want to delete your account?',
+    deleteAccountDetails: 'Once you confirm, your data will be permanently deleted.',
+    deleteAccountButton: 'Delete Account',
+    confirmationTitle: 'Are you sure you want to delete your account?',
+    confirmButton: 'Confirm',
+    cancelButton: 'Cancel'
+    
 };
