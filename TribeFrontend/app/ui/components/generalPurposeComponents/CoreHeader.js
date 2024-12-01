@@ -22,7 +22,7 @@ const CoreHeader = () => {
     const closeMenu = () => setMenuVisible(false);
 
     const styles = createStyles(theme);
-
+    console.log('user', user?.profileImage);
     return (
         <View>
             <View style={[styles.headerContainer]}>
@@ -34,9 +34,9 @@ const CoreHeader = () => {
                 }}>
                     <View style={styles.itemsLeft}>
                         <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
-                            <Image source={{ uri: user.profileImage ? user.profileImage : theme.UserCircleLight }} style={{ width: 50, height: 50, borderRadius: 100 }} />
+                        <Image source={{ uri: user?.profileImage !== null && user?.profileImage !== undefined ? user.profileImage : theme.UserCircleLight }} style={{ width: 50, height: 50, borderRadius: 100 }} />
                         </TouchableOpacity>
-                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 8}}>{`${I18n.t(TextKey.headerTitle)}, ${user.nickName}`}</CustomTextNunito>
+                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 8}}>{`${I18n.t(TextKey.headerTitle)}, ${user?.nickName}`}</CustomTextNunito>
                     </View>
                     <View style={styles.itemsRight}>
                         <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>

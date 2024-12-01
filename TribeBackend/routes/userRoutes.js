@@ -1,17 +1,18 @@
 const express = require('express');
-const router = express.Router();
-const userController = require('../controllers/userController');
 
-router.get('/me', userController.getProfile);
-router.patch('/me', userController.updateProfile);
-router.delete('/me', userController.deleteProfile);
-router.get('/', userController.getUsers);
-router.post('/me/following/:userId', userController.followUser);
-router.delete('/me/following/:userId', userController.unfollowUser);
-router.get('/me/followers', userController.getFollowers);
-router.get('/me/following', userController.getFollowings);
-router.patch('/me/passwords', userController.changePassword);
-router.get('/me/metrics', userController.getUserMetrics);
-router.post('/me/logout', userController.logout);
+const { getProfile, updateProfile, deleteProfile, getUsers, followUser, unfollowUser, getFollowers, getFollowing, changePassword, logout } = require('../controllers/userController');
+const router = express.Router();
+
+router.get('/me', getProfile);
+router.patch('/me', updateProfile);
+router.delete('/me', deleteProfile);
+router.get('/', getUsers);
+router.post('/me/following/:userId', followUser);
+router.delete('/me/following/:userId', unfollowUser);
+router.get('/me/followers', getFollowers);
+router.get('/me/following', getFollowing);
+router.patch('/me/passwords', changePassword);
+router.post('/me/logout', logout);
+
 
 module.exports = router;

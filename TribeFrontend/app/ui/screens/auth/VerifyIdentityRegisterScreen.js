@@ -9,6 +9,7 @@ import Back from 'assets/images/icons/Back.png';
 import BackNight from 'assets/images/iconsNight/Back_night.png';
 import { useRoute } from '@react-navigation/native';
 import { navigateToSignupSecondPart } from 'helper/navigationHandlers/AuthNavigationHandlers';
+import { verifyTotp } from 'networking/api/authsApi';
 
 const VerifyIdentityRegisterScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();
@@ -25,15 +26,14 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
   
       if (text.length === 6) {
         try {
-          const email = navigation.getParam('email'); // Obtén el email pasado desde el registro
-          const verificationData = { email, totpCode: text };
+          const verificationData = { email: route.params?.email, totpCode: text };
   
           const response = await verifyTotp(verificationData);
           console.log('response', response);
   
           Alert.alert(I18n.t(TextKey.verificationSuccessTitle), response.message);
   
-          navigateToSignupSecondPart(navigation, route.params?.fantasyName, route.params?.email);
+          navigateToSignupSecondPart(navigation, route.params?.email);
         } catch (error) {
           console.log('error', error);
           if (error.response && error.response.status === 400) {
@@ -47,7 +47,7 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
@@ -99,7 +99,7 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
 
       {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
 
-    </ScrollView>
+    </View>
   );
 };
 

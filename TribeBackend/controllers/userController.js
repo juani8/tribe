@@ -1,9 +1,7 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
 const Post = require('../models/Post');
-const Comment = require('../models/Comment');
-const Bookmark = require('../models/Bookmark');
+const jwt = require('jsonwebtoken');
 
 /**
  * Obtiene el perfil del usuario autenticado.
@@ -20,18 +18,9 @@ exports.getProfile = async (req, res) => {
         }
 
         const user = await User.findById(req.user.id)
-            .populate({
-                path: 'following',
-                select: 'name lastName nickName profileImage',
-                match: { isDeleted: false }
-            })
-            .populate({
-                path: 'followers',
-                select: 'name lastName nickName profileImage',
-                match: { isDeleted: false }
-            })
-            .lean();
-
+            .select('name lastName nickName email gender profileImage coverImage description gamificationLevel following followers')
+            .populate('following', 'name lastName nickName profileImage')
+            .populate('followers', 'name lastName nickName profileImage');
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
@@ -41,16 +30,14 @@ exports.getProfile = async (req, res) => {
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
             .select('description multimedia location likes totalComments createdAt');
 
-        const followingsCount = user.following.length;
-        const followersCount = user.followers.length;
+        const response = {
+            ...user.toObject(),
+            posts,
+        };
 
-        res.status(200).json({
-            ...user,
-            numberOfFollowings: followingsCount,
-            numberOfFollowers: followersCount
-        });
+        res.status(200).json(response);
     } catch (error) {
-        console.error("Error en getProfile:", error);
+        console.error('Error en getProfile:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
@@ -97,19 +84,16 @@ exports.updateProfile = async (req, res) => {
  */
 exports.deleteProfile = async (req, res) => {
     try {
-        const userId = req.user.id;
-
-        const user = await User.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
+        const user = await User.findByIdAndDelete(req.user.id);
         if (!user) {
-            console.log('Usuario no encontrado');
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-
-        res.status(204).send();
+        res.status(204).send(); // No content
     } catch (error) {
-        console.error('Error interno del servidor:', error);
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
-}
+};
+
 /**
  * Obtiene una lista de usuarios con búsqueda y paginación.
  * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de búsqueda y paginación.
@@ -121,9 +105,8 @@ exports.getUsers = async (req, res) => {
 
     try {
         const users = await User.find({
-            isDeleted: false,
             $or: [
-                { name: new RegExp(input, 'i') }, 
+                { name: new RegExp(input, 'i') }, // case-insensitive search
                 { lastName: new RegExp(input, 'i') },
                 { nickName: new RegExp(input, 'i') }
             ]
@@ -134,7 +117,6 @@ exports.getUsers = async (req, res) => {
         if (!users.length) {
             return res.status(404).json({ message: 'No se encontraron usuarios.' });
         }
-
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -240,21 +222,10 @@ exports.unfollowUser = async (req, res) => {
  */
 exports.getFollowers = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate({
-            path: 'followers',
-            match: { isDeleted: false },
-            select: 'name lastName nickName profileImage'
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
-
-        const filteredFollowers = user.followers.filter(follower => !follower.isDeleted);
-        const numberOfFollowers = filteredFollowers.length;
-        res.status(200).json({ followers: filteredFollowers, numberOfFollowers });
+        const user = await User.findById(req.user.id).populate('followers', 'name lastName nickName profileImage');
+        res.status(200).json(user.followers);
     } catch (error) {
-        res.status(500).json({ message: 'Error interno del servidor.' });
+        res.status(500).json({ message: 'Internal server error.' });
     }
 };
 
@@ -264,21 +235,10 @@ exports.getFollowers = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con la lista de usuarios seguidos.
  */
-exports.getFollowings = async (req, res) => {
+exports.getFollowing = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate({
-            path: 'following',
-            match: { isDeleted: false },
-            select: 'name lastName nickName profileImage'
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
-
-        const filteredFollowings = user.following.filter(followingUser => !followingUser.isDeleted);
-        const numberOfFollowings = filteredFollowings.length;
-        res.status(200).json({ following: filteredFollowings, numberOfFollowings });
+        const user = await User.findById(req.user.id).populate('following', 'name lastName nickName profileImage');
+        res.status(200).json(user.following);
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
@@ -301,75 +261,6 @@ exports.changePassword = async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
     res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
-};
-
-/**
- * Obtiene las métricas del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con las métricas del usuario.
- */
-exports.getUserMetrics = async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ message: 'Usuario no autenticado.' });
-        }
-
-        const userId = req.user.id;
-
-        const numberOfFollowers = await User.countDocuments({ following: userId, isDeleted: false });
-        const numberOfFollowing = await User.countDocuments({ followers: userId, isDeleted: false });
-        const numberOfPosts = await Post.countDocuments({ userId });
-
-        // Obtener todos los bookmarks del usuario
-        const bookmarks = await Bookmark.find({ userId }).populate({
-            path: 'postId',
-            populate: {
-                path: 'userId',
-                select: 'isDeleted',
-                match: { isDeleted: false }
-            }
-        });
-        
-        const numberOfFavorites = bookmarks.filter(bookmark => bookmark.postId && bookmark.postId.userId).length;
-
-        const numberOfComments = await Comment.countDocuments({ userId });
-
-        const metrics = {
-            numberOfFollowers,
-            numberOfFollowing,
-            numberOfPosts,
-            numberOfFavorites,
-            numberOfComments
-        };
-
-        res.status(200).json(metrics);
-    } catch (error) {
-        console.error('Error en getUserMetrics:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-};
-
-/**
- * Actualiza el nivel de gamificación del usuario.
- * @param {Object} user - Objeto del usuario.
- * @returns {Promise<void>} - Actualiza el nivel de gamificación del usuario si corresponde.
- */
-exports.updateGamificationLevel = async (user) => {
-    const levels = [
-        { level: 1, description: 'usuario nuevo', minPosts: 0 },
-        { level: 2, description: 'usuario activo', minPosts: 5 },
-        { level: 3, description: 'usuario avanzado', minPosts: 10 },
-        { level: 4, description: 'usuario experto', minPosts: 15 },
-    ];
-
-    const currentLevel = user.gamificationLevel.level;
-    const nextLevel = levels.find(level => level.level === currentLevel + 1);
-
-    if (nextLevel && user.numberOfPosts >= nextLevel.minPosts) {
-        user.gamificationLevel = { level: nextLevel.level, description: nextLevel.description };
-        await user.save();
-    }
 };
 
 /**

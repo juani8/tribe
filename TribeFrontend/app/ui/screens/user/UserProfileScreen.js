@@ -41,7 +41,7 @@ const UserProfileScreen = () => {
       <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginHorizontal: 20, marginTop: 10 }}>
         <CustomTextNunito weight={'Bold'} style={{ fontSize: 18 }}>{user.name}, {user.lastName} - <CustomTextNunito weight={'MediumItalic'}>@{user.nickName}</CustomTextNunito></CustomTextNunito>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 8 }}>
-          <CustomTextNunito weight={'Bold'}>{user.genre}</CustomTextNunito>
+          <CustomTextNunito weight={'Bold'}>{user.gender}</CustomTextNunito>
           <CustomButton title={'Editar perfil'} smallHeight={true} />
         </View>
         <CustomTextNunito>{user.description}</CustomTextNunito>

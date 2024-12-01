@@ -91,7 +91,7 @@ export const ThemeProvider = ({ children }) => {
     logo: isCurrentlyDarkMode ? LogoDarkMode : LogoLightMode,
     FavoriteFill: isCurrentlyDarkMode ? FavoriteFillNight : FavoriteFill,
     BookmarkFill: isCurrentlyDarkMode ? BookmarkFillNight : BookmarkFill,
-    UserCircleLight: isCurrentlyDarkMode ? UserCircleLightNight : UserCircleLight,
+    UserCircle: isCurrentlyDarkMode ? UserCircleLightNight : UserCircleLight,
     Menu: isCurrentlyDarkMode ? MenuNight : Menu,
     BellFill: isCurrentlyDarkMode ? BellFillNight : BellFill,
     Fingerprint: isCurrentlyDarkMode ? FingerprintNight : FingerprintBlack,

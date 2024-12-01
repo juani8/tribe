@@ -6,8 +6,8 @@ export const navigateToSignup = (navigation) => {
   navigation.navigate('Signup');
 }
 
-export const navigateToSignupSecondPart = (navigation, fantasyName, email) => {
-  navigation.navigate('SignupSecondPart', { fantasyName, email });
+export const navigateToSignupSecondPart = (navigation, email) => {
+  navigation.navigate('SignupSecondPart', { email });
 }
 
 export const navigateToPasswordRecovery = (navigation) => {
@@ -18,8 +18,8 @@ export const navigateToVerifyIdentity = (navigation) => {
   navigation.navigate('VerifyIdentity');
 }
 
-export const navigateToVerifyIdentityRegister = (navigation, fantasyName, email) => {
-  navigation.navigate('VerifyIdentityRegister', { fantasyName, email });
+export const navigateToVerifyIdentityRegister = (navigation, email) => {
+  navigation.navigate('VerifyIdentityRegister', { email });
 }
 
 export const navigateToInitialConfiguration = (navigation) => {

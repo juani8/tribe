@@ -21,7 +21,7 @@ const AdComponent = ({ ad }) => {
       <TouchableOpacity onPress={() => Linking.openURL(ad.Url)}>
         <View style={styles.postHeader}>
           <Image
-            source={ad.imagePath[0].landscape ? { uri: ad.imagePath[0].landscape } : theme.UserCircleLight}
+            source={ad.imagePath[0].landscape ? { uri: ad.imagePath[0].landscape } : theme.UserCircle}
             style={{ width: 65, height: 65, borderRadius: 100 }}
             resizeMode="cover"
           />

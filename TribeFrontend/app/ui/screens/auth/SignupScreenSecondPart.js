@@ -15,13 +15,14 @@ const SignupScreenSecondPart = ({ navigation }) => {
   const styles = createStyles(theme);
   const route = useRoute();
 
+  const [fantasyName, setFantasyName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!password || !confirmPassword) {
+    if (!fantasyName || !password || !confirmPassword) {
       setErrorMessage(I18n.t(TextKey.completeFields));
       return;
     } else if (password !== confirmPassword) {
@@ -32,16 +33,17 @@ const SignupScreenSecondPart = ({ navigation }) => {
     try {
       setIsLoading(true); 
       const registrationData = { 
-        nickName: route.params?.fantasyName, 
+        nickName: fantasyName, 
         email: route.params?.email, 
         password 
       };
 
       const response = await registerUser(registrationData);
+      console.log(response)
       if (response.token) {
         await storeToken(response.token);
       }
-      navigateToInitialConfiguration();
+      navigateToInitialConfiguration(navigation);
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setErrorMessage(I18n.t(TextKey.userAlreadyExists));
@@ -60,6 +62,14 @@ const SignupScreenSecondPart = ({ navigation }) => {
       <CustomTextNunito style={[styles.title, { color: theme.colors.text }]} weight="Bold">
         {I18n.t(TextKey.signupTitle)}
       </CustomTextNunito>
+
+      <TextInput
+        style={[styles.input, { color: theme.colors.text }]}
+        placeholder={I18n.t(TextKey.enterName)}
+        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
+        value={fantasyName}
+        onChangeText={setFantasyName}
+      />
 
       <TextInput
         style={[styles.input, { color: theme.colors.text }]}

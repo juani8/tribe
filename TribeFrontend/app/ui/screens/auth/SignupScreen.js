@@ -13,13 +13,12 @@ const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
-  const [fantasyName, setFantasyName] = useState('');
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!fantasyName || !email) {
+    if (!email) {
       setErrorMessage(I18n.t(TextKey.completeFields));
       return;
     }
@@ -27,7 +26,7 @@ const SignupScreen = ({ navigation }) => {
     try {
       await sendTotp({ email });
       setIsLoading(true); 
-      navigateToVerifyIdentityRegister(navigation, fantasyName, email);
+      navigateToVerifyIdentityRegister(navigation, email);
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setErrorMessage(I18n.t(TextKey.userAlreadyExists));
@@ -46,14 +45,6 @@ const SignupScreen = ({ navigation }) => {
       <CustomTextNunito style={[styles.title, { color: theme.colors.text }]} weight="Bold">
         {I18n.t(TextKey.signupTitle)}
       </CustomTextNunito>
-
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterName)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        value={fantasyName}
-        onChangeText={setFantasyName}
-      />
 
       <TextInput
         style={[styles.input, { color: theme.colors.text }]}

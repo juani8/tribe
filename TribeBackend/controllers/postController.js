@@ -7,7 +7,6 @@ const { check, validationResult } = require('express-validator');
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const { getMonthlyAds } = require('../utils/adsService');
 const User = require('../models/User');
-const userController = require('./userController');
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -27,37 +26,24 @@ exports.getTimeline = async (req, res) => {
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .populate('userId', 'nickName profileImage')
             .populate({
-                path: 'userId',
-                select: 'nickName profileImage isDeleted',
-                match: { isDeleted: false }
+                path: 'lastComment',
+                populate: {
+                    path: 'userId',
+                    select: 'nickName profileImage'
+                }
             })
             .lean();
 
-        const filteredPosts = posts.filter(post => post.userId !== null);
-
-        const postSummary = await Promise.all(filteredPosts.map(async post => {
+        const postSummary = await Promise.all(posts.map(async post => {
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
-            const lastComment = await Comment.findOne({ postId: post._id })
-                .sort({ createdAt: -1 })
-                .populate({
-                    path: 'userId',
-                    select: 'nickName profileImage',
-                    match: { isDeleted: false }
-                })
-                .lean();
 
             return {
                 ...post,
                 isLiked: !!isLiked,
-                isBookmarked: !!isBookmarked,
-                totalComments,
-                lastComment
+                isBookmarked: !!isBookmarked
             };
         }));
 
@@ -89,92 +75,51 @@ exports.fetchAds = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-exports.createPost = async (req, res) => {
-    const { description, multimedia, latitude, longitude } = req.body;
-    const userId = req.user.id;
+exports.createPost = [
+    check('multimedia').notEmpty().withMessage('El contenido multimedia es obligatorio.'),
+    check('description').optional(),
+    check('latitude').optional(),
+    check('longitude').optional(),
 
-    try {
-        let city;
-        if (latitude !== undefined && longitude !== undefined) {
-            city = await getCityFromCoordinates(latitude, longitude);
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.', errors: errors.array() });
         }
 
-        const newPost = new Post({
-            userId,
-            description,
-            multimedia,
-            location: {
-                latitude, 
-                longitude, 
-                city
+        const { description, multimedia, latitude, longitude } = req.body;
+
+        try {
+            let city;
+            if (latitude !== undefined && longitude !== undefined) {
+                city = await getCityFromCoordinates(latitude, longitude);
             }
-        });
 
-        const savedPost = await newPost.save();
-        
-        await userController.updateGamificationLevel(user);
-
-        res.status(201).json({ data: savedPost, message: 'Post creado exitosamente' });
-    } catch (error) {
-        console.error("Error en createPost:", error);
-        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
-    }
-};
-
-/**
- * Obtiene los posts del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con los posts del usuario autenticado.
- */
-exports.getUserPosts = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
-    const userId = req.user.id;
-
-    try {
-        const posts = await Post.find({ userId })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .populate({
-                path: 'userId',
-                select: 'nickName profileImage',
-            })
-            .lean();
-
-        const filteredPosts = posts.filter(post => post.userId !== null);
-
-        const postSummary = await Promise.all(filteredPosts.map(async post => {
-            const isLiked = await Like.exists({ userId, postId: post._id });
-            const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
+            const newPost = new Post({
+                userId: req.user.id,
+                description,
+                multimedia,
+                location: {
+                    latitude, 
+                    longitude, 
+                    city
+                }
             });
-            const lastComment = await Comment.findOne({ postId: post._id })
-                .sort({ createdAt: -1 })
-                .populate({
-                    path: 'userId',
-                    select: 'nickName profileImage',
-                    match: { isDeleted: false }
-                })
-                .lean();
 
-            return {
-                ...post,
-                isLiked: !!isLiked,
-                isBookmarked: !!isBookmarked,
-                totalComments,
-                lastComment
-            };
-        }));
+            const savedPost = await newPost.save();
 
-        res.status(200).json(postSummary);
-    } catch (error) {
-        console.error('Error en getUserPosts:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
+            res.status(201).send({ data: savedPost, message: 'Post creado exitosamente' });
+        } catch (error) {
+            console.error("Error en createPost:", error);
+            
+            if (error.message.includes('Coordenadas inválidas')) {
+                return res.status(400).json({ error: 400, message: 'La solicitud contiene datos inválidos o incompletos.' });
+            }
+            
+            res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        }
     }
-};
+];
 
 /**
  * Obtiene los posts del usuario autenticado.
@@ -224,30 +169,20 @@ exports.getPostById = async (req, res) => {
     try {
         const post = await Post.findById(postId)
             .populate('userId', 'nickName profileImage')
+            .populate({
+                path: 'lastComment',
+                populate: {
+                    path: 'userId',
+                    select: 'nickName profileImage'
+                }
+            })
             .lean();
-
+        
         if (!post) {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
-        const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-            path: 'userId',
-            match: { isDeleted: false }
-        });
-        const lastComment = await Comment.findOne({ postId: post._id })
-            .sort({ createdAt: -1 })
-            .populate({
-                path: 'userId',
-                select: 'nickName profileImage',
-                match: { isDeleted: false }
-            })
-            .lean();
-
-        res.status(200).json({
-            ...post,
-            totalComments,
-            lastComment
-        });
+        res.status(200).json(post);
     } catch (error) {
         console.error("Error en getPostById:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -263,6 +198,11 @@ exports.getPostById = async (req, res) => {
  */
 exports.getCommentsByPostId = async (req, res) => {
     const { postId } = req.params;
+    /**
+     * Los valores 0 y 10 son valores por defecto, en caso de que no sean proporcionados en la query. 
+     * El frontend es responsable de calcular y enviar el offset correcto en cada solicitud para obtener la página deseada. 
+     * El offset se incrementa en función del limit cada vez que se navega a una nueva página (offset + limit)
+     */
     const { offset = 0, limit = 10 } = req.query;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
@@ -274,21 +214,15 @@ exports.getCommentsByPostId = async (req, res) => {
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .sort({ createdAt: -1 })
-            .populate({
-                path: 'userId',
-                select: 'nickName profileImage isDeleted',
-                match: { isDeleted: false }
-            })
-            .lean();
+            .populate('userId', 'nickName profileImage');
 
-        const filteredComments = comments.filter(comment => comment.userId !== null);
-
-        res.status(200).json(filteredComments);
+        res.status(200).json(comments);
     } catch (error) {
         console.error("Error en getCommentsByPostId:", error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 };
+
 
 /**
  * Crea un comentario en un post específico.
@@ -299,7 +233,6 @@ exports.getCommentsByPostId = async (req, res) => {
 exports.createComment = async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
-    const userId = req.user.id;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -322,7 +255,19 @@ exports.createComment = async (req, res) => {
             comment: content
         });
 
-        const savedComment = await newComment.save();
+        // Intenta guardar el comentario y maneja cualquier error que ocurra
+        let savedComment;
+        try {
+            savedComment = await newComment.save();
+        } catch (error) {
+            console.error("Error al guardar el comentario:", error);
+            return res.status(500).json({ message: 'No se pudo crear el comentario', error: error.message });
+        }
+
+        // Solo actualiza el post si el comentario se creó correctamente
+        post.lastComment = savedComment._id;
+        post.totalComments += 1;
+        await post.save();
 
         res.status(201).json(savedComment);
     } catch (error) {
@@ -475,41 +420,14 @@ exports.getUserBookmarks = async (req, res) => {
                 path: 'postId',
                 populate: {
                     path: 'userId',
-                    select: 'nickName profileImage isDeleted',
-                    match: { isDeleted: false }
+                    select: 'nickName profileImage'
                 }
             })
             .lean();
 
-        const filteredBookmarks = bookmarks.filter(bookmark => bookmark.postId.userId !== null);
+        const posts = bookmarks.map(bookmark => bookmark.postId);
 
-        const bookmarkSummary = await Promise.all(filteredBookmarks.map(async bookmark => {
-            const post = bookmark.postId;
-            const isLiked = await Like.exists({ userId, postId: post._id });
-            const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
-            const lastComment = await Comment.findOne({ postId: post._id })
-                .sort({ createdAt: -1 })
-                .populate({
-                    path: 'userId',
-                    select: 'nickName profileImage',
-                    match: { isDeleted: false }
-                })
-                .lean();
-
-            return {
-                ...post,
-                isLiked: !!isLiked,
-                isBookmarked: !!isBookmarked,
-                totalComments,
-                lastComment
-            };
-        }));
-
-        res.status(200).json(bookmarkSummary);
+        res.status(200).json(posts);
     } catch (error) {
         console.error('Error en getUserBookmarks:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
