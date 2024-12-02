@@ -207,11 +207,11 @@ exports.unfollowUser = async (req, res) => {
 
         user.following = user.following.filter(id => id.toString() !== userToUnfollow._id.toString());
         user.numberOfFollowing = user.following.length;
-        await user.save;
+        await user.save();
 
         userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== user._id.toString());
         userToUnfollow.numberOfFollowers = userToUnfollow.followers.length;
-        await userToUnfollow.save;
+        await userToUnfollow.save();
 
         res.status(200).json({ message: 'Usuario dejado de seguir con éxito.', unfollowedUserId: userToUnfollow._id });
     } catch (error) {
