@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
-import { HOST, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
+const BASE_URL = 'https://tribe-plp5.onrender.com';
 
 // Obtener el perfil del usuario autenticado
 export const getUserProfile = async () => {
@@ -18,7 +17,12 @@ export const getUserProfile = async () => {
 // Editar el perfil del usuario autenticado
 export const editUserProfile = async (profileData) => {
   try {
-    const response = await axios.patch(`${BASE_URL}/users/me`, profileData);
+    const token = await getToken();
+    const response = await axios.patch(`${BASE_URL}/users/me`, profileData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al editar el perfil del usuario:', error);
@@ -62,7 +66,12 @@ export const followUser = async (userId) => {
 // Dejar de seguir a un usuario
 export const unfollowUser = async (userId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`);
+    const token = await getToken();
+    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error(`Error al dejar de seguir al usuario ${userId}:`, error);
@@ -73,7 +82,12 @@ export const unfollowUser = async (userId) => {
 // Obtener la lista de seguidores del usuario autenticado
 export const getFollowers = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/followers`);
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/followers`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener la lista de seguidores:', error);
@@ -84,10 +98,48 @@ export const getFollowers = async () => {
 // Obtener la lista de usuarios seguidos por el usuario autenticado
 export const getFollowing = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/following`);
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/following`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener la lista de seguidos:', error);
+    throw error;
+  }
+};
+
+// Obtener la lista de publicaciones favoritas del usuario autenticado
+export const getFavorites = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/users/me/favorites`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener la lista de favoritos:', error);
+    throw error;
+  }
+};
+
+// Agregar una publicación a favoritos
+export const addFavorite = async (favoriteId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/users/me/favorites/${favoriteId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al agregar la publicación ${favoriteId} a favoritos:`, error);
+    throw error;
+  }
+};
+
+// Eliminar una publicación de favoritos
+export const removeFavorite = async (favoriteId) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/users/me/favorites/${favoriteId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al eliminar la publicación ${favoriteId} de favoritos:`, error);
     throw error;
   }
 };
@@ -100,22 +152,6 @@ export const changeUserPassword = async (passwordData) => {
   } catch (error) {
     console.error('Error cambiando la contraseña del usuario:', error);
     throw error;
-  }
-};
-
-// Obtener las métricas del usuario
-export const getUserMetrics = async () => {
-  try {
-      const token = await getToken();
-      const response = await axios.get(`${BASE_URL}/users/me/metrics`, {
-          headers: {
-              'Authorization': `Bearer ${token}`
-          }
-      });
-      return response.data;
-  } catch (error) {
-      console.error('Error al obtener las métricas del usuario:', error);
-      throw error;
   }
 };
 

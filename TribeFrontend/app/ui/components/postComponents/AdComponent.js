@@ -1,3 +1,4 @@
+// Agregado por mrosariopresedo para la integración de los anuncios.
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Clipboard, Alert, Linking, Dimensions } from 'react-native';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
@@ -20,7 +21,7 @@ const AdComponent = ({ ad }) => {
       <TouchableOpacity onPress={() => Linking.openURL(ad.Url)}>
         <View style={styles.postHeader}>
           <Image
-            source={ad.imagePath[0].landscape ? { uri: ad.imagePath[0].landscape } : theme.UserCircleLight}
+            source={ad.imagePath[0].landscape ? { uri: ad.imagePath[0].landscape } : theme.UserCircle}
             style={{ width: 65, height: 65, borderRadius: 100 }}
             resizeMode="cover"
           />

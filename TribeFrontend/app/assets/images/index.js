@@ -41,6 +41,12 @@ export { default as SearchAltSelected } from './icons/Search_alt.png';
 export { default as Send } from './icons/Send.png';
 export { default as Copy } from './icons/Copy.png';
 export { default as VideoFill } from './icons/Video_fill.png';
+export { default as FingerprintBlack } from './icons/FingerprintBlack.png';
+export { default as LockBlack } from './icons/LockBlack.png';
+export { default as EditBlack } from './icons/EditBlack.png';
+export { default as EditNight } from './iconsNight/EditNight.png';
+export { default as LockNight } from './iconsNight/LockNight.png';
+export { default as FingerprintNight } from './iconsNight/FingerprintNight.png';
 
 //icons night
 export { default as BackNight } from './iconsNight/Back_night.png';

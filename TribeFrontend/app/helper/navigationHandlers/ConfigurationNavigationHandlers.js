@@ -9,3 +9,7 @@ export const navigateToThemeSelection = (navigation) => {
 export const navigateToMetrics = (navigation) => {
   navigation.navigate('Metrics');
 }
+
+export const navigateToAccountSettings = (navigation) => {
+  navigation.navigate('AccountSettings');
+}

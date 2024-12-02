@@ -20,6 +20,13 @@ const TextKey = {
     languageSelectionNavegation: 'languageSelectionNavegation',
     themeSelectionNavegation: 'themeSelectionNavegation',
     metricsNavegation: 'metricsNavegation',
+    accountSettingsNavegation: 'accountSettingsNavegation',
+    changePasswordNavegation: 'changePasswordNavegation',
+    deleteAccountNavegation: 'deleteAccountNavegation',
+    editPersonalDataNavegation: 'editPersonalDataNavegation',
+    enableBiometricsNavegation: 'enableBiometricsNavegation',
+    changeCoverPictureNavegation: 'changeCoverPictureNavegation',
+    changeProfilePictureNavegation: 'changeProfilePictureNavegation',
 
     // PopUp
     settingsTitle: 'settingsTitle',
@@ -73,11 +80,12 @@ const TextKey = {
     emailPlaceholder: 'emailPlaceholder', 
     passwordPlaceholder: 'passwordPlaceholder',
     completeFields: 'completeFields',
-    passwordsDontMatch: 'passwordsDontMatch',
+    invalidPassword: 'invalidPassword',
     completeFields: 'completeFields',
     gmailLogin: 'gmailLogin',
     gmailButton: 'gmailButton',
     gmailButton: 'gmailButton',
+    loginSuccessTitle: 'loginSuccessTitle',
 
     // Signup Screen
     signupTitle: 'signupTitle',
@@ -91,6 +99,11 @@ const TextKey = {
     enterConfirmPassword: 'enterConfirmPassword',
     createUserButton: 'createUserButton',
     logIn: 'logIn',
+    completeFields: 'completeFields',
+    passwordsDontMatch: 'passwordsDontMatch',
+    signupSuccessTitle: 'signupSuccessTitle',
+    signupSuccessMessage: 'signupSuccessMessage',
+
 
     // Password recovery Screen
     recoverPasswordTitle: 'recoverPasswordTitle',
@@ -113,12 +126,17 @@ const TextKey = {
     completeTokenFields: 'completeTokenFields',
     invalidTokenError: 'invalidTokenError',
         
+    // Verify Identity Register Screen
+    verifyIdentityRegisterCheckInbox: 'verifyIdentityRegisterCheckInbox',
+    verificationSuccessTitle: 'verificationSuccessTitle',
 
     // Initial Configuration Screen
     initialConfigTitle: 'initialConfigTitle',
     initialConfigSubtitle: 'initialConfigSubtitle',
     firstNameLabel: 'firstNameLabel',
+    firstNamePlaceholder: 'firstNamePlaceholder', 
     lastNameLabel: 'lastNameLabel',
+    lastNamePlaceholder: 'lastNamePlaceholder', 
     genderLabel: 'genderLabel',
     continueButton: 'continueButton',
     selectGender: 'selectGender',
@@ -128,7 +146,6 @@ const TextKey = {
     genderOther: 'genderOther',
     genderPreferNotToSay: 'genderPreferNotToSay',
     completeFieldsError: 'completeFieldsError',
-    profileUpdated: 'profileUpdated',
     profileUpdateSuccess: 'profileUpdateSuccess',
 
 
@@ -156,10 +173,12 @@ const TextKey = {
     uploadDescriptionPlaceholder: 'uploadDescriptionPlaceholder',
     uploadAddLocation: 'uploadAddLocation',
     uploadConfirmation: 'uploadConfirmation',
+    
 
+    
     // Search Screen
     searchTitle: 'searchTitle',
-    searchMessage: 'searchMessage',
+    searchPlaceholder: 'searchPlaceholder',
 
     // Post Detail Screen
     commentsTitle: 'commentsTitle',
@@ -243,6 +262,50 @@ const TextKey = {
     numberOfFollowing: 'numberOfFollowing',
     numberOfComments: 'numberOfComments',
     numberOfLikes: 'numberOfLikes',
+
+    //Editar info personal
+    changeProfilePicture: 'changeProfilePicture',
+    changeCoverPhoto: 'changeCoverPhoto',
+    nicknameLabel: 'nicknameLabel',
+    nicknamePlaceholder: 'nicknamePlaceholder',
+    firstNameLabel: 'firstNameLabel',
+    firstNamePlaceholder: 'firstNamePlaceholder',
+    lastNameLabel: 'lastNameLabel',
+    lastNamePlaceholder: 'lastNamePlaceholder',
+    descriptionLabel: 'descriptionLabel',
+    descriptionPlaceholder: 'descriptionPlaceholder',
+    genderLabel: 'genderLabel',
+    selectGender: 'selectGender',
+    genderMale: 'genderMale',
+    genderFemale: 'genderFemale',
+    genderNonBinary: 'genderNonBinary',
+    genderOther: 'genderOther',
+    genderPreferNotToSay: 'genderPreferNotToSay',
+    changeText: 'changeText',
+
+    //Cambiar foto de perfil y portada
+    noImageSelected: 'noImageSelected',
+    selectImageFromGallery: 'selectImageFromGallery',
+    saveButton: 'saveButton',
+
+    //Cambiar contraseña
+    changePasswordTitle: 'changePasswordTitle',
+    currentPasswordLabel: 'currentPasswordLabel',
+    currentPasswordPlaceholder: 'currentPasswordPlaceholder',
+    newPasswordLabel: 'newPasswordLabel',
+    newPasswordPlaceholder: 'newPasswordPlaceholder', 
+    confirmPasswordLabel: 'confirmPasswordLabel',
+    confirmPasswordPlaceholder: 'confirmPasswordPlaceholder', 
+    confirmButton: 'confirmButton',
+
+    //Borrar cuenta
+    deleteAccountTitle: 'deleteAccountTitle',
+    deleteAccountMessage: 'deleteAccountMessage',
+    deleteAccountDetails: 'deleteAccountDetails',
+    deleteAccountButton: 'deleteAccountButton',
+    confirmationTitle: 'confirmationTitle',
+    confirmButton: 'confirmButton',
+    cancelButton: 'cancelButton',
 };
 
 export default TextKey;

@@ -50,7 +50,7 @@ const FollowingScreen = () => {
   const renderItem = ({ item }) => (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Image source={item.profileImage ? { uri: item.profileImage } : theme.UserCircleLight} style={{ width: 50, height: 50, borderRadius: 25 }} />
+        <Image source={item.profileImage ? { uri: item.profileImage } : theme.UserCircle} style={{ width: 50, height: 50, borderRadius: 25 }} />
         <CustomTextNunito style={{ marginLeft: 10 }}>{item.nickName}</CustomTextNunito>
       </View>
       <CustomButton title="Dejar de seguir" style={{ marginLeft: 'auto' }} onPress={() => confirmUnfollow(item._id, item.nickName)} />    

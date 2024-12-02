@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
-import { HOST, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
+const BASE_URL = 'https://tribe-plp5.onrender.com';
 
 // Registro de usuario
 export const registerUser = async (registrationData) => {
@@ -23,6 +22,28 @@ export const verifyRegistrationToken = async (token) => {
   } catch (error) {
     console.error('Error verificando token de registro:', error);
     throw error;
+  }
+};
+
+// Verificación del código TOTP
+export const verifyTotp = async (verificationData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auths/verify-totp`, verificationData);
+    return response.data; 
+  } catch (error) {
+    console.error('Error verificando TOTP:', error);
+    throw error; 
+  }
+};
+
+// Verificación del código TOTP
+export const sendTotp = async (email) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auths/send-totp`, email);
+    return response.data; 
+  } catch (error) {
+    console.error('Error verificando TOTP:', error);
+    throw error; 
   }
 };
 
@@ -75,9 +96,10 @@ export const verifyPasswordToken = async (token) => {
 export const checkToken = async () => {
   try {
       const token = await getToken();
+      console.log(token);
       if (token) {
           const response = await axios.post(`${BASE_URL}/auths/validate-token`, { token });
-          return response.data.valid;
+          return response.data;
       } else {
           return false;
       }
@@ -85,3 +107,17 @@ export const checkToken = async () => {
       return false;
   }
 };
+
+export const checkRefreshToken = async () => {
+  try {
+      const refreshToken = await getToken();
+      if (refreshToken) {
+          const response = await axios.post(`${BASE_URL}/auths/validate-token`, { refreshToken });
+          return response.data;
+      } else {
+          return false;
+      }
+  } catch (error) {
+      return false;
+  }
+}

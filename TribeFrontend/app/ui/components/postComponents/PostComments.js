@@ -50,7 +50,7 @@ const PostComments = ({ postId }) => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.commentContainer}>
-            <Image source={item.userId.profileImage ? { uri: item.userId.profileImage } : theme.UserCircleLight} style={styles.profileImage} />
+            <Image source={item.userId.profileImage ? { uri: item.userId.profileImage } : theme.UserCircle} style={styles.profileImage} />
             <View style={styles.commentContent}>
               <View style={styles.header}>
                 <CustomTextNunito weight="SemiBold" style={styles.nickName}>

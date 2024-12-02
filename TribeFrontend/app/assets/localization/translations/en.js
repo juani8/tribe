@@ -22,6 +22,13 @@ export default {
     languageSelectionNavegation: 'Language Selection',
     themeSelectionNavegation: 'Theme Selection',
     metricsNavegation: 'Metrics',
+    accountSettingsNavegation: 'Account Settings',
+    changePasswordNavegation: 'Change Password',
+    deleteAccountNavegation: 'Delete Account',
+    editPersonalDataNavegation: 'Edit Personal Data',
+    enableBiometricsNavegation: 'Enable Biometrics',
+    changeCoverPictureNavegation: 'Change Cover Picture',
+    changeProfilePictureNavegation: 'Change Profile Picture',
 
     // PopUp
     settingsTitle: 'Settings',
@@ -52,11 +59,12 @@ export default {
     emailPlaceholder: 'Enter your email',
     passwordPlaceholder: 'Enter your password',
     completeFields: 'Please fill in all fields.',
-    passwordsDontMatch: 'Passwords do not match.',
+    invalidPassword: 'Wrong password',
     completeFields: 'Please fill in all fields.',
     gmailLogin: 'Or',
     gmailButton: 'Sign up with Google',
     gmailButton: 'Sign up with Google',
+    loginSuccessTitle: 'You have logged in successfully',
 
     // Signup Screen
     signupTitle: 'Create your account',
@@ -90,11 +98,17 @@ export default {
     verifyIdentityCheckInbox: 'Please check your inbox and click the link to continue.',
     verifyIdentityCheckSpam: 'If you don’t see the email, check your spam folder.',
 
-    // Initial Configuration Screen
+    // Verify Identity Screen
+    verifyIdentityRegisterCheckInbox: 'Please check your inbox and copy the 6 digit code to continue',
+    verificationSuccessTitle: 'Succesful code',
+
+   // Initial Configuration Screen
     initialConfigTitle: 'Welcome to Tribe',
     initialConfigSubtitle: 'Let’s start by completing your profile.',
     firstNameLabel: 'First Name',
+    firstNamePlaceholder: 'Enter your first name', 
     lastNameLabel: 'Last Name',
+    lastNamePlaceholder: 'Enter your last name', 
     genderLabel: 'Gender',
     continueButton: 'Continue',
     selectGender: 'Select',
@@ -104,8 +118,7 @@ export default {
     genderOther: 'Other',
     genderPreferNotToSay: 'Prefer not to say',
     completeFieldsError: 'Please complete all fields.',
-    profileUpdated: 'Profile updated',
-    profileUpdateSuccess: 'Your profile has been successfully completed.',
+    profileUpdateSuccess: 'Your account has been successfully created',
 
     // Timeline Screen
     timelineTitle: 'Timeline Screen',
@@ -132,9 +145,8 @@ export default {
     uploadAddLocation: 'Add actual location',
     uploadConfirmation: 'Confirm',
 
-    // Search Screen
-    searchTitle: 'Search Screen',
-    searchMessage: 'Please enter your search query',
+    // Search Screen,
+    searchPlaceholder: 'Search...',
 
     // Post Detail Screen
     commentsTitle: 'Comments',
@@ -218,4 +230,49 @@ export default {
     numberOfFollowing: "Number of Following",
     numberOfComments: "Number of Comments",
     numberOfLikes: "Number of Likes",
+
+    //Edit Personal Screen
+    changeProfilePicture: 'Select a new profile picture',
+    changeCoverPhoto: 'Select a new cover photo',
+    nicknameLabel: 'Nickname',
+    nicknamePlaceholder: 'Enter your nickname',
+    firstNameLabel: 'First Name',
+    firstNamePlaceholder: 'Enter your first name',
+    lastNameLabel: 'Last Name',
+    lastNamePlaceholder: 'Enter your last name',
+    descriptionLabel: 'Description',
+    descriptionPlaceholder: 'Write something about yourself',
+    genderLabel: 'Gender',
+    selectGender: 'Select your gender',
+    genderMale: 'Male',
+    genderFemale: 'Female',
+    genderNonBinary: 'Non-binary',
+    genderOther: 'Other',
+    genderPreferNotToSay: 'Prefer not to say',
+    changeText: '✔ Modified (pending save)',
+
+    //Change profile and banner pic
+    noImageSelected: 'No image selected',
+    selectImageFromGallery: 'Select an image from the gallery',
+    saveButton: 'Save',
+
+    //Change your password
+    changePasswordTitle: 'Change your password',
+    currentPasswordLabel: 'Current Password',
+    currentPasswordPlaceholder: 'Enter your current password',
+    newPasswordLabel: 'New Password',
+    newPasswordPlaceholder: 'Enter your new password', 
+    confirmPasswordLabel: 'Confirm New Password',
+    confirmPasswordPlaceholder: 'Confirm your new password',
+    confirmButton: 'Confirm',
+
+    //Delete account
+    deleteAccountTitle: 'Delete your account',
+    deleteAccountMessage: 'We’re sorry to see you go. Are you sure you want to delete your account?',
+    deleteAccountDetails: 'Once you confirm, your data will be permanently deleted.',
+    deleteAccountButton: 'Delete Account',
+    confirmationTitle: 'Are you sure you want to delete your account?',
+    confirmButton: 'Confirm',
+    cancelButton: 'Cancel'
+    
 };

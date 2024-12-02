@@ -5,28 +5,45 @@ import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
-import { sendTotp } from 'networking/api/authsApi';
+import { registerUser } from 'networking/api/authsApi';
 import { storeToken } from 'helper/JWTHelper';
-import { navigateToVerifyIdentityRegister } from 'helper/navigationHandlers/AuthNavigationHandlers';
+import { useRoute } from '@react-navigation/native';
+import { navigateToInitialConfiguration } from 'helper/navigationHandlers/AuthNavigationHandlers';
 
-const SignupScreen = ({ navigation }) => {
+const SignupScreenSecondPart = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const route = useRoute();
 
-  const [email, setEmail] = useState('');
+  const [fantasyName, setFantasyName] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!email) {
+    if (!fantasyName || !password || !confirmPassword) {
       setErrorMessage(I18n.t(TextKey.completeFields));
+      return;
+    } else if (password !== confirmPassword) {
+      setErrorMessage(I18n.t(TextKey.passwordsDontMatch));
       return;
     }
 
     try {
-      await sendTotp({ email });
       setIsLoading(true); 
-      navigateToVerifyIdentityRegister(navigation, email);
+      const registrationData = { 
+        nickName: fantasyName, 
+        email: route.params?.email, 
+        password 
+      };
+
+      const response = await registerUser(registrationData);
+      console.log(response)
+      if (response.token) {
+        await storeToken(response.token);
+      }
+      navigateToInitialConfiguration(navigation);
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setErrorMessage(I18n.t(TextKey.userAlreadyExists));
@@ -48,11 +65,28 @@ const SignupScreen = ({ navigation }) => {
 
       <TextInput
         style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterEmail)}
+        placeholder={I18n.t(TextKey.enterName)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
+        value={fantasyName}
+        onChangeText={setFantasyName}
+      />
+
+      <TextInput
+        style={[styles.input, { color: theme.colors.text }]}
+        placeholder={I18n.t(TextKey.enterPassword)}
+        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <TextInput
+        style={[styles.input, { color: theme.colors.text }]}
+        placeholder={I18n.t(TextKey.enterConfirmPassword)}
+        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
       />
 
       {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
@@ -101,8 +135,6 @@ const createStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    // borderWidth: 1,
-    // borderColor: theme.colors.primary,
   },
   loader: {
     marginBottom: 15, 
@@ -120,4 +152,4 @@ const createStyles = (theme) => StyleSheet.create({
   },
 });
 
-export default SignupScreen;
+export default SignupScreenSecondPart;
