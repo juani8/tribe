@@ -12,20 +12,23 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 // Select media (images or videos) from gallery
-const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'mixed') => {
+const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'mixed', selectionLimit = 5) => {
     const hasPermission = await requestExternalStoragePermission();
 
     if (hasPermission) {
         launchImageLibrary(
-            { mediaType, selectionLimit: 5 },
+            { mediaType, selectionLimit },
             (response) => {
-                if (response.didCancel) {
+                if (response.didCancel) {   
                     console.log('User cancelled camera');
-                } else if (response.errorCode) {
+                } else if (response?.errorCode) {
                     Alert.alert(I18n.t(TextKey.Error), response.errorMessage);
-                } else {
+                } else if (response?.assets) {
+                    console.log('Response:', response);
                     const assets = response.assets || [];
                     setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
+                } else {
+                    Alert.alert(I18n.t(TextKey.Error), I18n.t(TextKey.unknownError));
                 }
             }
         );

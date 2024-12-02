@@ -7,16 +7,14 @@ import TextKey from 'assets/localization/TextKey';
 import { selectFromGallery } from 'helper/MultimediaHelper';
 import { useTheme } from 'context/ThemeContext';
 
-const ChangeProfilePhotoScreen = ({ navigation, route }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
+const ChangeProfilePhotoScreen = ({ navigation }) => {
+  const [selectedImage, setSelectedImage] = useState([]);
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
   const handleSelectImage = async () => {
-    const image = await selectFromGallery();
-    if (image) {
-      setSelectedImage(image.uri);
-    }
+    selectFromGallery([], setSelectedImage, 'image', 1);
+    console.log('Image selected:', selectedImage);
   };
 
   const handleSave = () => {
@@ -33,27 +31,25 @@ const ChangeProfilePhotoScreen = ({ navigation, route }) => {
       </CustomTextNunito>
 
       <View style={styles.content}>
-        {selectedImage ? (
-          <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
-        ) : (
+        {selectedImage.lenght !== 0 ? (
+          <Image source={{ uri: selectedImage[0]?.uri }} style={styles.imagePreview} />
+        ) : ( 
           <CustomTextNunito style={styles.placeholder}>
             {I18n.t(TextKey.noImageSelected)}
           </CustomTextNunito>
         )}
-        <TouchableOpacity onPress={handleSelectImage}>
-          <CustomTextNunito style={styles.link}>
-            {I18n.t(TextKey.selectImageFromGallery)}
-          </CustomTextNunito>
-        </TouchableOpacity>
       </View>
 
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          title={I18n.t(TextKey.saveButton)}
-          onPress={handleSave}
-          style={styles.saveButton}
-        />
-      </View>
+      <CustomButton
+        title={I18n.t(TextKey.selectImageFromGallery)}
+        onPress={handleSelectImage}
+        style={styles.button}
+      />
+      <CustomButton
+        title={I18n.t(TextKey.saveButton)}
+        onPress={handleSave}
+        style={styles.saveButton}
+      />
     </View>
   );
 };
@@ -61,54 +57,36 @@ const ChangeProfilePhotoScreen = ({ navigation, route }) => {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
-    paddingHorizontal: 20,
+    padding: 20,
+    backgroundColor: theme?.colors?.background,
   },
   title: {
-    fontSize: 20,
-    color: theme.colors.primary,
-    textAlign: 'center',
-    marginVertical: 20,
+    fontSize: 24,
+    marginBottom: 20,
+    color: theme?.colors?.text,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
   },
   imagePreview: {
     width: 200,
     height: 200,
     borderRadius: 100,
-    marginBottom: 20,
   },
   placeholder: {
     fontSize: 16,
-    color: theme.colors.detailText,
+    color: theme?.colors?.detailText,
     textAlign: 'center',
     marginBottom: 20,
   },
-  link: {
-    fontSize: 16,
-    color: theme.colors.primary,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 50, 
+  button: {
+    marginVertical: 10,
   },
   saveButton: {
-    width: '100%', 
-    alignSelf: 'center',
+    marginTop: 20,
   },
 });
 
 export default ChangeProfilePhotoScreen;
-
-
-
-
-
-
