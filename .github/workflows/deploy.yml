@@ -19,6 +19,7 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
       NODE_ENV: ${{ vars.NODE_ENV }} 
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +44,7 @@ jobs:
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
           echo "GMAIL_APP_PASSWORD=${{ secrets.GMAIL_APP_PASSWORD }}"
           echo "NODE_ENV=${{ vars.NODE_ENV }}"
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}"
       
       - name: Zip TribeBackend for deployment
         run: |
@@ -67,6 +69,7 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }} 
       NODE_ENV: ${{ vars.NODE_ENV }} 
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
     steps:
       - name: Download artifact from build job
