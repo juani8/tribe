@@ -21,10 +21,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    totpSecret: {
-        type: String,
-        required: true
-    },
     isVerified: {
         type: Boolean,
         default: false,
