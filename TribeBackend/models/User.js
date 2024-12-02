@@ -78,7 +78,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Hook de pre-guardado para validar la contraseña en función de isGoogleUser.
-userSchema.pre('save', function(next) {
+userSchema.pre('save', async function(next) {
     if (!this.isGoogleUser && !this.password) {
         return next(new Error('Password is required for non-Google users.'));
     }

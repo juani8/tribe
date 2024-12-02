@@ -115,6 +115,7 @@ exports.register = async (req, res) => {
             email,
             nickName,
             password: hashedPassword,
+            isVerified: true,
             isGoogleUser: false,
         });
 
