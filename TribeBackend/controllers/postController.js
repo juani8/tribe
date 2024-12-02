@@ -171,38 +171,6 @@ exports.getUserPosts = async (req, res) => {
 };
 
 /**
- * Obtiene los posts del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con los posts del usuario autenticado.
- */
-exports.getUserPosts = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
-    const userId = req.user.id;
-
-    try {
-        const posts = await Post.find({ userId })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .populate('userId', 'nickName profileImage')
-            .populate({
-                path: 'lastComment',
-                populate: {
-                    path: 'userId',
-                    select: 'nickName profileImage'
-                }
-            })
-            .lean();
-
-        res.status(200).json(posts);
-    } catch (error) {
-        console.error('Error en getUserPosts:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-};
-
-/**
  * Obtiene los detalles de un post específico.
  * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
