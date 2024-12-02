@@ -14,7 +14,9 @@ import UploadScreen from 'ui/screens/core/UploadScreen';
 import SearchScreen from 'ui/screens/core/SearchScreen';
 import LoginScreen from 'ui/screens/auth/LoginScreen';
 import SignupScreen from 'ui/screens/auth/SignupScreen';
+import SignupScreenSecondPart from 'ui/screens/auth/SignupScreenSecondPart';
 import RecoverPasswordScreen from 'ui/screens/auth/RecoverPasswordScreen';
+import VerifyIdentityRegisterScreen from 'ui/screens/auth/VerifyIdentityRegisterScreen';
 import VerifyIdentityScreen from 'ui/screens/auth/VerifyIdentityScreen';
 import InitialConfigurationScreen from 'ui/screens/auth/InitialConfigurationScreen';
 import NotificationsScreen from 'ui/screens/core/NotificationsScreen';
@@ -27,6 +29,13 @@ import PostDetail from 'ui/screens/core/PostDetail';
 import LanguageSelectionScreen from 'ui/screens/configuration/LanguageSelectionScreen';
 import MetricsScreen from 'ui/screens/configuration/MetricsScreen';
 import ThemeSelectionScreen from 'ui/screens/configuration/ThemeSelectionScreen';
+import AccountSettingsScreen from 'ui/screens/configuration/AccountSettingsScreen';
+import ChangePasswordScreen from 'ui/screens/accountSettings/ChangePasswordScreen';
+import DeleteAccountScreen from 'ui/screens/accountSettings/DeleteAccountScreen';
+import EditPersonalDataScreen from 'ui/screens/accountSettings/EditPersonalDataScreen';
+import EnableBiometricsScreen from 'ui/screens/accountSettings/EnableBiometricsScreen';
+import ChangeProfilePhotoScreen from 'ui/screens/accountSettings/ChangeProfilePhotoScreen';
+import ChangeCoverPhotoScreen from 'ui/screens/accountSettings/ChangeCoverPhotoScreen';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -45,7 +54,7 @@ const Tab = createBottomTabNavigator();
 
 function TabBar({ navigation }) {
     const { theme, isDarkMode } = useTheme();
-    const flatListRef = useRef(null); // Add a ref to the FlatList
+    const flatListRef = useRef(null);
 
     return (
         <Tab.Navigator
@@ -137,7 +146,7 @@ function MainStack() {
     useMagicLinkListener();
 
     if (!isSessionChecked) {
-        return null; // or a loading spinner
+        return null;
     }
 
     return (
@@ -145,7 +154,9 @@ function MainStack() {
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="SignupSecondPart" component={SignupScreenSecondPart} />
             <Stack.Screen name="RecoverPassword" component={RecoverPasswordScreen} />
+            <Stack.Screen name="VerifyIdentityRegister" component={VerifyIdentityRegisterScreen} />
             <Stack.Screen name="VerifyIdentity" component={VerifyIdentityScreen} />
             <Stack.Screen name="InitialConfiguration" component={InitialConfigurationScreen} />
             <Stack.Screen name="Main" component={TabBar} />
@@ -159,6 +170,13 @@ function MainStack() {
             <Stack.Screen name="LanguageSelection" component={LanguageSelectionScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.languageSelectionNavegation)} /> }} />
             <Stack.Screen name="ThemeSelection" component={ThemeSelectionScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.themeSelectionNavegation)} /> }} />
             <Stack.Screen name="Metrics" component={MetricsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.metricsNavegation)} /> }} />  
+            <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.accountSettingsNavegation)} /> }} />
+            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.changePasswordNavegation)} /> }} />
+            <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.deleteAccountNavegation)} /> }} />
+            <Stack.Screen name="EditPersonalData" component={EditPersonalDataScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.editPersonalDataNavegation)} /> }} />
+            <Stack.Screen name="EnableBiometrics" component={EnableBiometricsScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.enableBiometricsNavegation)} /> }} />
+            <Stack.Screen name="ChangeProfilePicture" component={ChangeProfilePhotoScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.changeProfilePictureNavegation)} /> }} />
+            <Stack.Screen name="ChangeCoverPhoto" component={ChangeCoverPhotoScreen} options={{ headerShown: true, header: () => <ComplementaryHeader title={I18n.t(TextKey.changeCoverPictureNavegation)}/> }} />
         </Stack.Navigator>
     );
 }

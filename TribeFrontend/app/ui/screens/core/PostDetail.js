@@ -100,7 +100,7 @@ const PostDetail = ({ route }) => {
                   <>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image source={postLastComment?.userId?.profileImage ? { uri: postLastComment.userId.profileImage } : theme.UserCircleLight}
+                        <Image source={postLastComment?.userId?.profileImage ? { uri: postLastComment.userId.profileImage } : theme.UserCircle}
                           style={{ width: 24, height: 24, borderRadius: 100 }} />
                         <CustomTextNunito weight='Bold' style={{ marginLeft: 8 }}>{postLastComment.userId?.nickName ? postLastComment.userId.nickName : 'unknown'}</CustomTextNunito>
                       </View>

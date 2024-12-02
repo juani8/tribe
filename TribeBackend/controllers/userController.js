@@ -1,7 +1,9 @@
-const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const Post = require('../models/Post');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const Post = require('../models/Post');
+const Comment = require('../models/Comment');
+const Bookmark = require('../models/Bookmark');
 
 /**
  * Obtiene el perfil del usuario autenticado.
@@ -10,19 +12,45 @@ const jwt = require('jsonwebtoken');
  * @returns {Promise<void>} - Responde con el perfil del usuario si se encuentra, o un mensaje de error.
  */
 exports.getProfile = async (req, res) => {
+    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
+
     try {
-        // Check if req.user is populated
         if (!req.user) {
             return res.status(401).json({ message: 'Usuario no autenticado.' });
         }
 
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id)
+            .populate({
+                path: 'following',
+                select: 'name lastName nickName profileImage',
+                match: { isDeleted: false }
+            })
+            .populate({
+                path: 'followers',
+                select: 'name lastName nickName profileImage',
+                match: { isDeleted: false }
+            })
+            .lean();
+
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
+        const posts = await Post.find({ userId: req.user.id })
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .sort({ [sort]: order === 'desc' ? -1 : 1 })
+            .select('description multimedia location likes totalComments createdAt');
 
-        res.status(200).json(user);
+        const followingsCount = user.following.length;
+        const followersCount = user.followers.length;
+
+        res.status(200).json({
+            ...user,
+            numberOfFollowings: followingsCount,
+            numberOfFollowers: followersCount
+        });
     } catch (error) {
+        console.error("Error en getProfile:", error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
@@ -36,9 +64,27 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const { name, lastName, profileImage, coverImage, description, gender } = req.body;
-        const user = await User.findByIdAndUpdate(req.user.id, { name, lastName, profileImage, coverImage, description, gender }, { new: true });
-        res.status(200).json(user);
+
+        // Validar los campos obligatorios para la finalización del perfil inicial
+        if (!req.user.name || !req.user.lastName || !req.user.gender) {
+            // Verificar si es la primera vez que se completa el perfil
+            if (!name || !lastName || !gender) {
+                return res.status(400).json({
+                    message: 'Por favor, complete los campos obligatorios: nombre, apellido y género.',
+                });
+            }
+        }
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.id,
+            { name, lastName, profileImage, coverImage, description, gender },
+            { new: true }
+        );
+        res.status(200).json({
+                message: 'Perfil actualizado con éxito.',
+                user: updatedUser,
+        });
     } catch (error) {
+        console.error('Error al actualizar el perfil:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
@@ -51,16 +97,19 @@ exports.updateProfile = async (req, res) => {
  */
 exports.deleteProfile = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.user.id);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
-        res.status(204).send(); // No content
-    } catch (error) {
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-};
+        const userId = req.user.id;
 
+        const user = await User.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
+        if (!user) {
+            console.log('Usuario no encontrado');
+        }
+
+        res.status(204).send();
+    } catch (error) {
+        console.error('Error interno del servidor:', error);
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
+}
 /**
  * Obtiene una lista de usuarios con búsqueda y paginación.
  * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de búsqueda y paginación.
@@ -72,8 +121,9 @@ exports.getUsers = async (req, res) => {
 
     try {
         const users = await User.find({
+            isDeleted: false,
             $or: [
-                { name: new RegExp(input, 'i') }, // case-insensitive search
+                { name: new RegExp(input, 'i') }, 
                 { lastName: new RegExp(input, 'i') },
                 { nickName: new RegExp(input, 'i') }
             ]
@@ -84,6 +134,7 @@ exports.getUsers = async (req, res) => {
         if (!users.length) {
             return res.status(404).json({ message: 'No se encontraron usuarios.' });
         }
+
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -98,21 +149,37 @@ exports.getUsers = async (req, res) => {
  */
 exports.followUser = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
+        }
+
+        const user = await User.findById(req.user._id);
         const userToFollow = await User.findById(req.params.userId);
+        
         if (!userToFollow) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-
-        // Add user to following list
-        if (!req.user.following.includes(userToFollow._id)) {
-            req.user.following.push(userToFollow._id);
-            await req.user.save();
+        if (user._id.toString() === userToFollow._id.toString()) {
+            return res.status(400).json({ message: 'No puedes seguirte a ti mismo.' });
         }
 
-        // Add follower to the followed user
-        if (!userToFollow.followers.includes(req.user._id)) {
-            userToFollow.followers.push(req.user._id);
-            await userToFollow.save();
+        const isAlreadyFollowing = user.following.includes(userToFollow._id);
+        const isAlreadyFollowedBy = userToFollow.followers.includes(user._id);
+
+        if (isAlreadyFollowing && isAlreadyFollowedBy) {
+            return res.status(400).json({ message: 'Ya sigues a este usuario.' });
+        }
+
+        if (!isAlreadyFollowing) {
+            user.following.push(userToFollow._id);
+            user.numberOfFollowing = user.following.length;
+            await user.save({ validateModifiedOnly: true });
+        }
+
+        if (!isAlreadyFollowedBy) {
+            userToFollow.followers.push(user._id);
+            userToFollow.numberOfFollowers = userToFollow.followers.length;
+            await userToFollow.save({ validateModifiedOnly: true });
         }
 
         res.status(200).json({ followedUserId: userToFollow._id });
@@ -129,20 +196,37 @@ exports.followUser = async (req, res) => {
  */
 exports.unfollowUser = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
+        }
+
+        const user = await User.findById(req.user._id);
         const userToUnfollow = await User.findById(req.params.userId);
+
         if (!userToUnfollow) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        // Remove user from following list
-        req.user.following = req.user.following.filter(id => id.toString() !== req.params.userId);
-        await req.user.save();
+        if (user._id.toString() === userToUnfollow._id.toString()) {
+            return res.status(400).json({ message: 'No puedes dejar de seguirte a ti mismo.' });
+        }
 
-        // Remove follower from the unfollowed user
-        userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== req.user._id.toString());
-        await userToUnfollow.save();
+        const isFollowing = user.following.includes(userToUnfollow._id);
+        const isFollowedBy = userToUnfollow.followers.includes(user._id);
 
-        res.status(204).send();
+        if (!isFollowing || !isFollowedBy) {
+            return res.status(400).json({ message: 'No sigues a este usuario.' });
+        }
+
+        user.following = user.following.filter(id => id.toString() !== userToUnfollow._id.toString());
+        user.numberOfFollowing = user.following.length;
+        await user.save({ validateModifiedOnly: true });
+
+        userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== user._id.toString());
+        userToUnfollow.numberOfFollowers = userToUnfollow.followers.length;
+        await userToUnfollow.save({ validateModifiedOnly: true });
+
+        res.status(200).json({ message: 'Usuario dejado de seguir con éxito.', unfollowedUserId: userToUnfollow._id });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
@@ -156,10 +240,21 @@ exports.unfollowUser = async (req, res) => {
  */
 exports.getFollowers = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate('followers', 'name lastName nickName profileImage');
-        res.status(200).json(user.followers);
+        const user = await User.findById(req.user.id).populate({
+            path: 'followers',
+            match: { isDeleted: false },
+            select: 'name lastName nickName profileImage'
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        const filteredFollowers = user.followers.filter(follower => !follower.isDeleted);
+        const numberOfFollowers = filteredFollowers.length;
+        res.status(200).json({ followers: filteredFollowers, numberOfFollowers });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -169,10 +264,21 @@ exports.getFollowers = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con la lista de usuarios seguidos.
  */
-exports.getFollowing = async (req, res) => {
+exports.getFollowings = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate('following', 'name lastName nickName profileImage');
-        res.status(200).json(user.following);
+        const user = await User.findById(req.user.id).populate({
+            path: 'following',
+            match: { isDeleted: false },
+            select: 'name lastName nickName profileImage'
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        const filteredFollowings = user.following.filter(followingUser => !followingUser.isDeleted);
+        const numberOfFollowings = filteredFollowings.length;
+        res.status(200).json({ following: filteredFollowings, numberOfFollowings });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
@@ -195,6 +301,75 @@ exports.changePassword = async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
     res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
+};
+
+/**
+ * Obtiene las métricas del usuario autenticado.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Responde con las métricas del usuario.
+ */
+exports.getUserMetrics = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Usuario no autenticado.' });
+        }
+
+        const userId = req.user.id;
+
+        const numberOfFollowers = await User.countDocuments({ following: userId, isDeleted: false });
+        const numberOfFollowing = await User.countDocuments({ followers: userId, isDeleted: false });
+        const numberOfPosts = await Post.countDocuments({ userId });
+
+        // Obtener todos los bookmarks del usuario
+        const bookmarks = await Bookmark.find({ userId }).populate({
+            path: 'postId',
+            populate: {
+                path: 'userId',
+                select: 'isDeleted',
+                match: { isDeleted: false }
+            }
+        });
+        
+        const numberOfFavorites = bookmarks.filter(bookmark => bookmark.postId && bookmark.postId.userId).length;
+
+        const numberOfComments = await Comment.countDocuments({ userId });
+
+        const metrics = {
+            numberOfFollowers,
+            numberOfFollowing,
+            numberOfPosts,
+            numberOfFavorites,
+            numberOfComments
+        };
+
+        res.status(200).json(metrics);
+    } catch (error) {
+        console.error('Error en getUserMetrics:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+/**
+ * Actualiza el nivel de gamificación del usuario.
+ * @param {Object} user - Objeto del usuario.
+ * @returns {Promise<void>} - Actualiza el nivel de gamificación del usuario si corresponde.
+ */
+exports.updateGamificationLevel = async (user) => {
+    const levels = [
+        { level: 1, description: 'usuario nuevo', minPosts: 0 },
+        { level: 2, description: 'usuario activo', minPosts: 5 },
+        { level: 3, description: 'usuario avanzado', minPosts: 10 },
+        { level: 4, description: 'usuario experto', minPosts: 15 },
+    ];
+
+    const currentLevel = user.gamificationLevel.level;
+    const nextLevel = levels.find(level => level.level === currentLevel + 1);
+
+    if (nextLevel && user.numberOfPosts >= nextLevel.minPosts) {
+        user.gamificationLevel = { level: nextLevel.level, description: nextLevel.description };
+        await user.save();
+    }
 };
 
 /**

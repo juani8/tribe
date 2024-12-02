@@ -43,7 +43,7 @@ const CustomInputNunito = ({ inputText, setInputText, maxLength = 140, placehold
                 borderWidth: 1.5, 
                 borderRadius: 10, 
                 padding: 10,
-                height: isFocused ? 100 : 40, // Adjust height when focused
+                height: isFocused && maxLength > 50 ? 100 : 40, // Adjust height when focused
                 textAlignVertical: 'top',  // Align text to the top when multiline
                 color: theme.colors.text,
               }

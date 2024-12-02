@@ -35,7 +35,7 @@ const ContentCarouselListItem = ({ uri, type, index, dataLength }) => {
         )}
         {type === 'video' && (
           <>
-            <Video
+{/*             <Video
               source={{ uri }}
               style={[styles.media]}
               useNativeControls
@@ -44,7 +44,7 @@ const ContentCarouselListItem = ({ uri, type, index, dataLength }) => {
               disableBack
               disableFullscreen
               disableVolume
-            />
+            /> */}
             <Image source={Full} style={{ position: 'absolute', top: 16, right: 20, width: 24, height: 24 }} />
           </>
         )}

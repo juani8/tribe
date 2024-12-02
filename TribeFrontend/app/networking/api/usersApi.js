@@ -17,7 +17,12 @@ export const getUserProfile = async () => {
 // Editar el perfil del usuario autenticado
 export const editUserProfile = async (profileData) => {
   try {
-    const response = await axios.patch(`${BASE_URL}/users/me`, profileData);
+    const token = await getToken();
+    const response = await axios.patch(`${BASE_URL}/users/me`, profileData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al editar el perfil del usuario:', error);

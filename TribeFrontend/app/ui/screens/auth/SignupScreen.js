@@ -1,47 +1,40 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Alert } from 'react-native';
+import { View, TextInput, ScrollView, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import { registerUser } from 'networking/api/authsApi'; // DESCOMENTADO PARA FUNCIONAR CON EL BACKEND
+import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
+import { sendTotp } from 'networking/api/authsApi';
 import { storeToken } from 'helper/JWTHelper';
+import { navigateToVerifyIdentityRegister } from 'helper/navigationHandlers/AuthNavigationHandlers';
 
 const SignupScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
-  const [fantasyName, setFantasyName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!fantasyName || !email || !password || !confirmPassword) {
+    if (!email) {
       setErrorMessage(I18n.t(TextKey.completeFields));
-      return;
-    } else if (password !== confirmPassword) {
-      setErrorMessage(I18n.t(TextKey.passwordsDontMatch));
       return;
     }
 
     try {
-      // Llamada al backend para registrar al usuario y enviar el magic link
-      const registrationData = { nickName: fantasyName, email, password };
-      const response = await registerUser(registrationData);
-      {response.token && await storeToken(response.token)};
-      navigation.navigate('InitialConfiguration');
-      // Si la respuesta es exitosa, navega a VerifyIdentity;
+      await sendTotp({ email });
+      setIsLoading(true); 
+      navigateToVerifyIdentityRegister(navigation, email);
     } catch (error) {
-      //console.error('Error registrando el usuario:', error);
-
-      // Mostrar un mensaje de error apropiado según la respuesta del backend
       if (error.response && error.response.status === 409) {
-        setErrorMessage('Este usuario ya está registrado.');
+        setErrorMessage(I18n.t(TextKey.userAlreadyExists));
       } else {
-        setErrorMessage('Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
+        setErrorMessage(I18n.t(TextKey.genericSignupError));
       }
+    } finally {
+      setIsLoading(false); 
     }
   };
 
@@ -55,14 +48,6 @@ const SignupScreen = ({ navigation }) => {
 
       <TextInput
         style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterName)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        value={fantasyName}
-        onChangeText={setFantasyName}
-      />
-
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
         placeholder={I18n.t(TextKey.enterEmail)}
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         keyboardType="email-address"
@@ -70,38 +55,21 @@ const SignupScreen = ({ navigation }) => {
         onChangeText={setEmail}
       />
 
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterPassword)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
 
-      <TextInput
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholder={I18n.t(TextKey.enterConfirmPassword)}
-        placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
-
-      <TouchableOpacity
-        style={[styles.signupButton, { backgroundColor: theme.colors.primary }]}
+      <CustomButton
+        title={I18n.t(TextKey.createUserButton)}
         onPress={handleSignup}
-      >
-        <CustomTextNunito style={styles.signupButtonText} weight="Bold">
-          {I18n.t(TextKey.createUserButton)}
-        </CustomTextNunito>
-      </TouchableOpacity>
+        showLoading={isLoading}
+        locked={isLoading}
+      />
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <CustomTextNunito style={[styles.loginText, { color: theme.colors.primary }]}>
-          {I18n.t(TextKey.logIn)}
-        </CustomTextNunito>
-      </TouchableOpacity>
+      <CustomTextNunito
+        style={[styles.loginText, { color: theme.colors.primary }]}
+        onPress={() => navigation.navigate('Login')}
+      >
+        {I18n.t(TextKey.logIn)}
+      </CustomTextNunito>
 
       {errorMessage ? <CustomTextNunito style={styles.errorText}>{errorMessage}</CustomTextNunito> : null}
     </ScrollView>
@@ -113,7 +81,6 @@ const createStyles = (theme) => StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     paddingHorizontal: 40,
-    paddingTop: 40,
     backgroundColor: theme.colors.background,
   },
   logo: {
@@ -134,25 +101,11 @@ const createStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
+    // borderWidth: 1,
+    // borderColor: theme.colors.primary,
   },
-  signupButton: {
-    width: '100%',
-    height: 50,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  signupButtonText: {
-    fontSize: 18,
-    color: '#FFF',
-    fontFamily: 'Nunito-Bold', 
-  },
-  loginText: {
-    marginTop: 10,
-    fontSize: 16,
-    alignSelf: 'flex-start',
-    color: theme.colors.primary,
+  loader: {
+    marginBottom: 15, 
   },
   errorText: {
     color: 'red',
@@ -160,8 +113,11 @@ const createStyles = (theme) => StyleSheet.create({
     marginTop: 10,
     textAlign: 'center',
   },
+  loginText: {
+    marginTop: 20,
+    fontSize: 16,
+    textAlign: 'center',
+  },
 });
 
 export default SignupScreen;
-
-

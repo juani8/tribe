@@ -11,6 +11,7 @@ import { FavoriteFill, FavoriteFillNight,
   BellFillNight, BellFill
 
 } from 'assets/images';
+import { FingerprintBlack, LockBlack, EditBlack, EditNight, LockNight, FingerprintNight } from 'assets/images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ThemeContext = createContext();
@@ -90,11 +91,14 @@ export const ThemeProvider = ({ children }) => {
     logo: isCurrentlyDarkMode ? LogoDarkMode : LogoLightMode,
     FavoriteFill: isCurrentlyDarkMode ? FavoriteFillNight : FavoriteFill,
     BookmarkFill: isCurrentlyDarkMode ? BookmarkFillNight : BookmarkFill,
-    UserCircleLight: isCurrentlyDarkMode ? UserCircleLightNight : UserCircleLight,
+    UserCircle: isCurrentlyDarkMode ? UserCircleLightNight : UserCircleLight,
     Menu: isCurrentlyDarkMode ? MenuNight : Menu,
     BellFill: isCurrentlyDarkMode ? BellFillNight : BellFill,
+    Fingerprint: isCurrentlyDarkMode ? FingerprintNight : FingerprintBlack,
+    Lock: isCurrentlyDarkMode ? LockNight : LockBlack,
+    Edit: isCurrentlyDarkMode ? EditNight : EditBlack,
   }), [isCurrentlyDarkMode]);
-  
+
   const toggleSystemThemeUsage = () => {
     setUseSystemTheme((prev) => !prev);
   };
