@@ -39,10 +39,7 @@ exports.getTimeline = async (req, res) => {
         const postSummary = await Promise.all(filteredPosts.map(async post => {
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
+            const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id })
                 .sort({ createdAt: -1 })
                 .populate({
@@ -147,10 +144,7 @@ exports.getUserPosts = async (req, res) => {
         const postSummary = await Promise.all(filteredPosts.map(async post => {
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
+            const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id })
                 .sort({ createdAt: -1 })
                 .populate({
@@ -230,10 +224,7 @@ exports.getPostById = async (req, res) => {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
-        const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-            path: 'userId',
-            match: { isDeleted: false }
-        });
+        const totalComments = await Comment.countDocuments({ postId: post._id });
         const lastComment = await Comment.findOne({ postId: post._id })
             .sort({ createdAt: -1 })
             .populate({
@@ -487,10 +478,7 @@ exports.getUserBookmarks = async (req, res) => {
             const post = bookmark.postId;
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
+            const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id })
                 .sort({ createdAt: -1 })
                 .populate({
