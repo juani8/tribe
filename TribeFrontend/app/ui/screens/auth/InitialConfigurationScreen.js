@@ -7,6 +7,7 @@ import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextN
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { useTheme } from 'context/ThemeContext';
+import { editUserProfile } from 'networking/api/usersApi';
 
 const InitialConfigurationScreen = ({ navigation }) => {
   const route = useRoute();
@@ -17,10 +18,21 @@ const InitialConfigurationScreen = ({ navigation }) => {
   const [gender, setGender] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleContinue = () => {
-    // proceso para completar la configuración inicial si es necesario
-    Alert.alert('Continuar', 'Se han guardado tus preferencias.');
-    navigation.navigate('Main');
+  const handleContinue = async () => {
+    if (!name || !surname || !gender) {
+      setErrorMessage(I18n.t(TextKey.completeFieldsError));
+      return;
+    }
+
+    try {
+      await editUserProfile({ name, lastName: surname, gender });
+
+      Alert.alert('Continuar', 'Se han guardado tus preferencias.');
+      navigation.navigate('Main');
+    } catch (error) {
+      console.error('Error al actualizar el perfil del usuario:', error);
+      setErrorMessage('Hubo un error al guardar tus preferencias. Inténtalo de nuevo.');
+    }
   };
 
   return (

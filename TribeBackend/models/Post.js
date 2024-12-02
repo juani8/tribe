@@ -39,15 +39,6 @@ const PostSchema = new mongoose.Schema({
     likes: {
         type: Number,
         default: 0
-    },
-    lastComment: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment',
-        default: null
-    },
-    totalComments: {
-        type: Number,
-        default: 0
     }
 }, {
     timestamps: true 
