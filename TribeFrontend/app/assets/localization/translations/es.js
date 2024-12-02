@@ -231,8 +231,8 @@ export default {
     numberOfLikes: "Número de Me Gusta",
 
     // Editar info personal
-    changeProfilePicture: 'Cambiar foto de perfil',
-    changeCoverPhoto: 'Cambiar foto de portada',
+    changeProfilePicture: 'Selecciona una nueva foto de perfil',
+    changeCoverPhoto: 'Selecciona una nueva foto de portada',
     nicknameLabel: 'Nombre de fantasía',
     nicknamePlaceholder: 'Ingresa tu nombre de fantasía',
     firstNameLabel: 'Nombre',
@@ -248,6 +248,7 @@ export default {
     genderNonBinary: 'No binario',
     genderOther: 'Otro',
     genderPreferNotToSay: 'Prefiero no decirlo',
+    changeText: '✔ Modificado (pendiente guardar)',
 
     //Change profile and banner pic
     noImageSelected: 'Ninguna imagen seleccionada',

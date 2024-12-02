@@ -232,8 +232,8 @@ export default {
     numberOfLikes: "Number of Likes",
 
     //Edit Personal Screen
-    changeProfilePicture: 'Change profile picture',
-    changeCoverPhoto: 'Change cover photo',
+    changeProfilePicture: 'Select a new profile picture',
+    changeCoverPhoto: 'Select a new cover photo',
     nicknameLabel: 'Nickname',
     nicknamePlaceholder: 'Enter your nickname',
     firstNameLabel: 'First Name',
@@ -249,6 +249,7 @@ export default {
     genderNonBinary: 'Non-binary',
     genderOther: 'Other',
     genderPreferNotToSay: 'Prefer not to say',
+    changeText: '✔ Modified (pending save)',
 
     //Change profile and banner pic
     noImageSelected: 'No image selected',

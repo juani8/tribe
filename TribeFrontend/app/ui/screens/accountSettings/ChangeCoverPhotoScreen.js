@@ -1,83 +1,88 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
-import { selectFromGallery, openCamera } from 'helper/MultimediaHelper';
+import { selectFromGallery } from 'helper/MultimediaHelper';
 import { useTheme } from 'context/ThemeContext';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
+import { useUserContext } from 'context/UserContext';
+import { editUserProfile } from 'networking/api/usersApi';
 
 const ChangeCoverPhotoScreen = ({ navigation }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
+  const [isCoverImageModalVisible, setIsCoverImageModalVisible] = useState(false);
+  const [isSelectedImageModalVisible, setIsSelectedImageModalVisible] = useState(false);
   const { theme } = useTheme();
+  const { user, setUser } = useUserContext();
   const styles = createStyles(theme);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentUri, setCurrentUri] = useState('');
 
   const handleSelectImage = async () => {
-    selectFromGallery(selectedImage, setSelectedImage, 'image');
+    selectFromGallery([], setSelectedImage, 'image', 1);
+    console.log('Image selected:', selectedImage);
   };
 
-  const handleOpenCamera = async () => {
-    const image = await openCamera();
-    if (image) {
-      setSelectedImage(image.uri);
-    }
-  };
-
-  const handleSave = () => {
-    if (selectedImage) {
-      console.log('Cover photo saved:', selectedImage);
+  const saveChanges = async () => {
+    try {
+      const profileData = {
+        coverImage: selectedImage[0]?.uri,
+      };
+  
+      const response = await editUserProfile(profileData);
+      console.log('Perfil actualizado con éxito:', response);
+      setUser(response.user);
+      Alert.alert('Éxito', 'Perfil actualizado con éxito.');
       navigation.goBack();
+    } catch (error) {
+      console.error('Error al actualizar el perfil:', error);
+      Alert.alert('Error', 'Hubo un error al actualizar el perfil. Por favor, inténtelo de nuevo.');
     }
   };
 
-  const toggleModal = (uri) => {
-    setCurrentUri(uri);
-    setIsModalVisible(!isModalVisible);
-  };
-
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+  const toggleCoverImageModal = () => setIsCoverImageModalVisible(!isCoverImageModalVisible);
+  const toggleSelectedImageModal = () => setIsSelectedImageModalVisible(!isSelectedImageModalVisible);
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <ScrollView style={[{ backgroundColor: theme?.colors?.background }]}>
-        <View style={styles.container}>
-          <CustomTextNunito weight="Bold" style={styles.title}>
-            {I18n.t(TextKey.changeCoverPhoto)}
-          </CustomTextNunito>
+    <>
+      <View style={styles.container}>
+        <CustomTextNunito weight="Bold" style={styles.title}>
+          {I18n.t(TextKey.changeCoverPhoto)}
+        </CustomTextNunito>
 
-          {selectedImage ? (
-            <TouchableOpacity onPress={() => toggleModal(selectedImage)}>
-              <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+        <View style={styles.content}>
+          {selectedImage[0]?.uri ? (
+            <TouchableOpacity onPress={toggleSelectedImageModal} style={{ width: 350, height: 200}}>
+              <Image source={{ uri: selectedImage[0]?.uri }} style={{ width: '100%', height: '100%', borderRadius: 10, borderColor: theme.colors.primary, borderWidth: 3 }} />
+            </TouchableOpacity>
+          ) : user?.coverImage ? (
+            <TouchableOpacity onPress={toggleCoverImageModal} style={{ width: 350, height: 200}}>
+              <Image source={{ uri: user.coverImage }} style={{ width: '100%', height: '100%', borderRadius: 10, borderColor: theme.colors.primary, borderWidth: 3 }} />
             </TouchableOpacity>
           ) : (
             <CustomTextNunito style={styles.placeholder}>
               {I18n.t(TextKey.noImageSelected)}
             </CustomTextNunito>
           )}
-
+        </View>
+        <View style={{ flexDirection: 'column', gap: 12 }}>
           <CustomButton
-            title={I18n.t(TextKey.uploadSelectFromGallery)}
+            title={I18n.t(TextKey.selectImageFromGallery)}
             onPress={handleSelectImage}
             style={styles.button}
           />
           <CustomButton
-            title={I18n.t(TextKey.uploadSelectOpenCamera)}
-            onPress={handleOpenCamera}
-            style={styles.button}
-          />
-          <CustomButton
             title={I18n.t(TextKey.saveButton)}
-            onPress={handleSave}
+            onPress={saveChanges}
+            showLoading={true}
             style={styles.saveButton}
+            locked={!selectedImage[0]?.uri}
           />
         </View>
-      </ScrollView>
-    </TouchableWithoutFeedback>
+      </View>
+      <FullSizeImage isModalVisible={isCoverImageModalVisible} uri={user.coverImage} toggleModal={toggleCoverImageModal} />
+      <FullSizeImage isModalVisible={isSelectedImageModalVisible} uri={selectedImage[0]?.uri} toggleModal={toggleSelectedImageModal} />
+    </>
   );
 };
 
@@ -85,6 +90,7 @@ const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingVertical: 60,
     backgroundColor: theme?.colors?.background,
   },
   title: {
@@ -92,11 +98,15 @@ const createStyles = (theme) => StyleSheet.create({
     marginBottom: 20,
     color: theme?.colors?.text,
   },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   imagePreview: {
-    width: '100%',
+    width: 200,
     height: 200,
-    alignSelf: 'center',
-    marginBottom: 20,
+    borderRadius: 100,
   },
   placeholder: {
     fontSize: 16,

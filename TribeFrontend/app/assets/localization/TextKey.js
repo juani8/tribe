@@ -281,6 +281,7 @@ const TextKey = {
     genderNonBinary: 'genderNonBinary',
     genderOther: 'genderOther',
     genderPreferNotToSay: 'genderPreferNotToSay',
+    changeText: 'changeText',
 
     //Cambiar foto de perfil y portada
     noImageSelected: 'noImageSelected',

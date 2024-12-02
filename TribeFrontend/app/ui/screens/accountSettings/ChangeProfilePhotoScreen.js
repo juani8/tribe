@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { selectFromGallery } from 'helper/MultimediaHelper';
 import { useTheme } from 'context/ThemeContext';
+import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
+import { useUserContext } from 'context/UserContext';
+import { editUserProfile } from 'networking/api/usersApi';
 
 const ChangeProfilePhotoScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState([]);
+  const [isProfileImageModalVisible, setIsProfileImageModalVisible] = useState(false);
+  const [isSelectedImageModalVisible, setIsSelectedImageModalVisible] = useState(false);
   const { theme } = useTheme();
+  const { user, setUser } = useUserContext();
   const styles = createStyles(theme);
 
   const handleSelectImage = async () => {
@@ -17,40 +23,68 @@ const ChangeProfilePhotoScreen = ({ navigation }) => {
     console.log('Image selected:', selectedImage);
   };
 
-  const handleSave = () => {
-    if (selectedImage) {
-      console.log('Image saved:', selectedImage);
+  const saveChanges = async () => {
+    try {
+      const profileData = {
+        profileImage: selectedImage[0]?.uri,
+      };
+  
+      const response = await editUserProfile(profileData);
+      console.log('Perfil actualizado con éxito:', response);
+      setUser(response.user);
+      Alert.alert('Éxito', 'Perfil actualizado con éxito.');
       navigation.goBack();
+    } catch (error) {
+      console.error('Error al actualizar el perfil:', error);
+      Alert.alert('Error', 'Hubo un error al actualizar el perfil. Por favor, inténtelo de nuevo.');
     }
   };
 
+  const toggleProfileImageModal = () => setIsProfileImageModalVisible(!isProfileImageModalVisible);
+  const toggleSelectedImageModal = () => setIsSelectedImageModalVisible(!isSelectedImageModalVisible);
+
   return (
-    <View style={styles.container}>
-      <CustomTextNunito weight="Bold" style={styles.title}>
-        {I18n.t(TextKey.changeProfilePicture)}
-      </CustomTextNunito>
+    <>
+      <View style={styles.container}>
+        <CustomTextNunito weight="Bold" style={styles.title}>
+          {I18n.t(TextKey.changeProfilePicture)}
+        </CustomTextNunito>
 
-      <View style={styles.content}>
-        {selectedImage.lenght !== 0 ? (
-          <Image source={{ uri: selectedImage[0]?.uri }} style={styles.imagePreview} />
-        ) : ( 
-          <CustomTextNunito style={styles.placeholder}>
-            {I18n.t(TextKey.noImageSelected)}
-          </CustomTextNunito>
-        )}
+        <View style={styles.content}>
+          {selectedImage[0]?.uri ? (
+            <TouchableOpacity onPress={toggleSelectedImageModal} style={{ width: 200, height: 200}}>
+              <Image source={{ uri: selectedImage[0]?.uri }} style={{ width: '100%', height: '100%', borderRadius: 100, borderColor: theme.colors.primary, borderWidth: 3 }} />
+            </TouchableOpacity>
+          ) : (
+            user?.profileImage ? (
+              <TouchableOpacity onPress={toggleProfileImageModal} style={{ width: 200, height: 200}}>
+                <Image source={{ uri: user.profileImage }} style={{ width: '100%', height: '100%', borderRadius: 100, borderColor: theme.colors.primary, borderWidth: 3 }} />
+              </TouchableOpacity>
+            ) : (
+              <CustomTextNunito style={styles.placeholder}>
+                {I18n.t(TextKey.noImageSelected)}
+              </CustomTextNunito>
+            )
+          )}
+        </View>
+        <View style={{ flexDirection: 'column', gap: 12 }}>
+          <CustomButton
+            title={I18n.t(TextKey.selectImageFromGallery)}
+            onPress={handleSelectImage}
+            style={styles.button}
+          />
+          <CustomButton
+            title={I18n.t(TextKey.saveButton)}
+            onPress={saveChanges}
+            showLoading={true}
+            style={styles.saveButton}
+            locked={!selectedImage[0]?.uri}
+          />
+        </View>
       </View>
-
-      <CustomButton
-        title={I18n.t(TextKey.selectImageFromGallery)}
-        onPress={handleSelectImage}
-        style={styles.button}
-      />
-      <CustomButton
-        title={I18n.t(TextKey.saveButton)}
-        onPress={handleSave}
-        style={styles.saveButton}
-      />
-    </View>
+      <FullSizeImage isModalVisible={isProfileImageModalVisible} uri={user.profileImage} toggleModal={toggleProfileImageModal} />
+      <FullSizeImage isModalVisible={isSelectedImageModalVisible} uri={selectedImage[0]?.uri} toggleModal={toggleSelectedImageModal} />
+    </>
   );
 };
 
@@ -58,6 +92,7 @@ const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingVertical: 60,
     backgroundColor: theme?.colors?.background,
   },
   title: {
