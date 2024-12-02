@@ -152,10 +152,12 @@ exports.followUser = async (req, res) => {
         if (!req.user) {
             return res.status(401).json({ message: 'Usuario no autenticado.' });
         }
-
         const user = await User.findById(req.user._id);
+
         const userToFollow = await User.findById(req.params.userId);
-        
+        console.log(userToFollow);
+
+
         if (!userToFollow) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
@@ -173,17 +175,18 @@ exports.followUser = async (req, res) => {
         if (!isAlreadyFollowing) {
             user.following.push(userToFollow._id);
             user.numberOfFollowing = user.following.length;
-            await user.save({ validateModifiedOnly: true });
+            await user.save();
         }
 
         if (!isAlreadyFollowedBy) {
             userToFollow.followers.push(user._id);
             userToFollow.numberOfFollowers = userToFollow.followers.length;
-            await userToFollow.save({ validateModifiedOnly: true });
+            await userToFollow.save();
         }
 
         res.status(200).json({ followedUserId: userToFollow._id });
     } catch (error) {
+        console.error("Error saving user or userToFollow:", error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
@@ -201,7 +204,9 @@ exports.unfollowUser = async (req, res) => {
         }
 
         const user = await User.findById(req.user._id);
+
         const userToUnfollow = await User.findById(req.params.userId);
+        console.log(userToUnfollow);
 
         if (!userToUnfollow) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
@@ -220,11 +225,11 @@ exports.unfollowUser = async (req, res) => {
 
         user.following = user.following.filter(id => id.toString() !== userToUnfollow._id.toString());
         user.numberOfFollowing = user.following.length;
-        await user.save({ validateModifiedOnly: true });
+        await user.save();
 
         userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== user._id.toString());
         userToUnfollow.numberOfFollowers = userToUnfollow.followers.length;
-        await userToUnfollow.save({ validateModifiedOnly: true });
+        await userToUnfollow.save();
 
         res.status(200).json({ message: 'Usuario dejado de seguir con éxito.', unfollowedUserId: userToUnfollow._id });
     } catch (error) {
@@ -293,7 +298,12 @@ exports.getFollowings = async (req, res) => {
 exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const user = await User.findById(req.user.id);
+
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+
+    if (user.isGoogleUser) {
+        return res.status(400).json({ message: 'No puedes cambiar tu contraseña, ya que tu cuenta está asociada a Google.' });
+    }
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) return res.status(403).json({ message: 'Contraseña actual incorrecta.' });

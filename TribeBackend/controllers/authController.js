@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {sendRecoveryLink, sendTotpEmail, generateTotpCode, generateTotpSecret} = require('../utils/magicLink');
 const speakeasy = require('speakeasy');
+const {OAuth2Client} = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 /**
  * Envía un código TOTP al correo electrónico del usuario.
@@ -114,6 +116,7 @@ exports.register = async (req, res) => {
             nickName,
             password: hashedPassword,
             isVerified: true,
+            isGoogleUser: false,
         });
 
         await newUser.save();
@@ -162,6 +165,66 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
+
+/**
+ * Inicio de sesión con Google.
+ * Verifica el token de Google, crea un nuevo usuario si no existe y genera un token JWT para la sesión.
+ * Si el usuario ya existe pero no es un usuario de Google, devuelve un error.
+ *
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el token de Google.
+ * @param {Object} res - Objeto de respuesta HTTP que devolverá el resultado del inicio de sesión.
+ * @returns {Promise<void>} - Responde con un token JWT, un refresh token y los datos del usuario si el inicio de sesión es exitoso.
+ * @throws {Object} - Responde con un error 400 si el token no está presente o si el usuario no es un usuario de Google.
+ * @throws {Object} - Responde con un error 500 si ocurre un error interno en el servidor.
+ */
+exports.googleLogin = async (req, res) => {
+    try {
+        const { tokenId } = req.body;
+
+        if (!tokenId) {
+            return res.status(400).json({ message: 'Se requiere un token de Google.' });
+        }
+
+        const ticket = await client.verifyIdToken({
+            idToken: tokenId,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        const { email, name} = payload;
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            user = new User({
+                email,
+                nickName: name,
+                isVerified: true,
+                isGoogleUser: true,
+            });
+
+            await user.save();
+        } else if (!user.isGoogleUser) {
+        return res.status(400).json({
+            message: "User exists but is not a Google user. Please use traditional login.",
+        });
+    }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+        res.status(200).json({
+            token,
+            refreshToken,
+            message: 'Iniciaste sesión exitosamente con Google!',
+            user,
+        });
+    } catch (error) {
+        console.error('Error en Google Sign-In:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
 /**
  * Solicita el restablecimiento de contraseña (envía un magic link).
  * @param {Object} req - Objeto de solicitud HTTP.
@@ -171,10 +234,14 @@ exports.login = async (req, res) => {
 exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
-
         const user = await User.findOne({ email });
+
         if (!user || user.isDeleted) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        if (user.isGoogleUser) {
+            return res.status(400).json({ message: 'No puedes restablecer tu contraseña, ya que tu cuenta está asociada a Google.' });
         }
 
         await sendRecoveryLink(user.email, user._id); // Send password reset link

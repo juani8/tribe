@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const {hash} = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -19,7 +20,11 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        // Esto se validará en el hook de pre-guardado
+    },
+    isGoogleUser: {
+        type: Boolean,
+        default: false
     },
     isVerified: {
         type: Boolean,
@@ -55,5 +60,24 @@ const userSchema = new mongoose.Schema({
         ref: 'User',
     }]
 }, { timestamps: true });
+
+// Hook de pre-guardado para validar la contraseña en función de isGoogleUser.
+userSchema.pre('save', async function(next) {
+    if (!this.isGoogleUser && !this.password) {
+        return next(new Error('Password is required for non-Google users.'));
+    }
+
+    if (this.password && !this.isGoogleUser) {
+        hash(this.password, 10)
+            .then(hashedPassword => {
+                this.password = hashedPassword;
+                next();
+            })
+            .catch(err => next(err));
+    } else {
+        next();
+    }
+});
+
 
 module.exports = mongoose.model('User', userSchema);
