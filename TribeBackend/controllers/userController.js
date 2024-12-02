@@ -258,7 +258,12 @@ exports.getFollowing = async (req, res) => {
 exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const user = await User.findById(req.user.id);
+
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+
+    if (user.isGoogleUser) {
+        return res.status(400).json({ message: 'No puedes cambiar tu contraseña, ya que tu cuenta está asociada a Google.' });
+    }
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) return res.status(403).json({ message: 'Contraseña actual incorrecta.' });
