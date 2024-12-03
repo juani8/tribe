@@ -19,7 +19,7 @@ const ChangeProfilePhotoScreen = ({ navigation }) => {
   const styles = createStyles(theme);
 
   const handleSelectImage = async () => {
-    selectFromGallery([], setSelectedImage, 'image', 1);
+    selectFromGallery([], setSelectedImage, 'photo', 1);
     console.log('Image selected:', selectedImage);
   };
 

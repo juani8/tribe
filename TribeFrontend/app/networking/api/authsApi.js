@@ -108,16 +108,16 @@ export const checkToken = async () => {
   }
 };
 
-export const checkRefreshToken = async () => {
+// Inicio de sesión con Google
+export const loginUserWithGoogle = async (googleData) => {
   try {
-      const refreshToken = await getToken();
-      if (refreshToken) {
-          const response = await axios.post(`${BASE_URL}/auths/validate-token`, { refreshToken });
-          return response.data;
-      } else {
-          return false;
-      }
+    const response = await axios.post(`${BASE_URL}/auths/sessions/google-login`, googleData);
+    // Guarda el token devuelto por el backend
+    await storeToken(response.data.token);
+    // Obtenemos el JWT 
+    return response.data; 
   } catch (error) {
-      return false;
+    console.error('Error iniciando sesión con Google:', error);
+    throw error;
   }
-}
+};

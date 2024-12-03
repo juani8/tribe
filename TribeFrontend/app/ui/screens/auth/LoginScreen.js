@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
-import { loginUser } from 'networking/api/authsApi';
-import { storeToken } from 'helper/JWTHelper'; 
+import { loginUser, loginUserWithGoogle } from 'networking/api/authsApi';
+import { storeToken } from 'helper/JWTHelper';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import { useUserContext } from 'context/UserContext';
-import { TouchableOpacity } from 'react-native';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -17,8 +17,27 @@ const LoginScreen = ({ navigation }) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordFirstChar, setPasswordFirstChar] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); 
+
+  const handlePasswordChange = (text) => {
+    if (text.length === 0) {
+      setPassword('');
+      setPasswordFirstChar(null);
+    } else if (text.length === 1 && passwordFirstChar === null) {
+      setPasswordFirstChar(text[0]);
+      setPassword(text);
+    } else if (passwordFirstChar !== null) {
+      const updatedPassword = passwordFirstChar + text.slice(1);
+      setPassword(updatedPassword);
+    }
+  };
+
+  // Configurar Google Sign-In
+  GoogleSignin.configure({
+    webClientId: '336048572805-8v9bm9sej7jhkgv4hv1cmigkda5tj01o.apps.googleusercontent.com', // Client ID de Google
+    offlineAccess: true,
+  });
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -27,13 +46,13 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      setIsLoading(true); 
       const loginData = { email, password };
       const response = await loginUser(loginData);
       setUser(response.user);
+
       // Guarda el token usando Keychain
       await storeToken(response.token);
-      
+
       Alert.alert(
         'Inicio de sesión exitoso.',
         'Has iniciado sesión correctamente.',
@@ -45,14 +64,11 @@ const LoginScreen = ({ navigation }) => {
         ],
         { cancelable: false }
       );
-
-
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
-
       if (error.response) {
         if (error.response.status === 401) {
-            setErrorMessage(I18n.t(TextKey.invalidPassword)); 
+          setErrorMessage(I18n.t(TextKey.invalidPassword));
         } else if (error.response.status === 403) {
           setErrorMessage(I18n.t(TextKey.verifyEmailMessage));
         } else {
@@ -61,8 +77,46 @@ const LoginScreen = ({ navigation }) => {
       } else {
         setErrorMessage(I18n.t(TextKey.loginErrorMessage));
       }
-    } finally {
-      setIsLoading(false); 
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const idToken = userInfo.idToken;
+
+      const response = await loginUserWithGoogle({ tokenId: idToken });
+      if (response.user) {
+        setUser(response.user);
+      }
+      if (response.token) {
+        // Guarda el token usando Keychain
+        await storeToken(response.token);
+      }
+
+      Alert.alert(
+        'Inicio de sesión exitoso con Google.',
+        response.message,
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Main'),
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      console.error('Error en Google Sign-In:', error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert('Cancelado', 'El inicio de sesión con Google fue cancelado.');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        Alert.alert('En progreso', 'El inicio de sesión con Google está en progreso.');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert('Error', 'Google Play Services no está disponible.');
+      } else {
+        Alert.alert('Error', 'No se pudo iniciar sesión con Google.');
+      }
     }
   };
 
@@ -86,6 +140,7 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
+        <View style={{ marginBottom: 20 }}>
         <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.passwordLabel)}</Text>
         <TextInput
           style={[styles.input, { color: theme.colors.text }]}
@@ -93,20 +148,13 @@ const LoginScreen = ({ navigation }) => {
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           secureTextEntry
           value={password}
-          onChangeText={setPassword}
+          onChangeText={handlePasswordChange}
         />
+      
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       </View>
-
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-
-      {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
-
-      <CustomButton
-        title={I18n.t(TextKey.loginButton)}
-        onPress={handleLogin}
-        showLoading={isLoading}
-        locked={isLoading}
-      />
+        <CustomButton title={I18n.t(TextKey.loginButton)} onPress={handleLogin} showLoading={true} />
+      </View>
 
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
@@ -119,7 +167,7 @@ const LoginScreen = ({ navigation }) => {
 
       <Text style={[styles.orText, { color: theme.colors.text }]}>{I18n.t(TextKey.gmailLogin)}</Text>
 
-      <TouchableOpacity style={styles.gmailButton}>
+      <TouchableOpacity style={styles.gmailButton} onPress={handleGoogleSignIn}>
         <CustomTextNunito style={styles.gmailButtonText}>
           {I18n.t(TextKey.gmailButton)}
         </CustomTextNunito>
@@ -127,6 +175,7 @@ const LoginScreen = ({ navigation }) => {
     </View>
   );
 };
+
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,

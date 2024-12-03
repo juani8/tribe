@@ -9,11 +9,13 @@ import TextKey from 'assets/localization/TextKey';
 import { logoutUser } from 'networking/api/usersApi';
 import { navigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import { navigateToLanguageSelection, navigateToThemeSelection, navigateToMetrics, navigateToAccountSettings } from 'helper/navigationHandlers/ConfigurationNavigationHandlers';
+import { useUserContext } from 'context/UserContext';
 
 const CoreMenuOptionsList = ({ onClose }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation();
+  const { setUser } = useUserContext();
 
   const CoreMenuOptions = [
     {
@@ -39,7 +41,7 @@ const CoreMenuOptionsList = ({ onClose }) => {
     {
       icon: SignInSquare,
       label: I18n.t(TextKey.settingsOptionLogout),
-      onPress: () => {logoutUser(), navigateToWelcome(navigation)},
+      onPress: () => {logoutUser(), setUser(null),navigateToWelcome(navigation)},
     },
   ];
 

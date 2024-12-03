@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Image, TextInput, Alert } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, TouchableOpacity, StyleSheet, Image, TextInput, Alert, Keyboard, Animated } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import LottieView from 'lottie-react-native';
@@ -19,20 +19,44 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
   const [code, setCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const hiddenInputRef = useRef(null);
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener('keyboardDidShow', (e) => {
+      Animated.timing(translateY, {
+        toValue: -e.endCoordinates.height + 50, 
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    const keyboardWillHide = Keyboard.addListener('keyboardDidHide', () => {
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, [translateY]);
 
   const handleCodeChange = async (text) => {
     if (text.length <= 6) {
       setCode(text);
-  
+
       if (text.length === 6) {
         try {
           const verificationData = { email: route.params?.email, totpCode: text };
-  
+
           const response = await verifyTotp(verificationData);
           console.log('response', response);
-  
+
           Alert.alert(I18n.t(TextKey.verificationSuccessTitle), response.message);
-  
+
           navigateToSignupSecondPart(navigation, route.params?.email);
         } catch (error) {
           console.log('error', error);
@@ -47,7 +71,7 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
@@ -75,7 +99,6 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
         style={styles.lottie}
       />
 
-      {/* Contenedor para los dígitos */}
       <TouchableOpacity onPress={() => hiddenInputRef.current.focus()} style={styles.codeInputContainer}>
         {Array(6).fill('').map((_, index) => (
           <View key={index} style={styles.digitBox}>
@@ -86,7 +109,6 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
         ))}
       </TouchableOpacity>
 
-      {/* Input oculto para capturar el código completo */}
       <TextInput
         ref={hiddenInputRef}
         style={styles.hiddenInput}
@@ -98,8 +120,7 @@ const VerifyIdentityRegisterScreen = ({ navigation }) => {
       />
 
       {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
-
-    </View>
+    </Animated.View>
   );
 };
 
@@ -172,18 +193,6 @@ const createStyles = (theme) => StyleSheet.create({
     width: 1,
     height: 1,
   },
-  verifyButton: {
-    width: '100%',
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 14,
-    borderRadius: 30,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  verifyButtonText: {
-    fontSize: 16,
-    color: '#FFF',
-  },
   errorText: {
     color: 'red',
     marginBottom: 15,
@@ -193,6 +202,8 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default VerifyIdentityRegisterScreen;
+
+
 
 
 

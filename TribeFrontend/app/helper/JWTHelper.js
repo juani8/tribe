@@ -1,58 +1,39 @@
 import * as Keychain from 'react-native-keychain';
 
-const queue = [];
-
-// Function to process the queue
-const processQueue = async () => {
-  if (queue.length === 0) return;
-
-  const { resolve, reject, operation } = queue.shift();
-  try {
-    const result = await operation();
-    resolve(result);
-  } catch (error) {
-    reject(error);
-  } finally {
-    processQueue();
-  }
-};
-
-// Function to add an operation to the queue
-const enqueueOperation = (operation) => {
-  return new Promise((resolve, reject) => {
-    queue.push({ resolve, reject, operation });
-    if (queue.length === 1) {
-      processQueue();
-    }
-  });
-};
-
 // Store the token using Keychain
 const storeToken = async (token) => {
-  await enqueueOperation(async () => {
-    await Keychain.setGenericPassword('token', token);
-  });
+  try {
+      await Keychain.setGenericPassword('token', token);
+  } catch (error) {
+      console.error('Error storing the token:', error);
+  }
 };
 
 // Retrieve the token using Keychain
 const getToken = async () => {
-  return await enqueueOperation(async () => {
-    const credentials = await Keychain.getGenericPassword();
-    if (credentials) {
-      return credentials.password;
-    } else {
-      console.log('No token stored');
-      return null;
-    }
-  });
+  try {
+      const credentials = await Keychain.getGenericPassword();
+      if (credentials) {
+          return credentials.password;
+      } else {
+          console.log('No token stored');
+      }
+  } catch (error) {
+      console.error('Error retrieving the token:', error);
+  }
 };
 
-// Check if a token is stored
 const checkToken = async () => {
-  return await enqueueOperation(async () => {
-    const credentials = await Keychain.getGenericPassword();
-    return !!credentials;
-  });
+    try {
+        const credentials = await Keychain.getGenericPassword();
+        if (credentials) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking the token:', error);
+    }
 };
 
 export { storeToken, getToken, checkToken };

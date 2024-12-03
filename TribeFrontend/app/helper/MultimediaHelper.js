@@ -94,35 +94,4 @@ const handleLocationToggle = async (checkboxSelection, setCheckboxSelection) => 
     }
 };
 
-const handleCreatePost = async ({ selectedMedia, setSelectedMedia, commentText, setCommentText, checkboxSelection, setCheckboxSelection }) => {
-    // Check if there is any media selected
-    if (selectedMedia.length === 0) {
-        return;
-    } else {
-        // Create the post with the selected media
-        try {
-            const postMedia = selectedMedia;
-            const postComment = (commentText.trim().length > 0) ? commentText : null;
-            const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: null, longitude: null };
-            
-            const postData = { 
-                multimedia: postMedia, 
-                description: postComment, 
-                latitude: latitude, 
-                longitude: longitude 
-            };
-
-            // Send the post data to the backend
-            await createPost(postData);
-
-            // Reset the states
-            setSelectedMedia([]);
-            setCommentText('');
-            setCheckboxSelection(false);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-};
-
-export { selectFromGallery, openCamera, handleLocationToggle, handleCreatePost };
+export { selectFromGallery, openCamera, handleLocationToggle };
