@@ -365,12 +365,31 @@ exports.getUserMetrics = async (req, res) => {
 
         const numberOfComments = await Comment.countDocuments({ userId });
 
+        // Obtener el nivel de gamificación del usuario
+        const user = await User.findById(userId).select('gamificationLevel');
+        const gamificationLevel = user.gamificationLevel;
+
+        // Definir los niveles de gamificación
+        const levels = [
+            { level: 1, description: 'usuario nuevo', minPosts: 0 },
+            { level: 2, description: 'usuario activo', minPosts: 5 },
+            { level: 3, description: 'usuario avanzado', minPosts: 10 },
+            { level: 4, description: 'usuario experto', minPosts: 15 },
+        ];
+
+        // Obtener el minPosts para el siguiente nivel
+        const currentLevel = gamificationLevel.level;
+        const nextLevel = levels.find(level => level.level === currentLevel + 1);
+        const minPosts = nextLevel ? nextLevel.minPosts : null;
+
         const metrics = {
             numberOfFollowers,
             numberOfFollowing,
             numberOfPosts,
             numberOfFavorites,
-            numberOfComments
+            numberOfComments,
+            gamificationLevel,
+            minPosts
         };
 
         res.status(200).json(metrics);
