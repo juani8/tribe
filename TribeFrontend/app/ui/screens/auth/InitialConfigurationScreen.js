@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Alert, ScrollView, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, Alert, ScrollView, TextInput, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { storeToken } from 'helper/JWTHelper'; 
 import { Picker } from '@react-native-picker/picker';
@@ -8,6 +8,8 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { useTheme } from 'context/ThemeContext';
 import { editUserProfile } from 'networking/api/usersApi';
+import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
+import { useUserContext } from 'context/UserContext';
 
 const InitialConfigurationScreen = ({ navigation }) => {
   const route = useRoute();
@@ -17,6 +19,8 @@ const InitialConfigurationScreen = ({ navigation }) => {
   const [surname, setSurname] = useState('');
   const [gender, setGender] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { setUser } = useUserContext();
 
   const handleContinue = async () => {
     if (!name || !surname || !gender) {
@@ -25,8 +29,10 @@ const InitialConfigurationScreen = ({ navigation }) => {
     }
 
     try {
-      await editUserProfile({ name, lastName: surname, gender });
-
+      setLoading(true);
+      const response = await editUserProfile({ name, lastName: surname, gender });
+      setUser(response.user);
+      
       Alert.alert('Continuar', 'Se han guardado tus preferencias.');
       navigation.navigate('Main');
     } catch (error) {
@@ -82,9 +88,7 @@ const InitialConfigurationScreen = ({ navigation }) => {
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-        <CustomTextNunito style={styles.continueButtonText} weight="Bold">{I18n.t(TextKey.continueButton)}</CustomTextNunito>
-      </TouchableOpacity>
+      <CustomButton title={I18n.t(TextKey.continueButton)} onPress={handleContinue} showLoading={true} />
     </ScrollView>
   );
 };

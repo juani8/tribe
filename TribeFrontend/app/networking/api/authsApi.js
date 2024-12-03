@@ -107,3 +107,17 @@ export const checkToken = async () => {
       return false;
   }
 };
+
+// Inicio de sesión con Google
+export const loginUserWithGoogle = async (googleData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auths/sessions/google-login`, googleData);
+    // Guarda el token devuelto por el backend
+    await storeToken(response.data.token);
+    // Obtenemos el JWT 
+    return response.data; 
+  } catch (error) {
+    console.error('Error iniciando sesión con Google:', error);
+    throw error;
+  }
+};

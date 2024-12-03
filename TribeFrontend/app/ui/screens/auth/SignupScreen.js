@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, ScrollView, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, TextInput, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
@@ -15,7 +15,6 @@ const SignupScreen = ({ navigation }) => {
 
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
     if (!email) {
@@ -25,16 +24,17 @@ const SignupScreen = ({ navigation }) => {
 
     try {
       await sendTotp({ email });
-      setIsLoading(true); 
       navigateToVerifyIdentityRegister(navigation, email);
     } catch (error) {
       if (error.response && error.response.status === 409) {
+        console.log('User already exists');
+        console.log('error', error);
         setErrorMessage(I18n.t(TextKey.userAlreadyExists));
       } else {
+        console.log('User already exists');
+        console.log('error', error);
         setErrorMessage(I18n.t(TextKey.genericSignupError));
       }
-    } finally {
-      setIsLoading(false); 
     }
   };
 
@@ -55,13 +55,10 @@ const SignupScreen = ({ navigation }) => {
         onChangeText={setEmail}
       />
 
-      {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
-
       <CustomButton
         title={I18n.t(TextKey.createUserButton)}
         onPress={handleSignup}
-        showLoading={isLoading}
-        locked={isLoading}
+        showLoading={true}
       />
 
       <CustomTextNunito

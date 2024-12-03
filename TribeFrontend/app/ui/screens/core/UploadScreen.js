@@ -11,9 +11,10 @@ import CheckBox from '@react-native-community/checkbox';
 import Video from 'react-native-video-controls';
 import { getLocation } from 'helper/LocationHelper';
 import { createPost } from 'networking/api/postsApi';
-import { navigateToHomeRefresh } from 'helper/navigationHandlers/CoreNavigationHandlers';
+import { navigateToHome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
 import { VideoFill } from 'assets/images';
+import uploadToCloudinary from 'helper/CloudinaryHelper';
 
 export default function UploadScreen({ navigation }) {
   const [commentText, setCommentText] = useState('');
@@ -33,24 +34,27 @@ export default function UploadScreen({ navigation }) {
     } else {
       // Create the post with the selected media
       try {
-        const postMedia = selectedMedia.map(media => ({
-          url: media.uri,
-          type: media.type.startsWith('image') ? 'image' : 'video'
+        // Upload each media item to Cloudinary
+        const uploadedMedia = await Promise.all(selectedMedia.map(async (media) => {
+          const url = await uploadToCloudinary(media.uri, media.type);
+          return { url, type: media.type.startsWith('image') ? 'image' : 'video' };
         }));
+  
         const postComment = (commentText.trim().length > 0) ? commentText : null;
         const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: undefined, longitude: undefined };
-
+  
+        console.log('Media object:', uploadedMedia);
         const postData = {
-          multimedia: postMedia,
+          multimedia: uploadedMedia,
           description: postComment,
           latitude: latitude,
           longitude: longitude
         };
-
+  
         // Send the post data to the backend
         await createPost(postData);
-
-        navigateToHomeRefresh(navigation);
+  
+        navigateToHome(navigation);
         // Reset the states
         setSelectedMedia([]);
         setCommentText('');

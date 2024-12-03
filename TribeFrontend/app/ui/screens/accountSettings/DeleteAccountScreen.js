@@ -11,17 +11,45 @@ import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { useTheme } from 'context/ThemeContext';
+import { deleteUser } from 'networking/api/usersApi';
 
 const DeleteAccountScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleDeleteAccount = () => {
-    console.log('Account deleted');
-    // Aquí iría la lógica para eliminar la cuenta
-    setModalVisible(false);
-    navigation.goBack();
+  const handleDeleteAccount = async () => {
+    setLoading(true);
+    try {
+      // Llamada al backend para eliminar al usuario
+      await deleteUser();
+      setModalVisible(false);
+      
+      // Mostrar alerta de éxito
+      Alert.alert(
+        I18n.t(TextKey.successMessage), // "Cuenta eliminada exitosamente"
+        [
+          {
+            text: I18n.t(TextKey.okButton), // "Aceptar"
+            onPress: () => {
+              // Redirige al usuario a la pantalla inicial
+              navigation.navigate('WelcomeScreen');
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      console.error('Error al eliminar la cuenta:', error);
+      // Mostrar mensaje de error
+      Alert.alert(
+        I18n.t(TextKey.errorTitle), // "Error"
+        I18n.t(TextKey.deleteAccountError), // "Hubo un problema al eliminar tu cuenta. Inténtalo más tarde."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,7 +73,7 @@ const DeleteAccountScreen = ({ navigation }) => {
         style={styles.deleteButton}
       />
 
-      {/* Modal de confirmación */}
+      {/* Pop up de confirmación */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -63,6 +91,7 @@ const DeleteAccountScreen = ({ navigation }) => {
                 onPress={handleDeleteAccount}
                 color={theme.colors.danger}
                 style={styles.modalButton}
+                disabled={loading}
               />
               <CustomButton
                 title={I18n.t(TextKey.cancelButton)}

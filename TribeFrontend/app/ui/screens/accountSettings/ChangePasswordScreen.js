@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 import I18n from 'assets/localization/i18n';
@@ -12,12 +12,33 @@ const ChangePasswordScreen = ({ navigation }) => {
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newPasswordFirstChar, setNewPasswordFirstChar] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleNewPasswordChange = (text) => {
+    if (text.length === 0) {
+      setNewPassword('');
+      setNewPasswordFirstChar(null);
+    } else if (text.length === 1 && newPasswordFirstChar === null) {
+      setNewPasswordFirstChar(text[0]);
+      setNewPassword(text);
+    } else if (newPasswordFirstChar !== null) {
+      const updatedPassword = newPasswordFirstChar + text.slice(1);
+      setNewPassword(updatedPassword);
+    }
+  };
 
   const handlePasswordChange = () => {
     console.log('Current:', currentPassword);
     console.log('New:', newPassword);
     console.log('Confirm:', confirmPassword);
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      console.warn('All fields are required.');
+    } else if (newPassword !== confirmPassword) {
+      console.warn('New password and confirm password do not match.');
+    } else {
+      console.log('Password change successful.');
+    }
   };
 
   return (
@@ -50,7 +71,7 @@ const ChangePasswordScreen = ({ navigation }) => {
           placeholder={I18n.t(TextKey.newPasswordPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           value={newPassword}
-          onChangeText={setNewPassword}
+          onChangeText={handleNewPasswordChange}
         />
       </View>
 
@@ -116,3 +137,4 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default ChangePasswordScreen;
+

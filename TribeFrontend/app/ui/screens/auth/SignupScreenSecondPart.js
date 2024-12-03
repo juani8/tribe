@@ -9,17 +9,43 @@ import { registerUser } from 'networking/api/authsApi';
 import { storeToken } from 'helper/JWTHelper';
 import { useRoute } from '@react-navigation/native';
 import { navigateToInitialConfiguration } from 'helper/navigationHandlers/AuthNavigationHandlers';
+import { useUserContext } from 'context/UserContext';
 
 const SignupScreenSecondPart = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const route = useRoute();
+  const { setUser } = useUserContext();
 
   const [fantasyName, setFantasyName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [passwordFirstChar, setPasswordFirstChar] = useState(null);
+
+  const handlePasswordChange = (text) => {
+    if (text.length === 0) {
+      // Si el texto está vacío, resetea el estado
+      setPassword('');
+      setPasswordFirstChar(null);
+    } else if (text.length === 1 && passwordFirstChar === null) {
+      // Guarda el primer carácter cuando aún no se ha definido
+      setPasswordFirstChar(text[0]);
+      setPassword(text);
+    } else if (passwordFirstChar !== null) {
+      // Asegura que el primer carácter se mantenga igual
+      const updatedPassword = passwordFirstChar + text.slice(1);
+      setPassword(updatedPassword);
+    }
+  };
+
+  const handleConfirmPasswordChange = (text) => {
+    if (text.length === 0) {
+      setConfirmPassword('');
+    } else {
+      setConfirmPassword(text);
+    }
+  };
 
   const handleSignup = async () => {
     if (!fantasyName || !password || !confirmPassword) {
@@ -31,17 +57,19 @@ const SignupScreenSecondPart = ({ navigation }) => {
     }
 
     try {
-      setIsLoading(true); 
-      const registrationData = { 
-        nickName: fantasyName, 
-        email: route.params?.email, 
-        password 
+      const registrationData = {
+        nickName: fantasyName,
+        email: route.params?.email,
+        password,
       };
 
       const response = await registerUser(registrationData);
-      console.log(response)
+      console.log(response);
       if (response.token) {
         await storeToken(response.token);
+      }
+      if (response.user) {
+        setUser(response.user);
       }
       navigateToInitialConfiguration(navigation);
     } catch (error) {
@@ -50,8 +78,6 @@ const SignupScreenSecondPart = ({ navigation }) => {
       } else {
         setErrorMessage(I18n.t(TextKey.genericSignupError));
       }
-    } finally {
-      setIsLoading(false); 
     }
   };
 
@@ -77,7 +103,7 @@ const SignupScreenSecondPart = ({ navigation }) => {
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
         value={password}
-        onChangeText={setPassword}
+        onChangeText={handlePasswordChange}
       />
 
       <TextInput
@@ -86,17 +112,10 @@ const SignupScreenSecondPart = ({ navigation }) => {
         placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
         secureTextEntry
         value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        onChangeText={handleConfirmPasswordChange}
       />
 
-      {isLoading && <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />}
-
-      <CustomButton
-        title={I18n.t(TextKey.createUserButton)}
-        onPress={handleSignup}
-        showLoading={isLoading}
-        locked={isLoading}
-      />
+      <CustomButton title={I18n.t(TextKey.createUserButton)} onPress={handleSignup} showLoading={true} />
 
       <CustomTextNunito
         style={[styles.loginText, { color: theme.colors.primary }]}
@@ -137,7 +156,7 @@ const createStyles = (theme) => StyleSheet.create({
     fontSize: 16,
   },
   loader: {
-    marginBottom: 15, 
+    marginBottom: 15,
   },
   errorText: {
     color: 'red',
