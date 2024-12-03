@@ -124,9 +124,11 @@ exports.register = async (req, res) => {
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         const refreshToken = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+        const user = await User.findById(newUser._id).select('-password -following -followers');
         res.status(200).json({
             token,
             refreshToken,
+            user,
             message: 'Registro exitoso. Bienvenido a Tribe!'
         });
     } catch (error) {
@@ -160,7 +162,8 @@ exports.login = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(200).json({ token, refreshToken, user });
+        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers');
+        res.status(200).json({ token, refreshToken, user: userWithoutSensitiveInfo });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
@@ -213,11 +216,12 @@ exports.googleLogin = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers');
         res.status(200).json({
             token,
             refreshToken,
             message: 'Iniciaste sesión exitosamente con Google!',
-            user,
+            user: userWithoutSensitiveInfo,
         });
     } catch (error) {
         console.error('Error en Google Sign-In:', error);

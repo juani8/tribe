@@ -78,7 +78,8 @@ exports.updateProfile = async (req, res) => {
             req.user.id,
             { name, lastName, profileImage, coverImage, description, gender },
             { new: true }
-        );
+        ).select('-password -following -followers');
+
         res.status(200).json({
                 message: 'Perfil actualizado con éxito.',
                 user: updatedUser,
@@ -120,6 +121,8 @@ exports.getUsers = async (req, res) => {
     const { input = '', offset = 0, limit = 10 } = req.query;
 
     try {
+        const currentUser = await User.findById(req.user.id).select('following');
+
         const users = await User.find({
             isDeleted: false,
             $or: [
@@ -129,13 +132,19 @@ exports.getUsers = async (req, res) => {
             ]
         })
             .skip(parseInt(offset))
-            .limit(parseInt(limit));
+            .limit(parseInt(limit))
+            .select('profileImage name lastName nickName email');
 
         if (!users.length) {
             return res.status(404).json({ message: 'No se encontraron usuarios.' });
         }
 
-        res.status(200).json(users);
+        const usersWithFollowFlag = users.map(user => ({
+            ...user.toObject(),
+            isFollowed: currentUser.following.includes(user._id)
+        }));
+
+        res.status(200).json({ users: usersWithFollowFlag });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
