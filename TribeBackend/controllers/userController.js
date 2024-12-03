@@ -89,7 +89,7 @@ exports.updateProfile = async (req, res) => {
             req.user.id,
             { $set: updateFields },
             { new: true }
-        ).select('-password -following -followers');
+        ).select('-password -following -followers -gamificationLevel');
 
         res.status(200).json({
             message: 'Perfil actualizado con éxito.',

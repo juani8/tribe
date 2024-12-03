@@ -9,6 +9,7 @@ import { useTheme } from 'context/ThemeContext';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
 import { useUserContext } from 'context/UserContext';
 import { editUserProfile } from 'networking/api/usersApi';
+import uploadToCloudinary from 'helper/CloudinaryHelper';
 
 const ChangeProfilePhotoScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState([]);
@@ -25,10 +26,11 @@ const ChangeProfilePhotoScreen = ({ navigation }) => {
 
   const saveChanges = async () => {
     try {
+      const url = await uploadToCloudinary(selectedImage[0]?.uri, 'image');
       const profileData = {
-        profileImage: selectedImage[0]?.uri,
+        profileImage: url,
       };
-  
+
       const response = await editUserProfile(profileData);
       console.log('Perfil actualizado con éxito:', response);
       setUser(response.user);

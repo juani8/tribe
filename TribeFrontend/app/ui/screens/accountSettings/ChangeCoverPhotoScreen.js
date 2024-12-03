@@ -9,6 +9,7 @@ import { useTheme } from 'context/ThemeContext';
 import FullSizeImage from 'ui/components/generalPurposeComponents/FullSizeImage';
 import { useUserContext } from 'context/UserContext';
 import { editUserProfile } from 'networking/api/usersApi';
+import uploadToCloudinary from 'helper/CloudinaryHelper';
 
 const ChangeCoverPhotoScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState([]);
@@ -19,14 +20,15 @@ const ChangeCoverPhotoScreen = ({ navigation }) => {
   const styles = createStyles(theme);
 
   const handleSelectImage = async () => {
-    selectFromGallery([], setSelectedImage, 'image', 1);
+    selectFromGallery([], setSelectedImage, 'photo', 1);
     console.log('Image selected:', selectedImage);
   };
 
   const saveChanges = async () => {
     try {
+      const url = await uploadToCloudinary(selectedImage[0]?.uri, 'image');
       const profileData = {
-        coverImage: selectedImage[0]?.uri,
+        coverImage: url,
       };
   
       const response = await editUserProfile(profileData);

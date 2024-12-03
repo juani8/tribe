@@ -123,7 +123,7 @@ exports.register = async (req, res) => {
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        const user = await User.findById(newUser._id).select('-password -following -followers');
+        const user = await User.findById(newUser._id).select('-password -following -followers -gamificationLevel');
         res.status(200).json({
             token,
             user,
@@ -159,7 +159,7 @@ exports.login = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers');
+        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers -gamificationLevel');
         res.status(200).json({ token, user: userWithoutSensitiveInfo });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -212,7 +212,7 @@ exports.googleLogin = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers');
+        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers -gamificationLevel');
         res.status(200).json({
             token,
             message: 'Iniciaste sesión exitosamente con Google!',
@@ -304,7 +304,7 @@ exports.validateToken = async (req, res) => {
     try {
       // Verify the token with the access token secret
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password -following -followers');
+      const user = await User.findById(decoded.id).select('-password -following -followers -gamificationLevel');
   
       if (!user) {
         return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
