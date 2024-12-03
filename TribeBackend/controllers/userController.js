@@ -74,15 +74,26 @@ exports.updateProfile = async (req, res) => {
                 });
             }
         }
+
+        // Crear un objeto con los campos a actualizar
+        const updateFields = {};
+        if (name) updateFields.name = name;
+        if (lastName) updateFields.lastName = lastName;
+        if (profileImage) updateFields.profileImage = profileImage;
+        if (coverImage) updateFields.coverImage = coverImage;
+        if (description) updateFields.description = description;
+        if (gender) updateFields.gender = gender;
+
+        // Actualizar el usuario en la base de datos
         const updatedUser = await User.findByIdAndUpdate(
             req.user.id,
-            { name, lastName, profileImage, coverImage, description, gender },
+            { $set: updateFields },
             { new: true }
         ).select('-password -following -followers');
 
         res.status(200).json({
-                message: 'Perfil actualizado con éxito.',
-                user: updatedUser,
+            message: 'Perfil actualizado con éxito.',
+            user: updatedUser,
         });
     } catch (error) {
         console.error('Error al actualizar el perfil:', error);
