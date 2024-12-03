@@ -66,7 +66,7 @@ exports.updateProfile = async (req, res) => {
         const { name, lastName, profileImage, coverImage, description, gender } = req.body;
 
         // Validar los campos obligatorios para la finalización del perfil inicial
-        if (!req.user.name || !req.user.lastName || !req.user.gender) {
+        if (!req.user.name && !req.user.lastName && !req.user.gender) {
             // Verificar si es la primera vez que se completa el perfil
             if (!name || !lastName || !gender) {
                 return res.status(400).json({

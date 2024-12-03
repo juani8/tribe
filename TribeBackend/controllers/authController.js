@@ -309,11 +309,11 @@ exports.validateToken = async (req, res) => {
       // Try to verify the token with the access token secret
       try {
         decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id).select('-password');
+        user = await User.findById(decoded.id).select('-password -following -followers');
       } catch (error) {
         // If verification with access token secret fails, try with the refresh token secret
         decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id).select('-password');
+        user = await User.findById(decoded.id).select('-password -following -followers');
       }
   
       if (!user) {
@@ -324,4 +324,4 @@ exports.validateToken = async (req, res) => {
     } catch (error) {
       res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
     }
-  };
+};
