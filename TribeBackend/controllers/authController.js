@@ -122,12 +122,10 @@ exports.register = async (req, res) => {
         await newUser.save();
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         const user = await User.findById(newUser._id).select('-password -following -followers');
         res.status(200).json({
             token,
-            refreshToken,
             user,
             message: 'Registro exitoso. Bienvenido a Tribe!'
         });
@@ -160,10 +158,9 @@ exports.login = async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers');
-        res.status(200).json({ token, refreshToken, user: userWithoutSensitiveInfo });
+        res.status(200).json({ token, user: userWithoutSensitiveInfo });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
@@ -176,7 +173,7 @@ exports.login = async (req, res) => {
  *
  * @param {Object} req - Objeto de solicitud HTTP que contiene el token de Google.
  * @param {Object} res - Objeto de respuesta HTTP que devolverá el resultado del inicio de sesión.
- * @returns {Promise<void>} - Responde con un token JWT, un refresh token y los datos del usuario si el inicio de sesión es exitoso.
+ * @returns {Promise<void>} - Responde con un token JWT y los datos del usuario si el inicio de sesión es exitoso.
  * @throws {Object} - Responde con un error 400 si el token no está presente o si el usuario no es un usuario de Google.
  * @throws {Object} - Responde con un error 500 si ocurre un error interno en el servidor.
  */
@@ -214,12 +211,10 @@ exports.googleLogin = async (req, res) => {
     }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers');
         res.status(200).json({
             token,
-            refreshToken,
             message: 'Iniciaste sesión exitosamente con Google!',
             user: userWithoutSensitiveInfo,
         });
@@ -307,18 +302,9 @@ exports.validateToken = async (req, res) => {
     const token = req.body.token;
   
     try {
-      let decoded;
-      let user;
-  
-      // Try to verify the token with the access token secret
-      try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id).select('-password -following -followers');
-      } catch (error) {
-        // If verification with access token secret fails, try with the refresh token secret
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id).select('-password -following -followers');
-      }
+      // Verify the token with the access token secret
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id).select('-password -following -followers');
   
       if (!user) {
         return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
