@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Render
+name: Build and deploy Node.js app to Render and mobile app to App Center
 
 on:
   push:
@@ -91,36 +91,16 @@ jobs:
     env:
       APP_CENTER_TOKEN: ${{ secrets.APP_CENTER_TOKEN }}
       APP_NAME: ${{ vars.APP_NAME }}
-      UPLOAD_FILE: ${{ vars.UPLOAD_FILE }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Install Android SDK
-        uses: android-actions/setup-android@v2
-
-      - name: Install dependencies
+      - name: Trigger App Center Build
         run: |
-          cd TribeFrontend
-          npm install
-
-      - name: Build Android app
-        run: |
-          cd TribeFrontend/android
-          ./gradlew assembleDebug
-
-      - name: Upload to App Center
-        uses: wzieba/AppCenter-Github-Action@v1
-        with:
-          appName: ${{ env.APP_NAME }}
-          token: ${{ env.APP_CENTER_TOKEN }}
-          file: ${{ env.UPLOAD_FILE }}
-          group: 'collaborators'
-          notifyTesters: false
-          debug: false
+          curl -X POST \
+          -H "X-API-Token: ${{ secrets.APP_CENTER_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+                "branch": "main"
+              }' \
+          "https://api.appcenter.ms/v0.1/apps/${{ vars.APP_NAME }}/builds"
