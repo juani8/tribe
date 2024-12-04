@@ -233,6 +233,60 @@ Un "Build Status Badge" es una imagen dinámica que muestra el estado de los bui
 
 ```markdown
 ![Build Status](https://appcenter.ms/api/v0.1/apps/{owner}/{app}/status/badge)
+```
+
+## Configurar la distribución de la APK
+
+Para poder instalar la APK en tu dispositivo móvil, necesitas configurar la distribución de la APK construida. 
+
+### Configurar la distribución en App Center
+
+1. En App Center, navega a la sección Distribute.
+2. Crea un nuevo grupo de distribución (por ejemplo, "Desarrolladores").
+3. Agrega los correos electrónicos de los dispositivos que recibirán la APK.
+
+### Actualizar el flujo de trabajo en GitHub Actions
+
+Añade un paso en tu flujo de trabajo para distribuir la APK una vez que se haya construido. Aquí tienes un ejemplo de cómo hacerlo:
+
+```yaml
+jobs:
+  build-android:
+    runs-on: windows-latest
+    env:
+      APP_CENTER_TOKEN: ${{ secrets.APP_CENTER_TOKEN }}
+      APP_NAME: ${{ vars.APP_NAME }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger App Center Build
+        run: |
+          curl -X POST \
+          -H "X-API-Token: ${{ secrets.APP_CENTER_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+                "branch": "main"
+              }' \
+          "https://api.appcenter.ms/v0.1/apps/${{ vars.APP_NAME }}/builds"
+
+      - name: Distribute APK
+        run: |
+          curl -X POST \
+          -H "X-API-Token: ${{ secrets.APP_CENTER_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+                "destination_name": "Desarrolladores",
+                "release_notes": "Nueva versión para pruebas"
+              }' \
+          "https://api.appcenter.ms/v0.1/apps/${{ vars.APP_NAME }}/release_uploads"
+```
+### Descargar e instalar la APK en tu dispositivo
+
+1. **Recibir la notificación**: Una vez que la APK se haya distribuido, recibirás una notificación por correo electrónico (si configuraste los correos en el grupo de distribución).
+2. **Descargar la APK**: Abre el correo electrónico en tu dispositivo móvil y sigue el enlace para descargar la APK.
+3. **Instalar la APK**: Asegúrate de tener habilitada la opción para instalar aplicaciones de fuentes desconocidas en tu dispositivo.
+4. **Descarga e instala la APK**: Abre la aplicación en tu dispositivo móvil y realiza las pruebas necesarias en modo desarrollador.
 
 # Default README
 

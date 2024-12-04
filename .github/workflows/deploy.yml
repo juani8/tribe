@@ -104,3 +104,14 @@ jobs:
                 "branch": "main"
               }' \
           "https://api.appcenter.ms/v0.1/apps/${{ vars.APP_NAME }}/builds"
+      
+      - name: Distribute APK
+        run: |
+          curl -X POST \
+          -H "X-API-Token: ${{ secrets.APP_CENTER_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+                "destination_name": "Testers",
+                "release_notes": "Nueva versión de Tribe"
+              }' \
+          "https://api.appcenter.ms/v0.1/apps/${{ vars.APP_NAME }}/release_uploads"
