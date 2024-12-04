@@ -1,9 +1,11 @@
+![Build Status](https://build.appcenter.ms/v0.1/apps/22a6efcc-9200-4fc1-8398-8a2b860d1a2a/branches/main/badge)
+
 # Instrucciones de configuración inicial
 
 ## Requisitos previos
 
 1. **Node.js**: Asegúrate de tener [Node.js](https://nodejs.org/) instalado. Preferentemente una versión LTS.
-2. **Java Development Kit (JDK)**: Instala [JDK](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html). Preferentementemente de versión 17 en adelante.
+2. **Java Development Kit (JDK)**: Instala [JDK](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html). Preferentemente la versión 17 en adelante.
 3. **Android Studio**: Descarga e instala [Android Studio](https://developer.android.com/studio).
 4. **React Native CLI**: Instala React Native CLI globalmente si aún no lo tienes:
    ```bash
@@ -14,9 +16,9 @@
 (No replicar, la aplicación ya está creada)
 
 1. **Crear la aplicación**:
-      ```bash
-      npx react-native init tribeapp
-      ```
+    ```bash
+    npx react-native init tribeapp
+    ```
 
 ## Ejecución de la aplicación
 (Luego de hacer un pull del repositorio)
@@ -108,11 +110,11 @@ app/
 │   ├── lottie/           # Animaciones Lottie utilizadas en la aplicación.
 │   └── sound/            # Archivos de sonido usados en la app.
 │
-├── context/              # Contextos que proveeran información requerida globalmente en la aplicación.
+├── context/              # Contextos que proveen información requerida globalmente en la aplicación.
 │
 ├── helper/               # Funciones auxiliares o de utilidades que facilitan tareas comunes.
-│   └── navigationHandlers/ # Funciones que gestionan la lógica de redirección o flujo de navegación.
-│   └── permissionHandlers/ # Archivos de sonido usados en la app.
+│   ├── navigationHandlers/ # Funciones que gestionan la lógica de redirección o flujo de navegación.
+│   └── permissionHandlers/ # Funciones que gestionan permisos de la aplicación.
 │ 
 ├── navigation/           # Configuración del sistema de navegación de la aplicación.
 │
@@ -212,26 +214,27 @@ Este proceso generará el archivo APK en modo release. Una vez terminado, podrá
 android/app/build/outputs/apk/release/app-release.apk
 ```
 
+## ¿Qué es el "Build Status Badge"?
 
+Un "Build Status Badge" es una imagen dinámica que muestra el estado de los builds (éxito o fallo) del proyecto en tiempo real.Es útil para comunicar rápidamente el estado de las builds a colaboradores o usuarios que visitan el repositorio.
 
+### ¿Cómo funciona?
 
+- El badge se genera automáticamente por servicios como App Center o GitHub Actions.
+- Muestra el estado más reciente del pipeline de CI/CD, ya sea que haya fallado, esté en progreso o haya sido exitoso.
+- Se actualiza en tiempo real cada vez que se realiza un build.
 
+### ¿Cómo se configura en App Center?
 
+1. En App Center, ve a la configuración del proyecto.
+2. Busca la opción "Build status badge" y actívala.
+3. App Center generará un enlace en formato Markdown que puedes copiar.
+4. Pega el código Markdown generado en el archivo `README.md` de tu repositorio.
 
+#### Ejemplo:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+```markdown
+![Build Status](https://appcenter.ms/api/v0.1/apps/{owner}/{app}/status/badge)
 
 # Default README
 
@@ -288,7 +291,7 @@ This is one way to run your app — you can also run it directly from within And
 Now that you have successfully run the app, let's modify it.
 
 1. Open `App.js` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Windows and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
 
    For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
 
@@ -309,8 +312,14 @@ If you can't get this to work, see the [Troubleshooting](https://reactnative.dev
 
 To learn more about React Native, take a look at the following resources:
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- [React Native Website](https://reactnative.dev) - Learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - An **overview** of React Native and how to set up your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - A **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - Read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - The Open Source GitHub **repository** for React Native.
+- [React Native Express](http://www.reactnativeexpress.com/) - A comprehensive guide to React Native.
+- [React Native Directory](https://reactnative.directory/) - A directory of React Native libraries and tools.
+- [React Native Paper](https://callstack.github.io/react-native-paper/) - A high-quality, standard-compliant Material Design library for React Native.
+- [React Navigation](https://reactnavigation.org/) - Routing and navigation for your React Native apps.
+- [Expo](https://expo.dev/) - A framework and platform for universal React applications.
+- [React Native Elements](https://reactnativeelements.com/) - Cross-platform React Native UI toolkit.
