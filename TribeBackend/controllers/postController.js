@@ -8,6 +8,7 @@ const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const { getMonthlyAds } = require('../utils/adsService');
 const User = require('../models/User');
 const userController = require('./userController');
+const cloudinary = require('../utils/cloudinaryConfig');
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -39,10 +40,7 @@ exports.getTimeline = async (req, res) => {
         const postSummary = await Promise.all(filteredPosts.map(async post => {
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
+            const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id })
                 .sort({ createdAt: -1 })
                 .populate({
@@ -89,7 +87,7 @@ exports.fetchAds = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-exports.createPost = async (req, res) => {
+orts.createPost = async (req, res) => {
     const { description, multimedia, latitude, longitude } = req.body;
     const userId = req.user.id;
 
@@ -112,7 +110,7 @@ exports.createPost = async (req, res) => {
 
         const savedPost = await newPost.save();
         
-        await userController.updateGamificationLevel(user);
+        await userController.updateGamificationLevel(req.user);
 
         res.status(201).json({ data: savedPost, message: 'Post creado exitosamente' });
     } catch (error) {
@@ -147,10 +145,7 @@ exports.getUserPosts = async (req, res) => {
         const postSummary = await Promise.all(filteredPosts.map(async post => {
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
+            const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id })
                 .sort({ createdAt: -1 })
                 .populate({
@@ -170,70 +165,6 @@ exports.getUserPosts = async (req, res) => {
         }));
 
         res.status(200).json(postSummary);
-    } catch (error) {
-        console.error('Error en getUserPosts:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-};
-
-/**
- * Obtiene los posts del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con los posts del usuario autenticado.
- */
-exports.getUserPosts = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
-    const userId = req.user.id;
-
-    try {
-        const posts = await Post.find({ userId })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .populate('userId', 'nickName profileImage')
-            .populate({
-                path: 'lastComment',
-                populate: {
-                    path: 'userId',
-                    select: 'nickName profileImage'
-                }
-            })
-            .lean();
-
-        res.status(200).json(posts);
-    } catch (error) {
-        console.error('Error en getUserPosts:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-};
-
-/**
- * Obtiene los posts del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con los posts del usuario autenticado.
- */
-exports.getUserPosts = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
-    const userId = req.user.id;
-
-    try {
-        const posts = await Post.find({ userId })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .populate('userId', 'nickName profileImage')
-            .populate({
-                path: 'lastComment',
-                populate: {
-                    path: 'userId',
-                    select: 'nickName profileImage'
-                }
-            })
-            .lean();
-
-        res.status(200).json(posts);
     } catch (error) {
         console.error('Error en getUserPosts:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -262,10 +193,7 @@ exports.getPostById = async (req, res) => {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
-        const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-            path: 'userId',
-            match: { isDeleted: false }
-        });
+        const totalComments = await Comment.countDocuments({ postId: post._id });
         const lastComment = await Comment.findOne({ postId: post._id })
             .sort({ createdAt: -1 })
             .populate({
@@ -519,10 +447,7 @@ exports.getUserBookmarks = async (req, res) => {
             const post = bookmark.postId;
             const isLiked = await Like.exists({ userId, postId: post._id });
             const isBookmarked = await Bookmark.exists({ userId, postId: post._id });
-            const totalComments = await Comment.countDocuments({ postId: post._id }).populate({
-                path: 'userId',
-                match: { isDeleted: false }
-            });
+            const totalComments = await Comment.countDocuments({ postId: post._id });
             const lastComment = await Comment.findOne({ postId: post._id })
                 .sort({ createdAt: -1 })
                 .populate({

@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {sendRecoveryLink, sendTotpEmail, generateTotpCode, generateTotpSecret} = require('../utils/magicLink');
 const speakeasy = require('speakeasy');
+const {OAuth2Client} = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 /**
  * Envía un código TOTP al correo electrónico del usuario.
@@ -20,7 +22,7 @@ exports.sendTotp = async (req, res) => {
         }
 
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        if (existingUser && !existingUser.isDeleted) {
             return res.status(400).json({ message: 'Este correo electrónico ya está registrado. Por favor, inicia sesión.' });
         }
 
@@ -114,24 +116,20 @@ exports.register = async (req, res) => {
             nickName,
             password: hashedPassword,
             isVerified: true,
+            isGoogleUser: false,
         });
 
         await newUser.save();
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+        const user = await User.findById(newUser._id).select('-password -following -followers -gamificationLevel');
         res.status(200).json({
             token,
-            refreshToken,
+            user,
             message: 'Registro exitoso. Bienvenido a Tribe!'
         });
     } catch (error) {
-        if (error.code === 11000) {
-            const field = Object.keys(error.keyValue)[0];
-            const message = field === 'email' ? 'Correo electrónico ya registrado.' : 'Nombre de usuario ya registrado.';
-            return res.status(409).json({ message });
-        }
         console.error('Error en el registro:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
@@ -160,13 +158,72 @@ exports.login = async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas.' });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(200).json({ token, refreshToken, user });
+        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers -gamificationLevel');
+        res.status(200).json({ token, user: userWithoutSensitiveInfo });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
+
+/**
+ * Inicio de sesión con Google.
+ * Verifica el token de Google, crea un nuevo usuario si no existe y genera un token JWT para la sesión.
+ * Si el usuario ya existe pero no es un usuario de Google, devuelve un error.
+ *
+ * @param {Object} req - Objeto de solicitud HTTP que contiene el token de Google.
+ * @param {Object} res - Objeto de respuesta HTTP que devolverá el resultado del inicio de sesión.
+ * @returns {Promise<void>} - Responde con un token JWT y los datos del usuario si el inicio de sesión es exitoso.
+ * @throws {Object} - Responde con un error 400 si el token no está presente o si el usuario no es un usuario de Google.
+ * @throws {Object} - Responde con un error 500 si ocurre un error interno en el servidor.
+ */
+exports.googleLogin = async (req, res) => {
+    try {
+        const { tokenId } = req.body;
+
+        if (!tokenId) {
+            return res.status(400).json({ message: 'Se requiere un token de Google.' });
+        }
+
+        const ticket = await client.verifyIdToken({
+            idToken: tokenId,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        const { email, name} = payload;
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            user = new User({
+                email,
+                nickName: name,
+                isVerified: true,
+                isGoogleUser: true,
+            });
+
+            await user.save();
+        } else if (!user.isGoogleUser) {
+        return res.status(400).json({
+            message: "User exists but is not a Google user. Please use traditional login.",
+        });
+    }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers -gamificationLevel');
+        res.status(200).json({
+            token,
+            message: 'Iniciaste sesión exitosamente con Google!',
+            user: userWithoutSensitiveInfo,
+        });
+    } catch (error) {
+        console.error('Error en Google Sign-In:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
 /**
  * Solicita el restablecimiento de contraseña (envía un magic link).
  * @param {Object} req - Objeto de solicitud HTTP.
@@ -176,10 +233,14 @@ exports.login = async (req, res) => {
 exports.requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body;
-
         const user = await User.findOne({ email });
+
         if (!user || user.isDeleted) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        if (user.isGoogleUser) {
+            return res.status(400).json({ message: 'No puedes restablecer tu contraseña, ya que tu cuenta está asociada a Google.' });
         }
 
         await sendRecoveryLink(user.email, user._id); // Send password reset link
@@ -241,18 +302,9 @@ exports.validateToken = async (req, res) => {
     const token = req.body.token;
   
     try {
-      let decoded;
-      let user;
-  
-      // Try to verify the token with the access token secret
-      try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id).select('-password');
-      } catch (error) {
-        // If verification with access token secret fails, try with the refresh token secret
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id).select('-password');
-      }
+      // Verify the token with the access token secret
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id).select('-password -following -followers -gamificationLevel');
   
       if (!user) {
         return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
@@ -262,4 +314,4 @@ exports.validateToken = async (req, res) => {
     } catch (error) {
       res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
     }
-  };
+};
