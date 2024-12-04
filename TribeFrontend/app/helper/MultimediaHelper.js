@@ -12,20 +12,23 @@ import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 // Select media (images or videos) from gallery
-const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'mixed') => {
+const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'mixed', selectionLimit = 5) => {
     const hasPermission = await requestExternalStoragePermission();
 
     if (hasPermission) {
         launchImageLibrary(
-            { mediaType, selectionLimit: 5 },
+            { mediaType, selectionLimit },
             (response) => {
-                if (response.didCancel) {
+                if (response.didCancel) {   
                     console.log('User cancelled camera');
-                } else if (response.errorCode) {
+                } else if (response?.errorCode) {
                     Alert.alert(I18n.t(TextKey.Error), response.errorMessage);
-                } else {
+                } else if (response?.assets) {
+                    console.log('Response:', response);
                     const assets = response.assets || [];
                     setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
+                } else {
+                    Alert.alert(I18n.t(TextKey.Error), I18n.t(TextKey.unknownError));
                 }
             }
         );
@@ -91,35 +94,4 @@ const handleLocationToggle = async (checkboxSelection, setCheckboxSelection) => 
     }
 };
 
-const handleCreatePost = async ({ selectedMedia, setSelectedMedia, commentText, setCommentText, checkboxSelection, setCheckboxSelection }) => {
-    // Check if there is any media selected
-    if (selectedMedia.length === 0) {
-        return;
-    } else {
-        // Create the post with the selected media
-        try {
-            const postMedia = selectedMedia;
-            const postComment = (commentText.trim().length > 0) ? commentText : null;
-            const { latitude, longitude } = checkboxSelection ? await getLocation() : { latitude: null, longitude: null };
-            
-            const postData = { 
-                multimedia: postMedia, 
-                description: postComment, 
-                latitude: latitude, 
-                longitude: longitude 
-            };
-
-            // Send the post data to the backend
-            await createPost(postData);
-
-            // Reset the states
-            setSelectedMedia([]);
-            setCommentText('');
-            setCheckboxSelection(false);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-};
-
-export { selectFromGallery, openCamera, handleLocationToggle, handleCreatePost };
+export { selectFromGallery, openCamera, handleLocationToggle };

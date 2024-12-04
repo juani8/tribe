@@ -18,7 +18,12 @@ export const getUserProfile = async () => {
 // Editar el perfil del usuario autenticado
 export const editUserProfile = async (profileData) => {
   try {
-    const response = await axios.patch(`${BASE_URL}/users/me`, profileData);
+    const token = await getToken();
+    const response = await axios.patch(`${BASE_URL}/users/me`, profileData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al editar el perfil del usuario:', error);
@@ -29,7 +34,12 @@ export const editUserProfile = async (profileData) => {
 // Eliminar al usuario autenticado (desactivar cuenta)
 export const deleteUser = async () => {
   try {
-    const response = await axios.delete(`${BASE_URL}/users/me`);
+    const token = await getToken();
+    const response = await axios.delete(`${BASE_URL}/users/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al eliminar al usuario:', error);
@@ -40,7 +50,13 @@ export const deleteUser = async () => {
 // Buscar usuarios
 export const searchUsers = async (searchQuery) => {
   try {
-    const response = await axios.get(`${BASE_URL}/users`, { params: { q: searchQuery } });
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users`, {
+      params: { input: searchQuery },
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al buscar usuarios:', error);
@@ -51,7 +67,12 @@ export const searchUsers = async (searchQuery) => {
 // Seguir a un usuario
 export const followUser = async (userId) => {
   try {
-    const response = await axios.post(`${BASE_URL}/users/me/following/${userId}`);
+    const token = await getToken();
+    const response = await axios.post(`${BASE_URL}/users/me/following/${userId}`, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error(`Error al seguir al usuario ${userId}:`, error);

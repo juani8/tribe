@@ -6,7 +6,7 @@ import { useTheme } from 'context/ThemeContext';
 import { BlurView } from '@react-native-community/blur';
 import Video from 'react-native-video-controls';
 
-export default function FullSizeImage({ isModalVisible, uri, type, toggleModal }) {
+export default function FullSizeImage({ isModalVisible, uri, type = 'image', toggleModal }) {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
@@ -15,36 +15,35 @@ export default function FullSizeImage({ isModalVisible, uri, type, toggleModal }
       <Modal
         transparent={true}
         visible={isModalVisible}
-        onRequestClose={toggleModal} // Handle back button press on Android
-        animationType="fade" // You can also use "slide" or other animations
+        onRequestClose={toggleModal}
+        animationType="fade"
       >
         <BlurView
           style={StyleSheet.absoluteFill}
-          blurType="dark"  // You can adjust the blur effect ("light", "dark", etc.)
-          blurAmount={10}  // The intensity of the blur
-          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.6)"  // Fallback color
+          blurType="dark" 
+          blurAmount={10} 
+          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.6)" 
         />
 
         {/* Modal Content */}
         <View style={styles.modalContainer}>
-          {/* Full-screen media */}
           <View style={styles.modalContent}>
             {type === 'image' ? (
-              <Image source={{ uri }} style={styles.fullScreenImage} />
+              <Image source={{ uri }} style={styles.fullScreenMedia} resizeMode="contain" />
             ) : (
               <Video
                 source={{ uri }}
-                style={styles.fullScreenVideo}
+                style={styles.fullScreenMedia}
                 useNativeControls
-                resizeMode="contain"
+                resizeMode="contain" // Ensures horizontal videos display correctly
                 disableFullscreen
                 disableBack
               />
             )}
 
             {/* Close Button */}
-            <Pressable onPress={toggleModal} style={{ position: 'absolute', top: 14, right: 10 }}>
-              <Image source={FullAlt} style={{ width: 30, height: 30 }} />
+            <Pressable onPress={toggleModal} style={styles.closeButton}>
+              <Image source={FullAlt} style={styles.closeIcon} />
             </Pressable>
           </View>
         </View>
@@ -65,34 +64,18 @@ const createStyles = (theme) => StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  fullScreenImage: {
+  fullScreenMedia: {
     width: '100%',
-    height: '100%',
-    borderRadius: 20,
-  },
-  fullScreenVideo: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 20,
+    height: '100%', // Maintains aspect ratio for horizontal media
+    overflow: 'hidden',
   },
   closeButton: {
     position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: theme.colors.primary,
-    borderRadius: 100,
-    paddingHorizontal: 5,
+    top: 14,
+    right: 10,
+  },
+  closeIcon: {
     width: 30,
     height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.background,
-  },
-  closeButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    marginBottom: 3,
   },
 });

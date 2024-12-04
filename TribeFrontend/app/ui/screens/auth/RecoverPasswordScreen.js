@@ -7,6 +7,7 @@ import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito'; 
 import { requestPasswordReset } from 'networking/api/authsApi'; 
+import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
 
 const RecoverPasswordScreen = ({ navigation }) => {
   const { theme, isDarkMode } = useTheme();  
@@ -72,15 +73,11 @@ const RecoverPasswordScreen = ({ navigation }) => {
           value={email}
           onChangeText={setEmail}
         />
-      </View>
+      
 
       {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
 
-      <TouchableOpacity style={styles.button} onPress={handleVerify}>
-        <CustomTextNunito style={styles.buttonText} weight="Bold" color="#FFF">
-          {I18n.t(TextKey.verifyButton)}
-        </CustomTextNunito>
-      </TouchableOpacity>
+      <CustomButton title={I18n.t(TextKey.verifyButton)} onPress={handleVerify} showLoading={true} fullSize={true} /></View>
     </View>
   );
 };

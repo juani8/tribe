@@ -1,0 +1,210 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { View, TouchableOpacity, StyleSheet, Image, TextInput, Alert, Keyboard, Animated } from 'react-native';
+import { useTheme } from 'context/ThemeContext';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import LottieView from 'lottie-react-native';
+import I18n from 'assets/localization/i18n';
+import TextKey from 'assets/localization/TextKey';
+import Back from 'assets/images/icons/Back.png';
+import BackNight from 'assets/images/iconsNight/Back_night.png';
+import { useRoute } from '@react-navigation/native';
+import { navigateToSignupSecondPart } from 'helper/navigationHandlers/AuthNavigationHandlers';
+import { verifyTotp } from 'networking/api/authsApi';
+
+const VerifyIdentityRegisterScreen = ({ navigation }) => {
+  const { theme, isDarkMode } = useTheme();
+  const styles = createStyles(theme);
+  const route = useRoute();
+
+  const [code, setCode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const hiddenInputRef = useRef(null);
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener('keyboardDidShow', (e) => {
+      Animated.timing(translateY, {
+        toValue: -e.endCoordinates.height + 50, 
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    const keyboardWillHide = Keyboard.addListener('keyboardDidHide', () => {
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, [translateY]);
+
+  const handleCodeChange = async (text) => {
+    if (text.length <= 6) {
+      setCode(text);
+
+      if (text.length === 6) {
+        try {
+          const verificationData = { email: route.params?.email, totpCode: text };
+
+          const response = await verifyTotp(verificationData);
+          console.log('response', response);
+
+          Alert.alert(I18n.t(TextKey.verificationSuccessTitle), response.message);
+
+          navigateToSignupSecondPart(navigation, route.params?.email);
+        } catch (error) {
+          console.log('error', error);
+          if (error.response && error.response.status === 400) {
+            setErrorMessage(I18n.t(TextKey.invalidTokenMessage));
+          } else {
+            setErrorMessage(I18n.t(TextKey.genericVerificationError));
+          }
+        }
+      }
+    }
+  };
+
+  return (
+    <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
+      </TouchableOpacity>
+
+      <Image source={theme.logo} style={styles.logo} resizeMode="contain" />
+
+      <CustomTextNunito style={styles.title} weight="Bold">
+        {I18n.t(TextKey.verifyIdentityTitle)}
+      </CustomTextNunito>
+
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
+        {I18n.t(TextKey.verifyIdentityInstruction)}
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
+        {I18n.t(TextKey.verifyIdentityCheckInbox)}
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.paragraph} weight="Regular">
+        {I18n.t(TextKey.verifyIdentityCheckSpam)}
+      </CustomTextNunito>
+
+      <LottieView
+        source={require('assets/lottie/mailingLottie.json')}
+        autoPlay
+        loop
+        style={styles.lottie}
+      />
+
+      <TouchableOpacity onPress={() => hiddenInputRef.current.focus()} style={styles.codeInputContainer}>
+        {Array(6).fill('').map((_, index) => (
+          <View key={index} style={styles.digitBox}>
+            <CustomTextNunito style={styles.digitText} weight="Bold">
+              {code[index] || ''}
+            </CustomTextNunito>
+          </View>
+        ))}
+      </TouchableOpacity>
+
+      <TextInput
+        ref={hiddenInputRef}
+        style={styles.hiddenInput}
+        keyboardType="numeric"
+        maxLength={6}
+        value={code}
+        onChangeText={handleCodeChange}
+        autoFocus
+      />
+
+      {errorMessage ? <CustomTextNunito style={styles.errorText} weight="Regular">{errorMessage}</CustomTextNunito> : null}
+    </Animated.View>
+  );
+};
+
+const createStyles = (theme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: 24,
+    justifyContent: 'flex-start',
+    paddingTop: 60,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 20,
+    borderColor: theme.colors.primary,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+    alignSelf: 'flex-start',
+  },
+  title: {
+    fontSize: 26,
+    color: theme.colors.text,
+    marginBottom: 10,
+    textAlign: 'left',
+  },
+  paragraph: {
+    fontSize: 16,
+    color: theme.colors.text,
+    lineHeight: 24,
+    marginBottom: 10,
+  },
+  lottie: {
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  codeInputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  digitBox: {
+    width: 40,
+    height: 50,
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  digitText: {
+    fontSize: 18,
+    color: theme.colors.text,
+  },
+  hiddenInput: {
+    position: 'absolute',
+    opacity: 0,
+    width: 1,
+    height: 1,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 15,
+    textAlign: 'left',
+    width: '100%',
+  },
+});
+
+export default VerifyIdentityRegisterScreen;
+
+
+
+
+
+

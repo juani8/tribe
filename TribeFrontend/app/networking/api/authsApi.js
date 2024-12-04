@@ -26,6 +26,28 @@ export const verifyRegistrationToken = async (token) => {
   }
 };
 
+// Verificación del código TOTP
+export const verifyTotp = async (verificationData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auths/verify-totp`, verificationData);
+    return response.data; 
+  } catch (error) {
+    console.error('Error verificando TOTP:', error);
+    throw error; 
+  }
+};
+
+// Verificación del código TOTP
+export const sendTotp = async (email) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auths/send-totp`, email);
+    return response.data; 
+  } catch (error) {
+    console.error('Error verificando TOTP:', error);
+    throw error; 
+  }
+};
+
 // Inicio de sesión de usuario
 export const loginUser = async (loginData) => {
   try {
@@ -75,6 +97,7 @@ export const verifyPasswordToken = async (token) => {
 export const checkToken = async () => {
   try {
       const token = await getToken();
+      console.log(token);
       if (token) {
           const response = await axios.post(`${BASE_URL}/auths/validate-token`, { token });
           return response.data.valid;
@@ -83,5 +106,19 @@ export const checkToken = async () => {
       }
   } catch (error) {
       return false;
+  }
+};
+
+// Inicio de sesión con Google
+export const loginUserWithGoogle = async (googleData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auths/sessions/google-login`, googleData);
+    // Guarda el token devuelto por el backend
+    await storeToken(response.data.token);
+    // Obtenemos el JWT 
+    return response.data; 
+  } catch (error) {
+    console.error('Error iniciando sesión con Google:', error);
+    throw error;
   }
 };

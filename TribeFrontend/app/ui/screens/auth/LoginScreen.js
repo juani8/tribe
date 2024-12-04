@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
 import TextKey from 'assets/localization/TextKey';
 import I18n from 'assets/localization/i18n';
-import { loginUser } from 'networking/api/authsApi';
-import { getToken, storeToken } from 'helper/JWTHelper'; 
+import { loginUser, loginUserWithGoogle } from 'networking/api/authsApi';
+import { storeToken } from 'helper/JWTHelper';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
-import {useUserContext} from 'context/UserContext';
+import CustomButton from 'ui/components/generalPurposeComponents/CustomButton';
+import { useUserContext } from 'context/UserContext';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -15,11 +17,31 @@ const LoginScreen = ({ navigation }) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordFirstChar, setPasswordFirstChar] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  
+
+  const handlePasswordChange = (text) => {
+    if (text.length === 0) {
+      setPassword('');
+      setPasswordFirstChar(null);
+    } else if (text.length === 1 && passwordFirstChar === null) {
+      setPasswordFirstChar(text[0]);
+      setPassword(text);
+    } else if (passwordFirstChar !== null) {
+      const updatedPassword = passwordFirstChar + text.slice(1);
+      setPassword(updatedPassword);
+    }
+  };
+
+  // Configurar Google Sign-In
+  GoogleSignin.configure({
+    webClientId: '336048572805-8v9bm9sej7jhkgv4hv1cmigkda5tj01o.apps.googleusercontent.com', // Client ID de Google
+    offlineAccess: true,
+  });
+
   const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMessage(I18n.t(TextKey.loginMessage));
+      setErrorMessage(I18n.t(TextKey.completeFields));
       return;
     }
 
@@ -27,26 +49,73 @@ const LoginScreen = ({ navigation }) => {
       const loginData = { email, password };
       const response = await loginUser(loginData);
       setUser(response.user);
-      console.log(response);
 
       // Guarda el token usando Keychain
       await storeToken(response.token);
-      
-      Alert.alert('Inicio de sesión exitoso.');
-      navigation.navigate('Main'); 
+
+      Alert.alert(
+        'Inicio de sesión exitoso.',
+        'Has iniciado sesión correctamente.',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Main'),
+          },
+        ],
+        { cancelable: false }
+      );
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
-
       if (error.response) {
         if (error.response.status === 401) {
-          setErrorMessage('Credenciales inválidas. Inténtalo de nuevo.');
+          setErrorMessage(I18n.t(TextKey.invalidPassword));
         } else if (error.response.status === 403) {
-          setErrorMessage('Por favor verifica tu email antes de iniciar sesión.');
+          setErrorMessage(I18n.t(TextKey.verifyEmailMessage));
         } else {
-          setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+          setErrorMessage(I18n.t(TextKey.loginErrorMessage));
         }
       } else {
-        setErrorMessage('Hubo un error al iniciar sesión. Inténtalo de nuevo más tarde.');
+        setErrorMessage(I18n.t(TextKey.loginErrorMessage));
+      }
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const idToken = userInfo.idToken;
+
+      const response = await loginUserWithGoogle({ tokenId: idToken });
+      if (response.user) {
+        setUser(response.user);
+      }
+      if (response.token) {
+        // Guarda el token usando Keychain
+        await storeToken(response.token);
+      }
+
+      Alert.alert(
+        'Inicio de sesión exitoso con Google.',
+        response.message,
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Main'),
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      console.error('Error en Google Sign-In:', error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert('Cancelado', 'El inicio de sesión con Google fue cancelado.');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        Alert.alert('En progreso', 'El inicio de sesión con Google está en progreso.');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert('Error', 'Google Play Services no está disponible.');
+      } else {
+        Alert.alert('Error', 'No se pudo iniciar sesión con Google.');
       }
     }
   };
@@ -59,10 +128,10 @@ const LoginScreen = ({ navigation }) => {
       <Text style={styles.loginMessage}>{I18n.t(TextKey.loginMessage)}</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('emailLabel')}</Text>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.emailLabel)}</Text>
         <TextInput
           style={[styles.input, { color: theme.colors.text }]}
-          placeholder={I18n.t('emailPlaceholder')}
+          placeholder={I18n.t(TextKey.emailPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           keyboardType="email-address"
           value={email}
@@ -71,22 +140,21 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t('passwordLabel')}</Text>
+        <View style={{ marginBottom: 20 }}>
+        <Text style={[styles.labelText, { color: theme.colors.text }]}>{I18n.t(TextKey.passwordLabel)}</Text>
         <TextInput
           style={[styles.input, { color: theme.colors.text }]}
-          placeholder={I18n.t('passwordPlaceholder')}
+          placeholder={I18n.t(TextKey.passwordPlaceholder)}
           placeholderTextColor={theme.colors.placeholder || '#A9A9A9'}
           secureTextEntry
           value={password}
-          onChangeText={setPassword}
+          onChangeText={handlePasswordChange}
         />
+      
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       </View>
-
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-
-      <TouchableOpacity style={[styles.loginButton, { backgroundColor: theme.colors.primary }]} onPress={handleLogin}>
-        <Text style={[styles.loginButtonText, { color: '#FFF' }]}>{I18n.t(TextKey.loginButton)}</Text>
-      </TouchableOpacity>
+        <CustomButton title={I18n.t(TextKey.loginButton)} onPress={handleLogin} showLoading={true} />
+      </View>
 
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('RecoverPassword')}>
@@ -99,7 +167,7 @@ const LoginScreen = ({ navigation }) => {
 
       <Text style={[styles.orText, { color: theme.colors.text }]}>{I18n.t(TextKey.gmailLogin)}</Text>
 
-      <TouchableOpacity style={styles.gmailButton}>
+      <TouchableOpacity style={styles.gmailButton} onPress={handleGoogleSignIn}>
         <CustomTextNunito style={styles.gmailButtonText}>
           {I18n.t(TextKey.gmailButton)}
         </CustomTextNunito>
@@ -154,18 +222,8 @@ const createStyles = (theme) => StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
   },
-  loginButton: {
-    width: '85%',
-    height: 50,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  loginButtonText: {
-    fontSize: 18,
-    fontFamily: 'Nunito-Bold',
-    color: '#FFF',
+  loader: {
+    marginBottom: 15, // Espaciado entre el loader y el botón
   },
   linksContainer: {
     alignItems: 'flex-start',
@@ -203,6 +261,7 @@ const createStyles = (theme) => StyleSheet.create({
 });
 
 export default LoginScreen;
+
 
 
 

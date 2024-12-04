@@ -22,7 +22,7 @@ export const createPost = async (postData) => {
 };
 
 // Obtener todas las publicaciones del usuario actual
-export const getUserPosts = async (offset = 0, limit = 10, sort = 'createdAt', order = 'desc') => {
+export const getUserPosts = async (offset = 0, limit = 10) => {
     try {
         const token = await getToken();
         const response = await axios.get(`${BASE_URL}/posts/me`, {
@@ -32,8 +32,26 @@ export const getUserPosts = async (offset = 0, limit = 10, sort = 'createdAt', o
             params: {
                 offset,
                 limit,
-                sort,
-                order
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener las publicaciones del usuario:', error);
+        throw error;
+    }
+};
+
+// Obtener todas las publicaciones del usuario actual
+export const getUserBookmarks = async (offset = 0, limit = 10) => {
+    try {
+        const token = await getToken();
+        const response = await axios.get(`${BASE_URL}/posts/me/bookmarks`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                offset,
+                limit,
             }
         });
         return response.data;

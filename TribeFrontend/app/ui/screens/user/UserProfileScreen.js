@@ -15,13 +15,14 @@ import ProfilePosts from '../../components/userComponents/ProfilePosts';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
-
 const UserProfileScreen = () => {
   const { theme } = useTheme();
   const { user } = useUserContext();
   const [postView, setPostView] = useState('UserPosts');
   const [isProfileImageModalVisible, setIsProfileImageModalVisible] = useState(false);
   const [isCoverImageModalVisible, setIsCoverImageModalVisible] = useState(false);
+  const [isFetching, setIsFetching] = useState(false); // Estado para bloquear el cambio
+
   const navigation = useNavigation();
 
   const toggleProfileImageModal = () => setIsProfileImageModalVisible(!isProfileImageModalVisible);
@@ -38,9 +39,9 @@ const UserProfileScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginHorizontal: 20, marginTop: 10 }}>
-        <CustomTextNunito weight={'Bold'} style={{ fontSize: 18 }}>Juan Sosa - <CustomTextNunito weight={'MediumItalic'}>@{user.nickName}</CustomTextNunito></CustomTextNunito>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <CustomTextNunito weight={'Bold'}>Masculino</CustomTextNunito>
+        <CustomTextNunito weight={'Bold'} style={{ fontSize: 18 }}>{user.name}, {user.lastName} - <CustomTextNunito weight={'MediumItalic'}>@{user.nickName}</CustomTextNunito></CustomTextNunito>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 8 }}>
+          <CustomTextNunito weight={'Bold'}>{user.gender}</CustomTextNunito>
           <CustomButton title={'Editar perfil'} smallHeight={true} />
         </View>
         <CustomTextNunito>{user.description}</CustomTextNunito>
@@ -72,14 +73,49 @@ const UserProfileScreen = () => {
         borderRadius: 6,
         backgroundColor: theme.colors.placeholder 
       }}>
-        <TouchableOpacity onPress={() => setPostView('UserPosts')} style={{ width: '50%', height: 50, borderRadius: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: postView === 'UserPosts' ? theme.colors.background : null }}>
-          <CustomTextNunito weight={'Bold'} style={{ color: postView === 'UserPosts' ? theme.colors.primary : theme.colors.text }}>{I18n.t(TextKey.posts)}</CustomTextNunito>
+        <TouchableOpacity
+          onPress={() => !isFetching && setPostView('UserPosts')}
+          style={{
+            width: '50%',
+            height: 50,
+            borderRadius: 6,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: postView === 'UserPosts' ? theme.colors.background : null
+          }}
+        >
+          <CustomTextNunito
+            weight={'Bold'}
+            style={{
+              color: postView === 'UserPosts' ? theme.colors.primary : theme.colors.text
+            }}
+          >
+            {I18n.t(TextKey.posts)}
+          </CustomTextNunito>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setPostView('UserFavorites')}  style={{ width: '50%', height: 50, borderRadius: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: postView === 'UserFavorites' ? theme.colors.background : null }}>
-          <CustomTextNunito weight={'Bold'} style={{ color: postView === 'UserFavorites' ? theme.colors.primary : theme.colors.text }}>{I18n.t(TextKey.favorites)}</CustomTextNunito>
+        <TouchableOpacity
+          onPress={() => !isFetching && setPostView('UserBookmarks')}
+          style={{
+            width: '50%',
+            height: 50,
+            borderRadius: 6,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: postView === 'UserBookmarks' ? theme.colors.background : null
+          }}
+        >
+          <CustomTextNunito
+            weight={'Bold'}
+            style={{
+              color: postView === 'UserBookmarks' ? theme.colors.primary : theme.colors.text
+            }}
+          >
+            {I18n.t(TextKey.favorites)}
+          </CustomTextNunito>
         </TouchableOpacity>
-      </View>        
-      
+      </View>
+
+      {/* Modales */}
       <FullSizeImage isModalVisible={isProfileImageModalVisible} uri={user.profileImage} toggleModal={toggleProfileImageModal} />
       <FullSizeImage isModalVisible={isCoverImageModalVisible} uri={user.coverImage} toggleModal={toggleCoverImageModal} />
     </>
@@ -92,7 +128,12 @@ const UserProfileScreen = () => {
         data={[]}
         renderItem={null}
         keyExtractor={(item, index) => index.toString()}
-        ListFooterComponent={<ProfilePosts postView={postView} />}
+        ListFooterComponent={
+          <ProfilePosts
+            postView={postView}
+            setIsFetching={setIsFetching} // Pasar setIsFetching a ProfilePosts
+          />
+        }
       />
     </SafeAreaView>
   );

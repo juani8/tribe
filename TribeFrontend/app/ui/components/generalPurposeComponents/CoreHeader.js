@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Lamp, Aa, SettingFill, ChartPin, SignInSquare } from 'assets/images';
-import { navigateToNotifications, navigateToUserProfile, navigateToWelcome } from 'helper/navigationHandlers/CoreNavigationHandlers';
-import CustomTextNunito from './CustomTextNunito';
-import { useTheme } from 'context/ThemeContext';
+import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from 'context/ThemeContext';
+import { useUserContext } from 'context/UserContext';
+import { navigateToUserProfile, navigateToNotifications } from 'helper/navigationHandlers/CoreNavigationHandlers';
+import CustomTextNunito from './CustomTextNunito';
+import Separator from 'ui/components/generalPurposeComponents/Separator';
 import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 import CoreMenuOptionsList from 'ui/components/generalPurposeComponents/CoreMenuOptionsList';
-import Separator from 'ui/components/generalPurposeComponents/Separator';
-
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
 const CoreHeader = () => {
-    const { theme, isDarkMode } = useTheme();
+    const { theme } = useTheme();
+    const { user } = useUserContext();
     const [isMenuVisible, setMenuVisible] = useState(false);
     const navigation = useNavigation();
 
     // Handlers for menu visibility
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
-  
 
     const styles = createStyles(theme);
-
+    console.log('user', user?.profileImage);
     return (
         <View>
             <View style={[styles.headerContainer]}>
@@ -35,9 +34,9 @@ const CoreHeader = () => {
                 }}>
                     <View style={styles.itemsLeft}>
                         <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
-                            <Image source={theme.UserCircleLight} style={{ width: 50, height: 50 }} />
+                        <Image source={{ uri: user?.profileImage !== null && user?.profileImage !== undefined ? user.profileImage : theme.UserCircleLight }} style={{ width: 50, height: 50, borderRadius: 100 }} />
                         </TouchableOpacity>
-                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 4}}>{I18n.t(TextKey.headerTitle)}</CustomTextNunito>
+                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 8}}>{`${I18n.t(TextKey.headerTitle)}, ${user?.nickName}`}</CustomTextNunito>
                     </View>
                     <View style={styles.itemsRight}>
                         <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>
@@ -60,22 +59,14 @@ const CoreHeader = () => {
                 <CoreMenuOptionsList onClose={closeMenu} />
             </PopupMenu>
         </View>
-
-
     );
 };
 
 const createStyles = (theme) => StyleSheet.create({
     headerContainer: {
-
-        paddingHorizontal: 16,
-        paddingVertical: 10,
- 
+        paddingHorizontal: 20,
         backgroundColor: theme.colors.background,
-    },
-    backButton: {
-        fontSize: 18,
-        color: '#007AFF',
+        paddingTop: 10,
     },
     itemsLeft: {
         flexDirection: 'row',

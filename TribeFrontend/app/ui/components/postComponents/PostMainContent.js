@@ -30,7 +30,7 @@ const PostMainContent = ({ post, viewMore = true, renderingPostsFromUser }) => {
       {!renderingPostsFromUser && (
         <View style={styles.postHeader}>
           <Image
-            source={post.userId.profileImage ? { uri: post.userId.profileImage } : theme.UserCircleLight}
+            source={post.userId.profileImage ? { uri: post.userId.profileImage } : theme.UserCircle}
             style={{ width: 65, height: 65, borderRadius: 100 }}
             resizeMode="stretch"
           />
