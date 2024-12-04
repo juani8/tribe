@@ -1,5 +1,3 @@
-![Build Status](https://build.appcenter.ms/v0.1/apps/22a6efcc-9200-4fc1-8398-8a2b860d1a2a/branches/main/badge)
-
 # Instrucciones de configuración inicial
 
 ## Requisitos previos
