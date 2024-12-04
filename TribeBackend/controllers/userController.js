@@ -96,6 +96,7 @@ exports.getUsers = async (req, res) => {
         const currentUser = await User.findById(req.user.id).select('following');
 
         const users = await User.find({
+            _id: { $ne: req.user.id },
             isDeleted: false,
             $or: [
                 { name: new RegExp(input, 'i') }, 
@@ -118,6 +119,7 @@ exports.getUsers = async (req, res) => {
 
         res.status(200).json({ users: usersWithFollowFlag });
     } catch (error) {
+        console.error('Error en getUsers:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
