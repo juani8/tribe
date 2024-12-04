@@ -22,7 +22,7 @@ exports.sendTotp = async (req, res) => {
         }
 
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        if (existingUser && !existingUser.isDeleted) {
             return res.status(400).json({ message: 'Este correo electrónico ya está registrado. Por favor, inicia sesión.' });
         }
 

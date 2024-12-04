@@ -6,56 +6,6 @@ const Comment = require('../models/Comment');
 const Bookmark = require('../models/Bookmark');
 
 /**
- * Obtiene el perfil del usuario autenticado.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con el perfil del usuario si se encuentra, o un mensaje de error.
- */
-exports.getProfile = async (req, res) => {
-    const { offset = 0, limit = 10, sort = 'createdAt', order = 'desc' } = req.query;
-
-    try {
-        if (!req.user) {
-            return res.status(401).json({ message: 'Usuario no autenticado.' });
-        }
-
-        const user = await User.findById(req.user.id)
-            .populate({
-                path: 'following',
-                select: 'name lastName nickName profileImage',
-                match: { isDeleted: false }
-            })
-            .populate({
-                path: 'followers',
-                select: 'name lastName nickName profileImage',
-                match: { isDeleted: false }
-            })
-            .lean();
-
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
-        const posts = await Post.find({ userId: req.user.id })
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .sort({ [sort]: order === 'desc' ? -1 : 1 })
-            .select('description multimedia location likes totalComments createdAt');
-
-        const followingsCount = user.following.length;
-        const followersCount = user.followers.length;
-
-        res.status(200).json({
-            ...user,
-            numberOfFollowings: followingsCount,
-            numberOfFollowers: followersCount
-        });
-    } catch (error) {
-        console.error("Error en getProfile:", error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-};
-
-/**
  * Actualiza el perfil del usuario autenticado.
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.
@@ -111,10 +61,20 @@ exports.deleteProfile = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const user = await User.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
+        const user = await User.findById(userId);
         if (!user) {
-            console.log('Usuario no encontrado');
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
+
+        // Modifica el correo electrónico y el nickname del usuario eliminado para que sean únicos
+        const newEmail = `${user.email}_deleted_${Date.now()}`;
+        const newNickName = `${user.nickName}_deleted_${Date.now()}`;
+
+        // Actualiza el usuario para marcarlo como eliminado y cambiar su correo electrónico y nickname
+        user.isDeleted = true;
+        user.email = newEmail;
+        user.nickName = newNickName;
+        await user.save();
 
         res.status(204).send();
     } catch (error) {
@@ -350,8 +310,6 @@ exports.getUserMetrics = async (req, res) => {
         const numberOfFollowers = await User.countDocuments({ following: userId, isDeleted: false });
         const numberOfFollowing = await User.countDocuments({ followers: userId, isDeleted: false });
         const numberOfPosts = await Post.countDocuments({ userId });
-
-        // Obtener todos los bookmarks del usuario
         const bookmarks = await Bookmark.find({ userId }).populate({
             path: 'postId',
             populate: {
@@ -360,10 +318,17 @@ exports.getUserMetrics = async (req, res) => {
                 match: { isDeleted: false }
             }
         });
-        
         const numberOfFavorites = bookmarks.filter(bookmark => bookmark.postId && bookmark.postId.userId).length;
-
         const numberOfComments = await Comment.countDocuments({ userId });
+        const likes = await Like.find({ userId }).populate({
+            path: 'postId',
+            populate: {
+                path: 'userId',
+                select: 'isDeleted',
+                match: { isDeleted: false }
+            }
+        });
+        const numberOfLikes = likes.filter(like => like.postId && like.postId.userId).length;
 
         // Obtener el nivel de gamificación del usuario
         const user = await User.findById(userId).select('gamificationLevel');
@@ -388,6 +353,7 @@ exports.getUserMetrics = async (req, res) => {
             numberOfPosts,
             numberOfFavorites,
             numberOfComments,
+            numberOfLikes
             gamificationLevel,
             minPosts
         };

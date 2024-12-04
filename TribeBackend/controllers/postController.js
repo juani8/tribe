@@ -8,6 +8,7 @@ const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const { getMonthlyAds } = require('../utils/adsService');
 const User = require('../models/User');
 const userController = require('./userController');
+const cloudinary = require('../utils/cloudinaryConfig');
 
 /**
  * Obtiene posts para el timeline o feed.
@@ -86,7 +87,7 @@ exports.fetchAds = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @returns {Promise<void>} - Responde con el nuevo post creado y un mensaje de éxito.
  */
-exports.createPost = async (req, res) => {
+orts.createPost = async (req, res) => {
     const { description, multimedia, latitude, longitude } = req.body;
     const userId = req.user.id;
 
