@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-router.get('/me', userController.getProfile);
 router.patch('/me', userController.updateProfile);
 router.delete('/me', userController.deleteProfile);
 router.get('/', userController.getUsers);
