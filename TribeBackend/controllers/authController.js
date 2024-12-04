@@ -302,16 +302,20 @@ exports.validateToken = async (req, res) => {
     const token = req.body.token;
   
     try {
-      // Verify the token with the access token secret
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password -following -followers -gamificationLevel');
+        // Verify the token with the access token secret
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select('-password -following -followers -gamificationLevel');
   
-      if (!user) {
-        return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
-      }
+        if (!user) {
+            return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
+        }
   
-      res.status(200).json({ valid: true, user });
+        res.status(200).json({ valid: true, user });
     } catch (error) {
-      res.status(401).json({ valid: false, message: 'El token es inválido o ha expirado.' });
+        if (error.name === 'TokenExpiredError') {
+            res.status(401).json({ valid: false, message: 'El token ha expirado.' });
+        } else {
+            res.status(401).json({ valid: false, message: 'El token es inválido.' });
+        }
     }
 };
