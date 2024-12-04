@@ -1,14 +1,12 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
-import { HOST, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
+const BASE_URL = 'https://tribe-plp5.onrender.com';
 
 // Crear una nueva publicación
 export const createPost = async (postData) => {
     try {
         const token = await getToken();
-        console.log('createPost', postData);
         const response = await axios.post(`${BASE_URL}/posts`, postData, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -74,7 +72,6 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
                 limit,
             }
         });
-        console.log('getTimelinePosts', response.data);
         return response.data;
     } catch (error) {
         console.error('Error al obtener las publicaciones de la línea de tiempo:', error);
@@ -86,7 +83,6 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
 export const getPostById = async (postId) => {
     try {
         const response = await axios.get(`${BASE_URL}/posts/${postId}`);
-        console.log('getPostById', response.data);
         return response.data;
     } catch (error) {
         console.error(`Error al obtener la publicación con ID ${postId}:`, error);
@@ -119,8 +115,6 @@ export const getCommentsForPost = async (postId, offset = 0, limit = 10) => {
 export const createComment = async (postId, commentData) => {
     try {
         const token = await getToken();
-        console.log('createComment', commentData);
-        console.log('createComment', postId);
         const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, commentData, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -147,8 +141,14 @@ export const likePost = async (postId) => {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al dar me gusta a la publicación con ID ${postId}:`, error);
-        throw error;
+        if (error.response && error.response.status === 400) {
+            // Si el error es 400, significa que el post ya está marcado como favorito
+            console.log(`El post con ID ${postId} ya tiene like.`);
+            return; // No hacer nada
+        } else {
+            console.error(`Error al dar me gusta a la publicación con ID ${postId}:`, error);
+            throw error;
+        }  
     }
 };
 
@@ -185,8 +185,14 @@ export const bookmarkPost = async (postId) => {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al marcar la publicación con ID ${postId} como favorita:`, error);
-        throw error;
+        if (error.response && error.response.status === 400) {
+            // Si el error es 400, significa que el post ya está marcado como favorito
+            console.log(`El post con ID ${postId} ya está marcado como favorito.`);
+            return; // No hacer nada
+        } else {
+            console.error(`Error al marcar la publicación con ID ${postId} como favorita:`, error);
+            throw error;
+        }
     }
 };
 
@@ -209,28 +215,6 @@ export const unbookmarkPost = async (postId) => {
     }
 };
 
-// Obtener publicaciones favoritas del usuario actual
-export const getUserBookmarks = async (offset = 0, limit = 10, sort = 'createdAt', order = 'desc') => {
-    try {
-        const token = await getToken();
-        const response = await axios.get(`${BASE_URL}/posts/me/bookmarks`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            params: {
-                offset,
-                limit,
-                sort,
-                order
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error al obtener las publicaciones favoritas del usuario:', error);
-        throw error;
-    }
-};
-
 export const checkServerStatus = async () => {
     try {
       const response = await axios.get(BASE_URL);
@@ -242,6 +226,7 @@ export const checkServerStatus = async () => {
     }
 }; 
 
+// Agregado por mrosariopresedo para la integración de los anuncios.
 export const getAds = async () => {
     try {
         const token = await getToken();
