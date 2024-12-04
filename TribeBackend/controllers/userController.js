@@ -353,7 +353,7 @@ exports.getUserMetrics = async (req, res) => {
             numberOfPosts,
             numberOfFavorites,
             numberOfComments,
-            numberOfLikes
+            numberOfLikes,
             gamificationLevel,
             minPosts
         };
