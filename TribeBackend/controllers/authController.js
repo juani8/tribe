@@ -313,9 +313,9 @@ exports.validateToken = async (req, res) => {
         res.status(200).json({ valid: true, user });
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            res.status(401).json({ valid: false, message: 'El token ha expirado.' });
+            res.status(403).json({ valid: false, message: 'El token ha expirado.' });
         } else {
-            res.status(401).json({ valid: false, message: 'El token es inválido.' });
+            res.status(400).json({ valid: false, message: 'El token es inválido.' });
         }
     }
 };
