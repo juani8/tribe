@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-server:
     runs-on: windows-latest
     env:
       HOST: ${{ vars.HOST }}
@@ -56,9 +56,9 @@ jobs:
           name: node-app
           path: TribeBackend.zip
 
-  deploy:
+  deploy-server:
     runs-on: windows-latest
-    needs: build
+    needs: build-server
     env:
       HOST: ${{ vars.HOST }}
       SMPT_SERVER: ${{ vars.SMPT_SERVER }}
@@ -85,3 +85,42 @@ jobs:
           github_deployment: true 
           deployment_environment: 'production'
           github_token: ${{ secrets.TRIBE_GITHUB_TOKEN }}
+
+  build-android:
+    runs-on: windows-latest
+    env:
+      APP_CENTER_TOKEN: ${{ secrets.APP_CENTER_TOKEN }}
+      APP_NAME: ${{ vars.APP_NAME }}
+      UPLOAD_FILE: ${{ vars.UPLOAD_FILE }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Install dependencies
+        run: |
+          cd TribeFrontend
+          npm install
+
+      - name: Build Android app
+        run: |
+          cd TribeFrontend/android
+          ./gradlew assembleDebug
+
+      - name: Upload to App Center
+        uses: wzieba/AppCenter-Github-Action@v1
+        with:
+          appName: ${{ env.APP_NAME }}
+          token: ${{ env.APP_CENTER_TOKEN }}
+          file: ${{ env.UPLOAD_FILE }}
+          group: 'collaborators'
+          notifyTesters: false
+          debug: false
