@@ -3,7 +3,7 @@ const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const Like = require('../models/Like');
 const Bookmark = require('../models/Bookmark');
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator'); 
 const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const { getMonthlyAds } = require('../utils/adsService');
 const User = require('../models/User');
@@ -293,10 +293,10 @@ exports.createComment = async (req, res) => {
 };
 
 /**
- * Da un 'like' a un post.
+ * Da like a un post.
  * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>} - Responde con el post actualizado si se hace el 'like' correctamente.
+ * @returns {Promise<void>} - Responde con el objeto like creado.
  */
 exports.likePost = async (req, res) => {
     const { postId } = req.params;
@@ -312,13 +312,18 @@ exports.likePost = async (req, res) => {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
+        const existingLike = await Like.findOne({ postId, userId });
+        if (existingLike) {
+            return res.status(400).json({ message: 'Ya has dado like a este post.' });
+        }
+
         const like = new Like({ postId, userId });
         await like.save();
 
         post.likes += 1;
         await post.save();
 
-        res.status(200).json(post);
+        res.status(200).json(like);
     } catch (error) {
         console.error("Error en likePost:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
@@ -362,7 +367,7 @@ exports.unlikePost = async (req, res) => {
  * Marca un post como favorito para el usuario actual.
  * @param {Object} req - Objeto de solicitud HTTP que contiene el ID del post.
  * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - Responde con el objeto bookmark creado.
  */
 exports.bookmarkPost = async (req, res) => {
     const { postId } = req.params;
@@ -378,10 +383,15 @@ exports.bookmarkPost = async (req, res) => {
             return res.status(404).json({ message: 'Post no encontrado' });
         }
 
+        const existingBookmark = await Bookmark.findOne({ postId, userId });
+        if (existingBookmark) {
+            return res.status(400).json({ message: 'Ya has marcado este post como favorito.' });
+        }
+
         const bookmark = new Bookmark({ postId, userId });
         await bookmark.save();
 
-        res.status(200).json({ message: 'Post marcado como bookmark' });
+        res.status(200).json(bookmark);
     } catch (error) {
         console.error("Error en bookmarkPost:", error);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });

@@ -141,8 +141,14 @@ export const likePost = async (postId) => {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al dar me gusta a la publicación con ID ${postId}:`, error);
-        throw error;
+        if (error.response && error.response.status === 400) {
+            // Si el error es 400, significa que el post ya está marcado como favorito
+            console.log(`El post con ID ${postId} ya tiene like.`);
+            return; // No hacer nada
+        } else {
+            console.error(`Error al dar me gusta a la publicación con ID ${postId}:`, error);
+            throw error;
+        }  
     }
 };
 
@@ -179,8 +185,14 @@ export const bookmarkPost = async (postId) => {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al marcar la publicación con ID ${postId} como favorita:`, error);
-        throw error;
+        if (error.response && error.response.status === 400) {
+            // Si el error es 400, significa que el post ya está marcado como favorito
+            console.log(`El post con ID ${postId} ya está marcado como favorito.`);
+            return; // No hacer nada
+        } else {
+            console.error(`Error al marcar la publicación con ID ${postId} como favorita:`, error);
+            throw error;
+        }
     }
 };
 
