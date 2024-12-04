@@ -303,8 +303,9 @@ exports.validateToken = async (req, res) => {
   
     try {
         // Verify the token with the access token secret
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id).select('-password -following -followers -gamificationLevel');
+        // Verify the token with the access token secret
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select('-password -following -followers -gamificationLevel -following -followers -gamificationLevel');
   
         if (!user) {
             return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
