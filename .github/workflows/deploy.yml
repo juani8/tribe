@@ -87,7 +87,7 @@ jobs:
           github_token: ${{ secrets.TRIBE_GITHUB_TOKEN }}
 
   build-android:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       APP_CENTER_TOKEN: ${{ secrets.APP_CENTER_TOKEN }}
       APP_NAME: ${{ vars.APP_NAME }}
