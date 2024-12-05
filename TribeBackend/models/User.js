@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema({
     followers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    }]
+    }],
 }, { timestamps: true });
 
 // Hook de pre-guardado para validar la contraseña en función de isGoogleUser.
