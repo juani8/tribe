@@ -8,7 +8,8 @@ const { getCityFromCoordinates } = require('../utils/osmGeocoder');
 const { getMonthlyAds } = require('../utils/adsService');
 const User = require('../models/User');
 const userController = require('./userController');
-
+const { updateGamificationLevel } = require('./userController');
+ 
 /**
  * Obtiene posts para el timeline o feed.
  * @param {Object} req - Objeto de solicitud HTTP que contiene parámetros de paginación y ordenación.
