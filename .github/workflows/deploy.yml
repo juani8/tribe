@@ -11,10 +11,6 @@ jobs:
     runs-on: windows-latest
     env:
       HOST: ${{ vars.HOST }}
-      SMPT_SERVER: ${{ vars.SMPT_SERVER }}
-      SMPT_PORT: ${{ vars.SMPT_PORT }}
-      SMPT_USER: ${{ vars.SMPT_USER }}
-      SMPT_PASS: ${{ secrets.SMPT_PASS }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
@@ -36,10 +32,6 @@ jobs:
           npm run build --if-present
           npm run test --if-present
           echo "HOST=${{ vars.HOST }}"
-          echo "SMPT_SERVER=${{ vars.SMPT_SERVER }}"
-          echo "SMPT_PORT=${{ vars.SMPT_PORT }}"
-          echo "SMPT_USER=${{ vars.SMPT_USER }}"
-          echo "SMPT_PASS=${{ secrets.SMPT_PASS }}"
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}"
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
           echo "GMAIL_APP_PASSWORD=${{ secrets.GMAIL_APP_PASSWORD }}"
@@ -61,10 +53,6 @@ jobs:
     needs: build-server
     env:
       HOST: ${{ vars.HOST }}
-      SMPT_SERVER: ${{ vars.SMPT_SERVER }}
-      SMPT_PORT: ${{ vars.SMPT_PORT }}
-      SMPT_USER: ${{ vars.SMPT_USER }}
-      SMPT_PASS: ${{ secrets.SMPT_PASS }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }} 
