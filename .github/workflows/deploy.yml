@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_CENTER_TOKEN: ${{ secrets.APP_CENTER_TOKEN }}
-      APP_NAME: ${{ vars.APP_NAME }}
+      APP_NAME: mpresedo-uade.edu.ar/Tribe
 
     steps:
       - uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
           -d '{
                 "branch": "main"
               }' \
-          "https://api.appcenter.ms/v0.1/apps/${{ vars.APP_NAME }}/builds"
+          "https://api.appcenter.ms/v0.1/apps/${{ env.APP_NAME }}/builds"
       
       - name: Distribute APK
         run: |
@@ -102,4 +102,4 @@ jobs:
                 "destination_name": "Testers",
                 "release_notes": "Nueva versión de Tribe"
               }' \
-          "https://api.appcenter.ms/v0.1/apps/${{ vars.APP_NAME }}/release_uploads"
+          "https://api.appcenter.ms/v0.1/apps/${{ env.APP_NAME }}/release_uploads"
