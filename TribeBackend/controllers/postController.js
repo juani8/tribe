@@ -111,7 +111,7 @@ exports.createPost = async (req, res) => {
 
         const savedPost = await newPost.save();
         
-        await userController.updateGamificationLevel(req, res);
+        await updateGamificationLevel(userId);
 
         res.status(201).json({ data: savedPost, message: 'Post creado exitosamente' });
     } catch (error) {
