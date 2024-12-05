@@ -349,7 +349,7 @@ exports.getUserMetrics = async (req, res) => {
         // Obtener el minPosts para el siguiente nivel
         const currentLevel = gamificationLevel.level;
         const nextLevel = levels.find(level => level.level === currentLevel + 1);
-        const minPosts = nextLevel ? nextLevel.minPosts : currentLevel.minPosts;
+        const minPosts = nextLevel ? nextLevel.minPosts : levels.find(level => level.level === currentLevel).minPosts;
 
         const metrics = {
             numberOfFollowers,
