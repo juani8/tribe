@@ -235,13 +235,13 @@ exports.requestPasswordReset = async (req, res) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
 
-        if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+        if (!user || user.isDeleted) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
 
         if (user.isGoogleUser) {
             return res.status(400).json({ message: 'No puedes restablecer tu contraseña, ya que tu cuenta está asociada a Google.' });
         }
-        user.resetTokenUsed = false;
-        await user.save();
 
         await sendRecoveryLink(user.email, user._id); // Send password reset link
         res.status(200).json({ message: 'Magic link enviado.' });
@@ -273,15 +273,10 @@ exports.resetPasswordWithToken = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-        if (user.resetTokenUsed) {
-            return res.status(400).json({ message: 'Este enlace de recuperación ya ha sido usado.' });
-        }
 
         // Hashear la nueva contraseña
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
-
-        user.resetTokenUsed = true;
 
         // Guardar la nueva contraseña en la base de datos
         await user.save();
