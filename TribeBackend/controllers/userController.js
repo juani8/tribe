@@ -349,7 +349,7 @@ exports.getUserMetrics = async (req, res) => {
         // Obtener el minPosts para el siguiente nivel
         const currentLevel = gamificationLevel.level;
         const nextLevel = levels.find(level => level.level === currentLevel + 1);
-        const minPosts = nextLevel ? nextLevel.minPosts : null;
+        const minPosts = nextLevel ? nextLevel.minPosts : currentLevel.minPosts;
 
         const metrics = {
             numberOfFollowers,
@@ -374,20 +374,38 @@ exports.getUserMetrics = async (req, res) => {
  * @param {Object} user - Objeto del usuario.
  * @returns {Promise<void>} - Actualiza el nivel de gamificación del usuario si corresponde.
  */
-exports.updateGamificationLevel = async (user) => {
-    const levels = [
-        { level: 1, description: 'usuario nuevo', minPosts: 0 },
-        { level: 2, description: 'usuario activo', minPosts: 5 },
-        { level: 3, description: 'usuario avanzado', minPosts: 10 },
-        { level: 4, description: 'usuario experto', minPosts: 15 },
-    ];
-
-    const currentLevel = user.gamificationLevel.level;
-    const nextLevel = levels.find(level => level.level === currentLevel + 1);
-
-    if (nextLevel && user.numberOfPosts >= nextLevel.minPosts) {
-        user.gamificationLevel = { level: nextLevel.level, description: nextLevel.description };
+exports.updateGamificationLevel = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+ 
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+ 
+        const levels = [
+            { level: 1, description: 'usuario nuevo', minPosts: 0 },
+            { level: 2, description: 'usuario activo', minPosts: 5 },
+            { level: 3, description: 'usuario avanzado', minPosts: 10 },
+            { level: 4, description: 'usuario experto', minPosts: 15 },
+        ];
+ 
+        const currentLevel = user.gamificationLevel.level;
+        const nextLevel = levels.find(level => level.level === currentLevel + 1);
+ 
+        if (nextLevel && user.numberOfPosts >= nextLevel.minPosts) {
+            user.gamificationLevel = {
+                level: nextLevel.level,
+                description: nextLevel.description
+            };
+        }
+ 
         await user.save();
+ 
+        res.status(200).json({ message: 'Nivel de gamificación actualizado correctamente' });
+    } catch (error) {
+        console.error('Error en updateGamificationLevel:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
