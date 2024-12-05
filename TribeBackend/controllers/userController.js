@@ -14,7 +14,7 @@ const Like = require('../models/Like');
  */
 exports.updateProfile = async (req, res) => {
     try {
-        const { name, lastName, profileImage, coverImage, description, gender } = req.body;
+        const { name, lastName, profileImage, coverImage, description, gender, nickName } = req.body;
 
         // Validar los campos obligatorios para la finalización del perfil inicial
         if (!req.user.name && !req.user.lastName && !req.user.gender) {
@@ -34,6 +34,7 @@ exports.updateProfile = async (req, res) => {
         if (coverImage) updateFields.coverImage = coverImage;
         if (description) updateFields.description = description;
         if (gender) updateFields.gender = gender;
+        if (nickName) updateFields.nickName = nickName;
 
         // Actualizar el usuario en la base de datos
         const updatedUser = await User.findByIdAndUpdate(
