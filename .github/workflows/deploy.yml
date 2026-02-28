@@ -1,9 +1,10 @@
 name: Build and deploy Node.js app to Render and mobile app to App Center
 
 on:
-  push:
-    branches:
-      - main
+  # push trigger disabled – secrets not configured in this repo
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 jobs:
