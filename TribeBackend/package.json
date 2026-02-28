@@ -25,7 +25,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.10.0",
     "mongoose": "^9.2.3",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^8.0.1",
     "otplib": "^13.3.0",
     "speakeasy": "^2.0.0",
     "swagger-ui-express": "^5.0.1",
