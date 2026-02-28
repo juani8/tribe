@@ -1,0 +1,304 @@
+###############################################################################
+# Security Pipeline – Shift-Left CI/CD
+# Fase 1: Hardening + SCA  (Gitleaks · Trivy)
+# Fase 2: SAST             (Semgrep – OWASP Top 10 Quality Gate)
+# Fase 3: DAST             (OWASP ZAP Baseline)
+###############################################################################
+name: "🔒 Security Pipeline"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# ── Mínimo privilegio global ─────────────────────────────────────────────────
+permissions: read-all
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # FASE 1-A ▸ Escaneo de secretos con Gitleaks
+  # ═══════════════════════════════════════════════════════════════════════════
+  secret-scan:
+    name: "🔑 Secret Scan (Gitleaks)"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read        # solo lectura del código
+      security-events: write # para subir SARIF a GitHub Security tab
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # historial completo para escanear todos los commits
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # FASE 1-B ▸ SCA – Escaneo de dependencias con Trivy
+  # ═══════════════════════════════════════════════════════════════════════════
+  sca-backend:
+    name: "📦 SCA Backend (Trivy)"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install backend dependencies
+        run: |
+          cd TribeBackend
+          npm ci --ignore-scripts
+
+      - name: Run Trivy FS scan (backend)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: TribeBackend
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"           # falla el pipeline en CRITICAL/HIGH
+
+      - name: Run Trivy FS scan – SARIF (backend)
+        if: always()
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: TribeBackend
+          format: sarif
+          output: trivy-backend.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-backend.sarif
+          category: trivy-backend
+
+  sca-frontend:
+    name: "📦 SCA Frontend (Trivy)"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install frontend dependencies
+        run: |
+          cd TribeFrontend
+          npm ci --ignore-scripts
+
+      - name: Run Trivy FS scan (frontend)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: TribeFrontend
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+
+      - name: Run Trivy FS scan – SARIF (frontend)
+        if: always()
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          scan-type: fs
+          scan-ref: TribeFrontend
+          format: sarif
+          output: trivy-frontend.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-frontend.sarif
+          category: trivy-frontend
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # FASE 2 ▸ SAST – Semgrep con Quality Gate (OWASP Top 10)
+  # ═══════════════════════════════════════════════════════════════════════════
+  sast:
+    name: "🛡️ SAST (Semgrep)"
+    runs-on: ubuntu-latest
+    needs: [secret-scan]          # no arranca si hay secretos expuestos
+    permissions:
+      contents: read
+      security-events: write
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep – OWASP Top 10 rules
+        run: |
+          semgrep scan \
+            --config "p/owasp-top-ten" \
+            --config "p/nodejs" \
+            --config "p/react" \
+            --sarif \
+            --output semgrep-results.sarif \
+            --severity ERROR \
+            --severity WARNING \
+            TribeBackend TribeFrontend
+
+      - name: Quality Gate – fail on Critical/High
+        run: |
+          echo "──────────────────────────────────────"
+          echo "🔍 Quality Gate: checking for CRITICAL/HIGH findings..."
+          echo "──────────────────────────────────────"
+          # Semgrep SARIF: level "error" = Critical/High
+          ERRORS=$(python3 -c "
+          import json, sys
+          with open('semgrep-results.sarif') as f:
+              sarif = json.load(f)
+          count = 0
+          for run in sarif.get('runs', []):
+              for result in run.get('results', []):
+                  if result.get('level') == 'error':
+                      count += 1
+          print(count)
+          ")
+          echo "Found $ERRORS critical/high findings"
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "❌ Quality Gate FAILED: $ERRORS critical/high vulnerabilities found"
+            # Print details
+            semgrep scan \
+              --config "p/owasp-top-ten" \
+              --config "p/nodejs" \
+              --config "p/react" \
+              --severity ERROR \
+              TribeBackend TribeFrontend || true
+            exit 1
+          fi
+          echo "✅ Quality Gate PASSED"
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep-results.sarif
+          category: semgrep
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # FASE 3 ▸ DAST – OWASP ZAP Baseline contra el backend en Docker
+  # ═══════════════════════════════════════════════════════════════════════════
+  dast:
+    name: "⚡ DAST (OWASP ZAP)"
+    runs-on: ubuntu-latest
+    needs: [sast, sca-backend]    # ejecuta después de SAST+SCA
+    permissions:
+      contents: read
+      issues: write               # para crear issues si ZAP lo configura
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGODB_URI: mongodb://localhost:27017/tribe_test
+      MONGODB_URI_LOCAL: mongodb://localhost:27017/tribe_test
+      JWT_SECRET: ci-test-secret-not-real
+      NODE_ENV: Development
+      PORT: 8080
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install backend dependencies
+        run: |
+          cd TribeBackend
+          npm ci
+
+      - name: Start backend server
+        run: |
+          cd TribeBackend
+          node server/index.js &
+          # Esperar a que el servidor esté listo
+          echo "Waiting for server to start..."
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:8080/ > /dev/null 2>&1; then
+              echo "✅ Server is up!"
+              break
+            fi
+            echo "  attempt $i/30..."
+            sleep 2
+          done
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: "http://localhost:8080"
+          rules_file_name: ""
+          allow_issue_writing: false
+          fail_action: true
+          cmd_options: "-I"        # solo informativo en la primera iteración
+
+      - name: Upload ZAP report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: report_html.html
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # RESUMEN – Gate final
+  # ═══════════════════════════════════════════════════════════════════════════
+  security-gate:
+    name: "🏁 Security Gate"
+    runs-on: ubuntu-latest
+    needs: [secret-scan, sca-backend, sca-frontend, sast, dast]
+    if: always()
+    permissions:
+      contents: read
+    steps:
+      - name: Evaluate results
+        run: |
+          echo "═══════════════════════════════════════"
+          echo "       Security Pipeline Summary"
+          echo "═══════════════════════════════════════"
+          echo "Secret Scan : ${{ needs.secret-scan.result }}"
+          echo "SCA Backend : ${{ needs.sca-backend.result }}"
+          echo "SCA Frontend: ${{ needs.sca-frontend.result }}"
+          echo "SAST        : ${{ needs.sast.result }}"
+          echo "DAST        : ${{ needs.dast.result }}"
+          echo "═══════════════════════════════════════"
+          
+          # Fail if any critical gate failed
+          if [[ "${{ needs.secret-scan.result }}" == "failure" ]]; then
+            echo "❌ BLOCKED: Secrets detected in codebase!"
+            exit 1
+          fi
+          if [[ "${{ needs.sast.result }}" == "failure" ]]; then
+            echo "❌ BLOCKED: Critical/High SAST findings (OWASP Top 10)!"
+            exit 1
+          fi
+          if [[ "${{ needs.sca-backend.result }}" == "failure" ]]; then
+            echo "⚠️  WARNING: SCA backend found vulnerable dependencies"
+          fi
+          if [[ "${{ needs.sca-frontend.result }}" == "failure" ]]; then
+            echo "⚠️  WARNING: SCA frontend found vulnerable dependencies"
+          fi
+          if [[ "${{ needs.dast.result }}" == "failure" ]]; then
+            echo "⚠️  WARNING: DAST found potential runtime vulnerabilities"
+          fi
+          echo "✅ Security Gate evaluation complete"
