@@ -16,7 +16,7 @@
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
-    "express": "^4.21.1",
+    "express": "^5.2.1",
     "express-validator": "^7.3.1",
     "faker": "^6.6.6",
     "google-auth-library": "^9.15.0",
