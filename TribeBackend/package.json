@@ -23,7 +23,7 @@
     "googleapis": "^171.4.0",
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.3",
-    "mongodb": "^6.10.0",
+    "mongodb": "^7.1.0",
     "mongoose": "^9.2.3",
     "nodemailer": "^6.9.16",
     "otplib": "^13.3.0",
