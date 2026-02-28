@@ -94,6 +94,22 @@ export default function ProfilePosts({ postView, setIsFetching }) {
             )}
           </>
         }
+        ListEmptyComponent={
+          !isFetching.current && (
+            <View style={styles.emptyContainer}>
+              <CustomTextNunito weight="SemiBold" style={styles.emptyTitle}>
+                {postView === 'UserPosts' 
+                  ? (I18n.locale?.startsWith('es') ? 'Sin publicaciones' : 'No posts yet')
+                  : (I18n.locale?.startsWith('es') ? 'Sin favoritos' : 'No favorites yet')}
+              </CustomTextNunito>
+              <CustomTextNunito style={styles.emptySubtitle}>
+                {postView === 'UserPosts'
+                  ? (I18n.locale?.startsWith('es') ? 'Comparte tu primer momento' : 'Share your first moment')
+                  : (I18n.locale?.startsWith('es') ? 'Guarda publicaciones que te gusten' : 'Save posts you like')}
+              </CustomTextNunito>
+            </View>
+          )
+        }
       />
     </View>
   );
@@ -102,7 +118,8 @@ export default function ProfilePosts({ postView, setIsFetching }) {
 const createStyles = theme =>
   StyleSheet.create({
     container: {
-      paddingHorizontal: 20,
+      paddingHorizontal: 0,
+      marginHorizontal: 8,
       backgroundColor: theme.colors.background,
       flex: 1,
     },
@@ -117,5 +134,20 @@ const createStyles = theme =>
     noMorePostsText: {
       textAlign: 'center',
       color: theme.colors.detailText,
+    },
+    emptyContainer: {
+      alignItems: 'center',
+      paddingVertical: 60,
+      paddingHorizontal: 20,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      color: theme.colors.text,
+      marginBottom: 8,
+    },
+    emptySubtitle: {
+      fontSize: 14,
+      color: theme.colors.detailText,
+      textAlign: 'center',
     },
   });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Alert, ScrollView, TextInput, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { storeToken } from 'helper/JWTHelper'; 
-import { Picker } from '@react-native-picker/picker';
+import CustomPicker from 'ui/components/generalPurposeComponents/CustomPicker';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -71,20 +71,18 @@ const InitialConfigurationScreen = ({ navigation }) => {
       />
 
       <CustomTextNunito style={styles.label} weight="Regular">{I18n.t(TextKey.genderLabel)}</CustomTextNunito>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={gender}
-          style={styles.picker}
-          onValueChange={(itemValue) => setGender(itemValue)}
-        >
-          <Picker.Item label={I18n.t(TextKey.selectGender)} value="" />
-          <Picker.Item label={I18n.t(TextKey.genderMale)} value="male" />
-          <Picker.Item label={I18n.t(TextKey.genderFemale)} value="female" />
-          <Picker.Item label={I18n.t(TextKey.genderNonBinary)} value="non_binary" />
-          <Picker.Item label={I18n.t(TextKey.genderOther)} value="other" />
-          <Picker.Item label={I18n.t(TextKey.genderPreferNotToSay)} value="prefer_not_to_say" />
-        </Picker>
-      </View>
+      <CustomPicker
+        selectedValue={gender}
+        onValueChange={(itemValue) => setGender(itemValue)}
+        placeholder={I18n.t(TextKey.selectGender)}
+        items={[
+          { label: I18n.t(TextKey.genderMale), value: 'male' },
+          { label: I18n.t(TextKey.genderFemale), value: 'female' },
+          { label: I18n.t(TextKey.genderNonBinary), value: 'non_binary' },
+          { label: I18n.t(TextKey.genderOther), value: 'other' },
+          { label: I18n.t(TextKey.genderPreferNotToSay), value: 'prefer_not_to_say' },
+        ]}
+      />
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 

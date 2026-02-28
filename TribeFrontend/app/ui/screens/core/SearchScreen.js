@@ -6,124 +6,226 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
-  Text,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { useTheme } from 'context/ThemeContext';
-import Search from 'assets/images/icons/Search.png';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import { followUser, unfollowUser, searchUsers } from 'networking/api/usersApi';
+import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
+import { SearchGoogle } from 'assets/images';
+
+const { width } = Dimensions.get('window');
 
 export default function SearchScreen() {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [users, setUsers] = useState(null); // Inicialmente null
+  const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // Datos simulados (comentados ahora)
-  // const mockUsers = [
-  //   { _id: '1', name: 'Juan', lastName: 'Pérez', nickName: 'juampi', isFollowing: false },
-  //   { _id: '2', name: 'Ana', lastName: 'López', nickName: 'anita123', isFollowing: true },
-  //   { _id: '3', name: 'Carlos', lastName: 'Martínez', nickName: 'charly', isFollowing: false },
-  // ];
+  const [loadingFollow, setLoadingFollow] = useState({}); // Track loading state per user
 
   const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    
     setLoading(true);
     setError(null);
     try {
       const results = await searchUsers(searchQuery);
-      setUsers(results);
+      setUsers(results || []);
     } catch (err) {
       console.error('Error al buscar usuarios:', err);
-      setError(I18n.t(TextKey.searchError));
+      
+      // Handle 404 specifically - user not found is not an error, just empty results
+      if (err.response?.status === 404) {
+        setUsers([]);
+        setError(null);
+      } else if (err.response?.status === 401) {
+        setError(I18n.locale?.startsWith('es') 
+          ? 'Sesión expirada. Por favor inicia sesión nuevamente.' 
+          : 'Session expired. Please log in again.');
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setError(I18n.locale?.startsWith('es') 
+          ? 'La búsqueda tardó demasiado. Intenta de nuevo.' 
+          : 'Search took too long. Please try again.');
+      } else if (!err.response) {
+        setError(I18n.locale?.startsWith('es') 
+          ? 'Error de conexión. Verifica tu internet.' 
+          : 'Connection error. Check your internet.');
+      } else {
+        setError(I18n.t(TextKey.searchError));
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const toggleFollow = async (userId) => {
+    // Prevent multiple clicks while loading
+    if (loadingFollow[userId]) return;
+    
+    const user = users.find((user) => user._id === userId);
+    if (!user) return;
+
+    // Set loading state for this specific user
+    setLoadingFollow(prev => ({ ...prev, [userId]: true }));
+    
+    // Optimistically update UI
+    const newFollowState = !user.isFollowing;
+    setUsers((prevUsers) =>
+      prevUsers.map((u) =>
+        u._id === userId ? { ...u, isFollowing: newFollowState } : u
+      )
+    );
+
     try {
-      // Obtener el estado actual del usuario
-      const user = users.find((user) => user._id === userId);
-
       if (user.isFollowing) {
-        await unfollowUser(userId); 
+        await unfollowUser(userId);
       } else {
-        await followUser(userId); 
+        await followUser(userId);
       }
-
-      // Actualizar el estado local para reflejar el cambio
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === userId ? { ...user, isFollowing: !user.isFollowing } : user
-        )
-      );
     } catch (err) {
       console.error('Error al cambiar el estado de seguimiento:', err);
+      // Revert on error
+      setUsers((prevUsers) =>
+        prevUsers.map((u) =>
+          u._id === userId ? { ...u, isFollowing: user.isFollowing } : u
+        )
+      );
+    } finally {
+      setLoadingFollow(prev => ({ ...prev, [userId]: false }));
     }
   };
 
   const renderUser = ({ item }) => (
-    <View style={styles.userContainer}>
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>
-          {item.name} {item.lastName}
-        </Text>
-        <Text style={styles.userNickName}>@{item.nickName}</Text>
+    <View style={styles.userCard}>
+      <View style={styles.avatarContainer}>
+        <Image
+          source={item.profileImage ? { uri: item.profileImage } : theme.UserCircle}
+          style={styles.avatar}
+        />
+        <View style={styles.onlineIndicator} />
       </View>
+      
+      <View style={styles.userInfo}>
+        <CustomTextNunito weight="Bold" style={styles.userName}>
+          {item.name} {item.lastName}
+        </CustomTextNunito>
+        <CustomTextNunito style={styles.userNickName}>@{item.nickName}</CustomTextNunito>
+      </View>
+      
       <TouchableOpacity
         style={[
           styles.followButton,
           item.isFollowing ? styles.unfollowButton : styles.followButtonActive,
+          loadingFollow[item._id] && styles.followButtonDisabled,
         ]}
         onPress={() => toggleFollow(item._id)}
+        activeOpacity={0.8}
+        disabled={loadingFollow[item._id]}
       >
-        <Text style={styles.followButtonText}>
-          {item.isFollowing ? I18n.t(TextKey.unfollow) : I18n.t(TextKey.follow)}
-        </Text>
+        {loadingFollow[item._id] ? (
+          <ActivityIndicator size="small" color={item.isFollowing ? theme.colors.text : '#FFFFFF'} />
+        ) : (
+          <CustomTextNunito 
+            weight="SemiBold" 
+            style={[
+              styles.followButtonText,
+              item.isFollowing && styles.unfollowButtonText
+            ]}
+          >
+            {item.isFollowing ? I18n.t(TextKey.unfollow) : I18n.t(TextKey.follow)}
+          </CustomTextNunito>
+        )}
       </TouchableOpacity>
+    </View>
+  );
+
+  const renderEmptyState = () => (
+    <View style={styles.emptyStateContainer}>
+      <View style={styles.emptyIconContainer}>
+        <Image source={SearchGoogle} style={styles.googleIcon} />
+      </View>
+      <CustomTextNunito weight="SemiBold" style={styles.emptyTitle}>
+        {users === null 
+          ? (I18n.locale?.startsWith('es') ? 'Encuentra personas' : 'Find people')
+          : (I18n.locale?.startsWith('es') ? 'Sin resultados' : 'No results')}
+      </CustomTextNunito>
+      <CustomTextNunito style={styles.emptySubtitle}>
+        {users === null 
+          ? I18n.t(TextKey.startSearch)
+          : I18n.t(TextKey.searchNoResults)}
+      </CustomTextNunito>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      {/* Barra de búsqueda */}
+      {/* Header */}
+      <View style={styles.headerSection}>
+        <CustomTextNunito weight="Bold" style={styles.title}>
+          {I18n.locale?.startsWith('es') ? 'Buscar' : 'Search'}
+        </CustomTextNunito>
+        <CustomTextNunito style={styles.subtitle}>
+          {I18n.locale?.startsWith('es') 
+            ? 'Encuentra y conecta con personas' 
+            : 'Find and connect with people'}
+        </CustomTextNunito>
+      </View>
+
+      {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder={I18n.t(TextKey.searchPlaceholder)}
-          placeholderTextColor={theme.colors.detailText}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Image source={Search} style={{ width: 24, height: 24 }} />
+        <View style={styles.searchInputWrapper}>
+          <TextInput
+            style={styles.input}
+            placeholder={I18n.t(TextKey.searchPlaceholder)}
+            placeholderTextColor={theme.colors.placeholder}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
+          />
+        </View>
+        <TouchableOpacity 
+          style={styles.searchButton} 
+          onPress={handleSearch}
+          activeOpacity={0.8}
+        >
+          <CustomTextNunito weight="SemiBold" style={styles.searchButtonText}>
+            {I18n.locale?.startsWith('es') ? 'Buscar' : 'Search'}
+          </CustomTextNunito>
         </TouchableOpacity>
       </View>
 
-      {/* Indicador de carga */}
-      {loading && <ActivityIndicator size="large" color={theme.colors.primary} />}
+      {/* Loading */}
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <CustomTextNunito style={styles.loadingText}>
+            {I18n.locale?.startsWith('es') ? 'Buscando...' : 'Searching...'}
+          </CustomTextNunito>
+        </View>
+      )}
 
-      {/* Lista de usuarios */}
-      {users === null ? (
-        <Text style={styles.emptyText}>{I18n.t(TextKey.startSearch)}</Text>
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
+      {/* Error */}
+      {error && (
+        <View style={styles.errorContainer}>
+          <CustomTextNunito style={styles.errorText}>{error}</CustomTextNunito>
+        </View>
+      )}
+
+      {/* Results List */}
+      {!loading && !error && (
         <FlatList
           data={users}
           keyExtractor={(item) => item._id}
           renderItem={renderUser}
           contentContainerStyle={styles.listContainer}
-          ListEmptyComponent={
-            !loading && (
-              <Text style={styles.emptyText}>{I18n.t(TextKey.searchNoResults)}</Text>
-            )
-          }
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmptyState}
         />
       )}
     </View>
@@ -135,72 +237,182 @@ const createStyles = (theme) =>
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
-      padding: 20,
+    },
+    headerSection: {
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 16,
+    },
+    title: {
+      fontSize: 28,
+      color: theme.colors.text,
+      letterSpacing: -0.5,
+    },
+    subtitle: {
+      fontSize: 15,
+      color: theme.colors.detailText,
+      marginTop: 6,
     },
     searchContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 20,
+      paddingHorizontal: 20,
+      marginBottom: 16,
+      gap: 12,
+    },
+    searchInputWrapper: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.card || theme.colors.surface,
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: theme.colors.border || 'transparent',
     },
     input: {
       flex: 1,
-      height: 40,
-      borderWidth: 1,
-      borderColor: theme.colors.detailText,
-      borderRadius: 10,
-      paddingHorizontal: 10,
+      height: 48,
+      fontSize: 16,
       color: theme.colors.text,
+      fontFamily: 'Nunito-Regular',
     },
     searchButton: {
-      marginLeft: 10,
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: 20,
+      height: 48,
+      borderRadius: 14,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    searchButtonText: {
+      color: theme.colors.buttonText,
+      fontSize: 15,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 12,
+    },
+    loadingText: {
+      color: theme.colors.detailText,
+      fontSize: 14,
+    },
+    errorContainer: {
+      marginHorizontal: 20,
+      backgroundColor: '#FEE2E2',
+      padding: 14,
+      borderRadius: 12,
+    },
+    errorText: {
+      color: '#DC2626',
+      fontSize: 14,
+      textAlign: 'center',
     },
     listContainer: {
-      marginTop: 10,
+      paddingHorizontal: 20,
+      paddingBottom: 20,
     },
-    userContainer: {
+    userCard: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.detailText,
+      backgroundColor: theme.colors.card || theme.colors.surface,
+      padding: 14,
+      borderRadius: 16,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.border || 'transparent',
+    },
+    avatarContainer: {
+      position: 'relative',
+    },
+    avatar: {
+      width: 52,
+      height: 52,
+      borderRadius: 26,
+      backgroundColor: theme.colors.surface,
+    },
+    onlineIndicator: {
+      position: 'absolute',
+      bottom: 2,
+      right: 2,
+      width: 14,
+      height: 14,
+      borderRadius: 7,
+      backgroundColor: '#22c55e',
+      borderWidth: 2,
+      borderColor: theme.colors.card || theme.colors.surface,
     },
     userInfo: {
       flex: 1,
+      marginLeft: 14,
     },
     userName: {
       fontSize: 16,
-      fontWeight: 'bold',
       color: theme.colors.text,
     },
     userNickName: {
       fontSize: 14,
       color: theme.colors.detailText,
+      marginTop: 2,
     },
     followButton: {
-      paddingVertical: 5,
-      paddingHorizontal: 15,
-      borderRadius: 5,
+      paddingVertical: 10,
+      paddingHorizontal: 18,
+      borderRadius: 10,
+      minWidth: 90,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     followButtonActive: {
       backgroundColor: theme.colors.primary,
     },
     unfollowButton: {
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      borderColor: theme.colors.border || theme.colors.detailText,
+    },
+    followButtonDisabled: {
+      opacity: 0.7,
     },
     followButtonText: {
       color: theme.colors.buttonText,
-      fontWeight: 'bold',
+      fontSize: 14,
     },
-    errorText: {
-      color: theme.colors.danger,
-      textAlign: 'center',
-      marginTop: 20,
+    unfollowButtonText: {
+      color: theme.colors.text,
     },
-    emptyText: {
-      textAlign: 'center',
+    emptyStateContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: 80,
+    },
+    emptyIconContainer: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: theme.colors.primary + '15',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    googleIcon: {
+      width: 24,
+      height: 24,
+      tintColor: theme.colors.primary,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      color: theme.colors.text,
+      marginBottom: 8,
+    },
+    emptySubtitle: {
+      fontSize: 14,
       color: theme.colors.detailText,
-      marginTop: 20,
+      textAlign: 'center',
+      paddingHorizontal: 40,
     },
   });
 

@@ -21,9 +21,14 @@ const TextKey = {
     themeSelectionNavegation: 'themeSelectionNavegation',
     metricsNavegation: 'metricsNavegation',
     accountSettingsNavegation: 'accountSettingsNavegation',
+    accountSettings: 'accountSettings',
     changePasswordNavegation: 'changePasswordNavegation',
+    changePassword: 'changePassword',
     deleteAccountNavegation: 'deleteAccountNavegation',
+    deleteAccount: 'deleteAccount',
     editPersonalDataNavegation: 'editPersonalDataNavegation',
+    editPersonalData: 'editPersonalData',
+    dangerZone: 'dangerZone',
     enableBiometricsNavegation: 'enableBiometricsNavegation',
     changeCoverPictureNavegation: 'changeCoverPictureNavegation',
     changeProfilePictureNavegation: 'changeProfilePictureNavegation',
@@ -306,6 +311,22 @@ const TextKey = {
     confirmationTitle: 'confirmationTitle',
     confirmButton: 'confirmButton',
     cancelButton: 'cancelButton',
+
+    // Search Screen - additional
+    searchError: 'searchError',
+    startSearch: 'startSearch',
+    searchNoResults: 'searchNoResults',
+    follow: 'follow',
+    unfollow: 'unfollow',
+
+    // Profile
+    editProfile: 'editProfile',
+
+    // Auth errors
+    userAlreadyExists: 'userAlreadyExists',
+    genericSignupError: 'genericSignupError',
+    verifyEmailMessage: 'verifyEmailMessage',
+    loginErrorMessage: 'loginErrorMessage',
 };
 
 export default TextKey;

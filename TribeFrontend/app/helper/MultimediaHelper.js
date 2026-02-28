@@ -1,9 +1,7 @@
-import { PermissionsAndroid, Platform, Alert, Linking } from 'react-native';
-import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import { PermissionsAndroid, Platform, Alert, Linking, ActionSheetIOS } from 'react-native';
+import ImageCropPicker from 'react-native-image-crop-picker';
 import { requestLocationPermission } from 'helper/permissionHandlers/LocationPermission';
-import { requestCameraPermission } from 'helper/permissionHandlers/CameraPermission';
 import { requestExternalStoragePermission } from 'helper/permissionHandlers/StoragePermission';
-import { requestMicrophonePermission } from 'helper/permissionHandlers/MicrophonePermission';
 
 import { getLocation } from 'helper/LocationHelper';
 import { createPost } from 'networking/api/postsApi';
@@ -11,72 +9,56 @@ import { createPost } from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 
-// Select media (images or videos) from gallery
-const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'mixed', selectionLimit = 5) => {
+// Select media (images or videos) from gallery using ImageCropPicker
+const selectFromGallery = async (selectedMedia, setSelectedMedia, mediaType = 'any', selectionLimit = 5) => {
     const hasPermission = await requestExternalStoragePermission();
 
     if (hasPermission) {
-        launchImageLibrary(
-            { mediaType, selectionLimit },
-            (response) => {
-                if (response.didCancel) {   
-                    console.log('User cancelled camera');
-                } else if (response?.errorCode) {
-                    Alert.alert(I18n.t(TextKey.Error), response.errorMessage);
-                } else if (response?.assets) {
-                    console.log('Response:', response);
-                    const assets = response.assets || [];
-                    setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
-                } else {
-                    Alert.alert(I18n.t(TextKey.Error), I18n.t(TextKey.unknownError));
-                }
+        try {
+            const response = await ImageCropPicker.openPicker({
+                multiple: true,
+                maxFiles: selectionLimit,
+                mediaType: mediaType === 'mixed' ? 'any' : mediaType,
+                compressImageQuality: 0.8,
+                compressVideoPreset: 'MediumQuality',
+            });
+
+            if (response && response.length > 0) {
+                const newAssets = response.map(asset => ({ 
+                    uri: asset.path, 
+                    type: asset.mime || 'image/jpeg',
+                    fileName: asset.filename || asset.path.split('/').pop(),
+                    width: asset.width,
+                    height: asset.height,
+                }));
+                setSelectedMedia(prevMedia => [...prevMedia, ...newAssets]);
             }
-        );
+        } catch (error) {
+            if (error.code !== 'E_PICKER_CANCELLED') {
+                console.error('Gallery error:', error);
+                Alert.alert(I18n.t(TextKey.Error), error.message);
+            }
+        }
     } else {
         Alert.alert(I18n.t(TextKey.multimediaHelperPermissionDenied), I18n.t(TextKey.multimediaHelperStoragePermissionDeniedMessage));
     }
 };
 
-// Open camera for media capture (photo or video)
-const openCamera = async (selectedMedia, setSelectedMedia) => {
-    const hasCameraPermission = await requestCameraPermission();
-    const hasMicrophonePermission = await requestMicrophonePermission();
-
-    if (hasCameraPermission && hasMicrophonePermission) {
-        // Ask the user to choose between photo or video
-        Alert.alert(
-            I18n.t(TextKey.multimediaHelperChooseMediaTypeTitle),
-            I18n.t(TextKey.multimediaHelperChooseMediaTypeMessage),
-            [
-                { text: I18n.t(TextKey.multimediaHelperChooseMediaPhoto), onPress: () => captureMedia('photo', selectedMedia, setSelectedMedia) },
-                { text: I18n.t(TextKey.multimediaHelperChooseMediaVideo), onPress: () => captureMedia('video', selectedMedia, setSelectedMedia) },
-                { text: I18n.t(TextKey.multimediaHelperChooseMediaCancel), style: 'cancel' }
-            ]
-        );
-    } else {
-        Alert.alert(I18n.t(TextKey.multimediaHelperPermissionDenied), I18n.t(TextKey.multimediaHelperCameraPermissionDeniedMessage));
+// Open camera - this function now returns true to signal that the camera screen should be opened
+// The actual camera handling is done by the CameraScreen component using react-native-vision-camera
+const openCamera = async (selectedMedia, setSelectedMedia, setCameraVisible) => {
+    // Simply show the camera screen - permissions are handled by react-native-vision-camera
+    if (setCameraVisible) {
+        setCameraVisible(true);
     }
+    return true;
 };
 
-const captureMedia = (mediaType, selectedMedia, setSelectedMedia) => {
-    const options = mediaType === 'photo'
-        ? { mediaType: 'photo' }
-        : { mediaType: 'video', videoQuality: 'low', durationLimit: 30 }; // Try lowering the quality and duration
-
-    launchCamera(options, (response) => {
-        if (response.didCancel) {
-            console.log('User cancelled camera');
-        } else if (response.errorCode) {
-            Alert.alert(I18n.t(TextKey.Error), response.errorMessage);
-        } else {
-            const assets = response.assets || [];
-            if (assets.length > 0) {
-                setSelectedMedia([...selectedMedia, ...assets.map(asset => ({ uri: asset.uri, type: asset.type }))]);
-            } else {
-                console.log('No assets returned from camera');
-            }
-        }
-    });
+// Handle media captured from CameraScreen
+const handleCameraCapture = (capturedMedia, selectedMedia, setSelectedMedia) => {
+    if (capturedMedia && capturedMedia.length > 0) {
+        setSelectedMedia([...selectedMedia, ...capturedMedia]);
+    }
 };
 
 const handleLocationToggle = async (checkboxSelection, setCheckboxSelection) => {
@@ -94,4 +76,4 @@ const handleLocationToggle = async (checkboxSelection, setCheckboxSelection) => 
     }
 };
 
-export { selectFromGallery, openCamera, handleLocationToggle };
+export { selectFromGallery, openCamera, handleLocationToggle, handleCameraCapture };

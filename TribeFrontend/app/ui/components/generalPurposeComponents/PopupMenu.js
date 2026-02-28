@@ -5,7 +5,6 @@ import {
   Modal,
   StyleSheet,
   Dimensions,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import CustomTextNunito from './CustomTextNunito';
@@ -13,6 +12,7 @@ import { useTheme } from 'context/ThemeContext';
 
 const PopupMenu = ({ visible, onClose, options, title, children }) => {
   const { theme, isDarkMode } = useTheme();
+  const styles = createStyles(theme, isDarkMode);
   
   return (
     <Modal
@@ -21,69 +21,95 @@ const PopupMenu = ({ visible, onClose, options, title, children }) => {
       animationType="none"
       onRequestClose={onClose}
     >
-      <TouchableOpacity
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
+      <View style={styles.overlay}>
+        <TouchableOpacity 
+          style={styles.dismissArea} 
+          activeOpacity={1} 
+          onPress={onClose} 
+        />
         {visible && (
-          <TouchableWithoutFeedback>
-            <Animated.View
-              entering={FadeInDown.duration(400)}
-              exiting={FadeOutUp.duration(500)}
-              style={styles.container}
-            >
-              {/* Content Wrapper */}
-              <View style={styles.contentWrapper}>
-                {title && (
-                  <>
-                    <CustomTextNunito
-                      weight={'Bold'}
-                      style={{
-                        textAlign: 'center',
-                        marginVertical: 10,
-                        color: theme.colors.options,
-                        fontSize: 20,
-                      }}
-                    >
-                      {title}
-                    </CustomTextNunito>
-                    {children}
-                  </>
-                )}
+          <Animated.View
+            entering={FadeInDown.duration(350).springify()}
+            exiting={FadeOutUp.duration(300)}
+            style={styles.container}
+          >
+            {/* Handle Bar */}
+            <TouchableOpacity onPress={onClose} activeOpacity={1}>
+              <View style={styles.handleContainer}>
+                <View style={styles.handle} />
               </View>
-            </Animated.View>
-          </TouchableWithoutFeedback>
+            </TouchableOpacity>
+            
+            {/* Content Wrapper */}
+            <View style={styles.contentWrapper}>
+              {title && (
+                <>
+                  <CustomTextNunito
+                    weight={'Bold'}
+                    style={styles.title}
+                  >
+                    {title}
+                  </CustomTextNunito>
+                  {children}
+                </>
+              )}
+            </View>
+          </Animated.View>
         )}
-      </TouchableOpacity>
+      </View>
     </Modal>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme, isDarkMode) => StyleSheet.create({
   contentWrapper: {
-    maxHeight: Dimensions.get('window').height * 0.6,
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingBottom: 8,
   },
   overlay: { 
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.2)', // 20% opacity overlay for the background
-    transition: 'background-color 0.9s ease', // Adjust the duration and timing function as needed
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  dismissArea: {
+    flex: 0.3,
   },  
   container: {
+    flex: 0.7,
     width: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.9)', // Black with 80% opacity
-    paddingBottom: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 10,
-    position: 'absolute', // Fix positioning
-    bottom: 0, // Start at the bottom of the screen
+    backgroundColor: isDarkMode ? theme.colors.background : '#FFFFFF',
+    paddingBottom: 24,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 20,
+  },
+  handleContainer: {
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
+    borderRadius: 2,
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: 16,
+    color: theme.colors.text,
+    fontSize: 18,
+    letterSpacing: -0.3,
   },
   optionContainer: {
     flexDirection: 'row',
-    paddingVertical: 15,
+    paddingVertical: 16,
     paddingHorizontal: 20,
+    borderRadius: 12,
   },
 });
 

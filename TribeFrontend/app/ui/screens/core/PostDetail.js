@@ -1,53 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Image, StyleSheet, ScrollView, Keyboard, TouchableWithoutFeedback, Alert, TouchableOpacity, ActivityIndicator, TextInput, Platform } from 'react-native';
 import ContentCarousel from 'ui/components/postComponents/ContentCarousel';
 import { formatDistanceToNow } from 'date-fns';
+import { es, enUS } from 'date-fns/locale';
 import { useTheme } from 'context/ThemeContext';
 import { Send } from 'assets/images';
-import Separator from 'ui/components/generalPurposeComponents/Separator';
 import {GetPostById} from 'networking/api/postsApi';
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import CustomHighlightedTextNunito from 'ui/components/generalPurposeComponents/CustomHighlightedTextNunito';
-import CustomInputNunito from 'ui/components/generalPurposeComponents/CustomInputNunito';
 import { createComment } from 'networking/api/postsApi';
 import PostMainContent from 'ui/components/postComponents/PostMainContent';
 import { usePostContext } from 'context/PostContext';
+import { useUserContext } from 'context/UserContext';
 import PostComments from 'ui/components/postComponents/PostComments';
 import PopupMenu from 'ui/components/generalPurposeComponents/PopupMenu';
 
 const PostDetail = ({ route }) => {
   const { post } = route.params;
   const [commentText, setCommentText] = useState('');
-  const { theme } = useTheme();
-  const styles = createStyles(theme);
-  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const { theme, isDarkMode } = useTheme();
+  const { user } = useUserContext();
+  const styles = createStyles(theme, isDarkMode);
   const [isCommentViewVisible, setCommentViewVisible] = useState(false);
   const [isCreatingComment, setIsCreatingComment] = useState(false);
   const { totalComments, lastComments, handleAddComment } = usePostContext();
 
   const postTotalComments = totalComments.get(post._id) ?? post.totalComments;
   const postLastComment = lastComments.get(post._id) ?? post.lastComment;
+  const currentLocale = I18n.locale?.startsWith('es') ? es : enUS;
 
   // Handlers for menu visibility
   const openCommentView = () => setCommentViewVisible(true);
   const closeCommentView = () => setCommentViewVisible(false);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
-      setKeyboardOffset(140);
-    });
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardOffset(0);
-    });
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
+  const formatTimeAgo = (date) => {
+    try {
+      return formatDistanceToNow(new Date(date), { 
+        addSuffix: true,
+        locale: currentLocale 
+      });
+    } catch {
+      return '';
+    }
+  };
 
   const handleCreateComment = async () => {
     if (commentText.trim().length > 0) {
@@ -56,123 +53,269 @@ const PostDetail = ({ route }) => {
         const commentData = { content: commentText };
         const postDTO = { _id: post._id, totalComments: post.totalComments };
         await handleAddComment(postDTO, commentData);
-        // Reset the comment text
         setCommentText('');
       } catch (error) {
         console.error('Error creating comment:', error);
-        Alert.alert('There was an error creating your comment.', 'Please try again.');
+        Alert.alert(
+          I18n.locale?.startsWith('es') ? 'Error' : 'Error',
+          I18n.locale?.startsWith('es') ? 'No se pudo crear el comentario' : 'Could not create comment'
+        );
       } finally {
         setIsCreatingComment(false);
       }
-    } else {
-      Alert.alert('Please enter a comment before submitting.');
     }
   };
 
   return (
     <>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Post Content */}
         <PostMainContent post={post} viewMore={false} />
 
-        <Separator color={theme.colors.detailText} style={{marginVertical: 14}} />
-        
-          {/* Comment section */}
-          <View>
-            <View style={styles.commentSection}>
-              <View style={{ marginBottom: 10 }}>
-                <CustomTextNunito weight={'SemiBold'} style={{ fontSize: 18, marginBottom: 10 }}>
-                  {I18n.t(TextKey.commentsTitle)} ({postTotalComments})
+        {/* Comments Section */}
+        <View style={styles.commentsSection}>
+          <View style={styles.commentsHeader}>
+            <CustomTextNunito weight="Bold" style={styles.commentsTitle}>
+              {I18n.t(TextKey.commentsTitle)}
+            </CustomTextNunito>
+            {postTotalComments > 0 && (
+              <View style={styles.commentsBadge}>
+                <CustomTextNunito weight="SemiBold" style={styles.commentsBadgeText}>
+                  {postTotalComments}
                 </CustomTextNunito>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View style={{ width: '92%' }}>
-                    <CustomInputNunito inputText={commentText} setInputText={setCommentText} placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)} />
-                  </View>
-                  <TouchableOpacity onPress={handleCreateComment}>
-                    {isCreatingComment ? (
-                      <ActivityIndicator size="small" color={theme.colors.primary} style={{ alignSelf: 'center', marginTop: -15, marginLeft: 5  }} />
-                    ) : (
-                      <Image source={Send} style={{ width: 30, height: 30, marginTop: -15 }} />
-                    )}
-                  </TouchableOpacity>
-                </View>
-                {postTotalComments > 0 && postLastComment && (
-                  <>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image source={postLastComment?.userId?.profileImage ? { uri: postLastComment.userId.profileImage } : theme.UserCircle}
-                          style={{ width: 24, height: 24, borderRadius: 100 }} />
-                        <CustomTextNunito weight='Bold' style={{ marginLeft: 8 }}>{postLastComment.userId?.nickName ? postLastComment.userId.nickName : 'unknown'}</CustomTextNunito>
-                      </View>
-                      <CustomTextNunito style={styles.timeAgo}>
-                        {formatDistanceToNow(new Date(postLastComment?.createdAt))} ago 
-                      </CustomTextNunito>
-                    </View>
-                    <CustomTextNunito style={{ marginLeft: 30 }}>{postLastComment.comment}</CustomTextNunito>
-                    <TouchableOpacity style={{ marginTop: 6 }} onPress={openCommentView}>
-                      <CustomHighlightedTextNunito weight='BoldItalic'>{I18n.t(TextKey.commentsViewMore)}</CustomHighlightedTextNunito>
-                    </TouchableOpacity>
-                  </>
-                )}
               </View>
-            </View>
+            )}
           </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-      <PopupMenu
-        visible={isCommentViewVisible}
-        onClose={closeCommentView}
-        title={I18n.t(TextKey.commentsViewTitle)}
-      >
-        <PostComments onClose={closeCommentView} postId={post._id} />
-      </PopupMenu>
+
+          {/* Comment Input */}
+          <View style={styles.commentInputContainer}>
+            <Image 
+              source={user?.profileImage ? { uri: user.profileImage } : theme.UserCircle} 
+              style={styles.commentInputAvatar} 
+            />
+            <View style={styles.commentInputWrapper}>
+              <TextInput
+                style={styles.commentInput}
+                placeholder={I18n.t(TextKey.commentsWriteCommentPlaceholder)}
+                placeholderTextColor={theme.colors.detailText}
+                value={commentText}
+                onChangeText={setCommentText}
+                multiline
+                maxLength={500}
+              />
+            </View>
+            <TouchableOpacity 
+              style={[
+                styles.sendButton,
+                (!commentText.trim() || isCreatingComment) && styles.sendButtonDisabled
+              ]}
+              onPress={handleCreateComment}
+              disabled={!commentText.trim() || isCreatingComment}
+            >
+              {isCreatingComment ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Image source={Send} style={styles.sendIcon} />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Last Comment Preview */}
+          {postTotalComments > 0 && postLastComment && (
+            <View style={styles.lastCommentContainer}>
+              <View style={styles.lastCommentHeader}>
+                <Image 
+                  source={postLastComment?.userId?.profileImage ? { uri: postLastComment.userId.profileImage } : theme.UserCircle}
+                  style={styles.lastCommentAvatar} 
+                />
+                <View style={styles.lastCommentInfo}>
+                  <CustomTextNunito weight="Bold" style={styles.lastCommentNickname}>
+                    {postLastComment.userId?.nickName || 'Usuario'}
+                  </CustomTextNunito>
+                  <CustomTextNunito style={styles.lastCommentTime}>
+                    {formatTimeAgo(postLastComment?.createdAt)}
+                  </CustomTextNunito>
+                </View>
+              </View>
+              <View style={styles.lastCommentBubble}>
+                <CustomTextNunito style={styles.lastCommentText}>
+                  {postLastComment.comment}
+                </CustomTextNunito>
+              </View>
+              
+              {postTotalComments > 1 && (
+                <TouchableOpacity style={styles.viewMoreButton} onPress={openCommentView}>
+                  <CustomTextNunito weight="SemiBold" style={styles.viewMoreText}>
+                    {I18n.locale?.startsWith('es') 
+                      ? `Ver los ${postTotalComments} comentarios` 
+                      : `View all ${postTotalComments} comments`}
+                  </CustomTextNunito>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+          {/* Empty state */}
+          {postTotalComments === 0 && (
+            <View style={styles.emptyComments}>
+              <CustomTextNunito style={styles.emptyCommentsText}>
+                {I18n.locale?.startsWith('es') 
+                  ? 'Sé el primero en comentar' 
+                  : 'Be the first to comment'}
+              </CustomTextNunito>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </TouchableWithoutFeedback>
+    
+    <PopupMenu
+      visible={isCommentViewVisible}
+      onClose={closeCommentView}
+      title={I18n.t(TextKey.commentsViewTitle)}
+    >
+      <PostComments onClose={closeCommentView} postId={post._id} />
+    </PopupMenu>
     </>
   );
 };
 
-const createStyles = (theme) => StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 16,
+const createStyles = (theme, isDarkMode) => StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
   },
-  postHeader: {
+  container: {
+    paddingBottom: 30,
+  },
+  commentsSection: {
+    marginTop: 8,
+    paddingHorizontal: 16,
+  },
+  commentsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignContent: 'center',
+    marginBottom: 16,
   },
-  header: {
-    flexDirection: 'column',
-    marginLeft: 16,
-    justifyContent: 'center',
-  },
-  username: {
+  commentsTitle: {
     fontSize: 18,
     color: theme.colors.text,
   },
-  timeAgo: {
-    fontSize: 12,
-    color: theme.colors.detailText,
+  commentsBadge: {
+    marginLeft: 8,
+    backgroundColor: theme.colors.primary,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
   },
-  description: {
-    marginTop: 8,
-    fontSize: 12,
+  commentsBadgeText: {
+    color: '#fff',
+    fontSize: 13,
+  },
+  commentInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: 16,
+  },
+  commentInputAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
+    marginBottom: 4,
+  },
+  commentInputWrapper: {
+    flex: 1,
+    backgroundColor: isDarkMode ? 'rgba(255,255,255,0.08)' : '#f0f2f5',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 6,
+    minHeight: 42,
+    justifyContent: 'center',
+  },
+  commentInput: {
+    color: theme.colors.text,
+    fontSize: 14,
+    fontFamily: 'Nunito-Regular',
+    maxHeight: 100,
+    paddingVertical: 0,
+  },
+  sendButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: theme.colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginBottom: 2,
+  },
+  sendButtonDisabled: {
+    backgroundColor: isDarkMode ? 'rgba(255,255,255,0.2)' : '#ccc',
+  },
+  sendIcon: {
+    width: 18,
+    height: 18,
+    tintColor: '#fff',
+  },
+  lastCommentContainer: {
+    backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : '#f8f9fa',
+    borderRadius: 16,
+    padding: 14,
+  },
+  lastCommentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  lastCommentAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 10,
+  },
+  lastCommentInfo: {
+    flex: 1,
+  },
+  lastCommentNickname: {
+    fontSize: 14,
     color: theme.colors.text,
   },
-  metadata: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 14,
-  },
-  textOfMetadata: {
-    fontSize: 12,
+  lastCommentTime: {
+    fontSize: 11,
     color: theme.colors.detailText,
-    marginLeft: 4,
   },
-  commentSection: {
-    marginHorizontal: 10,
-    marginBottom: 10
+  lastCommentBubble: {
+    backgroundColor: isDarkMode ? 'rgba(255,255,255,0.08)' : '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  lastCommentText: {
+    fontSize: 14,
+    color: theme.colors.text,
+    lineHeight: 20,
+  },
+  viewMoreButton: {
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  viewMoreText: {
+    color: theme.colors.primary,
+    fontSize: 14,
+  },
+  emptyComments: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  emptyCommentsText: {
+    color: theme.colors.detailText,
+    fontSize: 14,
   },
 });
 

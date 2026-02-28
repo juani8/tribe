@@ -17,38 +17,55 @@ const CoreHeader = () => {
     const [isMenuVisible, setMenuVisible] = useState(false);
     const navigation = useNavigation();
 
-    // Handlers for menu visibility
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
 
     const styles = createStyles(theme);
-    console.log('user', user?.profileImage);
+
     return (
         <View>
-            <View style={[styles.headerContainer]}>
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    height: 90,
-                }}>
-                    <View style={styles.itemsLeft}>
-                        <TouchableOpacity onPress={() => navigateToUserProfile(navigation)}>
-                        <Image source={{ uri: user?.profileImage !== null && user?.profileImage !== undefined ? user.profileImage : theme.UserCircleLight }} style={{ width: 50, height: 50, borderRadius: 100 }} />
+            <View style={styles.headerContainer}>
+                <View style={styles.headerContent}>
+                    <TouchableOpacity 
+                        onPress={() => navigateToUserProfile(navigation)}
+                        style={styles.profileSection}
+                        activeOpacity={0.7}
+                    >
+                        <View style={styles.avatarWrapper}>
+                            <Image 
+                                source={{ uri: user?.profileImage || undefined }} 
+                                defaultSource={theme.UserCircleLight}
+                                style={styles.avatar} 
+                            />
+                            <View style={styles.onlineIndicator} />
+                        </View>
+                        <View style={styles.greetingContainer}>
+                            <CustomTextNunito style={styles.greetingText}>
+                                {I18n.t(TextKey.headerTitle)}
+                            </CustomTextNunito>
+                            <CustomTextNunito weight='SemiBold' style={styles.nicknameText}>
+                                {user?.nickName || 'Usuario'}
+                            </CustomTextNunito>
+                        </View>
+                    </TouchableOpacity>
+                    
+                    <View style={styles.actionsContainer}>
+                        <TouchableOpacity 
+                            onPress={() => navigateToNotifications(navigation)}
+                            style={styles.iconButton}
+                            activeOpacity={0.7}
+                        >
+                            <Image source={theme.BellFill} style={styles.icon} />
                         </TouchableOpacity>
-                        <CustomTextNunito weight='Light' style={{fontSize: 16, color: theme.colors.primary, marginLeft: 8}}>{`${I18n.t(TextKey.headerTitle)}, ${user?.nickName}`}</CustomTextNunito>
-                    </View>
-                    <View style={styles.itemsRight}>
-                        <TouchableOpacity onPress={() => navigateToNotifications(navigation)}>
-                            <Image source={theme.BellFill} style={{ width: 28, height: 28, marginRight: 12 }} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={openMenu}>
-                            <Image source={theme.Menu} style={{ width: 28, height: 28 }} />
+                        <TouchableOpacity 
+                            onPress={openMenu}
+                            style={styles.iconButton}
+                            activeOpacity={0.7}
+                        >
+                            <Image source={theme.Menu} style={styles.icon} />
                         </TouchableOpacity> 
                     </View>
                 </View>
-
-                <Separator style={{marginHorizontal: -2}} />
             </View>
 
             <PopupMenu
@@ -64,17 +81,67 @@ const CoreHeader = () => {
 
 const createStyles = (theme) => StyleSheet.create({
     headerContainer: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 16,
         backgroundColor: theme.colors.background,
-        paddingTop: 10,
+        paddingTop: 12,
+        paddingBottom: 12,
     },
-    itemsLeft: {
+    headerContent: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
     },
-    itemsRight: {
+    profileSection: {
         flexDirection: 'row',
         alignItems: 'center',
+        flex: 1,
+    },
+    avatarWrapper: {
+        position: 'relative',
+    },
+    avatar: {
+        width: 46,
+        height: 46,
+        borderRadius: 23,
+        borderWidth: 2,
+        borderColor: theme.colors.primary,
+    },
+    onlineIndicator: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        backgroundColor: '#22c55e',
+        borderWidth: 2,
+        borderColor: theme.colors.background,
+    },
+    greetingContainer: {
+        marginLeft: 12,
+    },
+    greetingText: {
+        fontSize: 13,
+        color: theme.colors.detailText,
+    },
+    nicknameText: {
+        fontSize: 16,
+        color: theme.colors.text,
+        marginTop: 1,
+    },
+    actionsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    iconButton: {
+        padding: 10,
+        borderRadius: 12,
+        backgroundColor: theme.colors.card || theme.colors.surface || 'rgba(0,0,0,0.03)',
+    },
+    icon: {
+        width: 22,
+        height: 22,
     },
 });
 

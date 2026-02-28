@@ -9,10 +9,27 @@ export { default as ExpandDown } from './icons/Expand_down.png';
 export { default as FavoriteFill } from './icons/Favorite_fill.png';
 export { default as Favorite } from './icons/Favorite.png';
 export { default as Fingerprint } from './icons/Fingerprint.png';
+
+// Google Material Icons
+export { default as SearchGoogle } from './icons/SearchGoogle.png';
+export { default as CameraGoogle } from './icons/CameraGoogle.png';
+export { default as GalleryGoogle } from './icons/GalleryGoogle.png';
+export { default as FingerprintGoogle } from './icons/FingerprintGoogle.png';
+export { default as Visibility } from './icons/Visibility.png';
+export { default as VisibilityOff } from './icons/VisibilityOff.png';
+export { default as GlobeLocation } from './icons/GlobeLocation.png';
+export { default as GalleryThumbnail } from './icons/GalleryThumbnail.png';
+export { default as Analytics } from './icons/Analytics.png';
+export { default as DeleteForever } from './icons/DeleteForever.png';
+export { default as ExitToApp } from './icons/ExitToApp.png';
+export { default as InvertColors } from './icons/InvertColors.png';
+export { default as SettingsNew } from './icons/Settings.png';
+
 export { default as Full } from './icons/Full.png';
 export { default as FullAlt } from './icons/Full_alt.png';
 export { default as HomeFill } from './icons/Home_fill.png';
 export { default as ImgLoadBoxFill } from './icons/Img_load_box_fill.png';
+export { default as AddBox } from './icons/AddBox.png';
 export { default as Lamp } from './icons/Lamp.png';
 export { default as Lock } from './icons/Lock.png';
 export { default as MoonAltFill } from './icons/Moon_alt_fill.png';
@@ -41,6 +58,8 @@ export { default as SearchAltSelected } from './icons/Search_alt.png';
 export { default as Send } from './icons/Send.png';
 export { default as Copy } from './icons/Copy.png';
 export { default as VideoFill } from './icons/Video_fill.png';
+export { default as TouchDouble } from './icons/TouchDouble.png';
+export { default as PinchZoom } from './icons/PinchZoom.png';
 export { default as FingerprintBlack } from './icons/FingerprintBlack.png';
 export { default as LockBlack } from './icons/LockBlack.png';
 export { default as EditBlack } from './icons/EditBlack.png';

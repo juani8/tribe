@@ -23,9 +23,14 @@ export default {
     themeSelectionNavegation: 'Theme Selection',
     metricsNavegation: 'Metrics',
     accountSettingsNavegation: 'Account Settings',
+    accountSettings: 'Account Settings',
     changePasswordNavegation: 'Change Password',
+    changePassword: 'Change Password',
     deleteAccountNavegation: 'Delete Account',
+    deleteAccount: 'Delete Account',
     editPersonalDataNavegation: 'Edit Personal Data',
+    editPersonalData: 'Edit Personal Data',
+    dangerZone: 'Danger Zone',
     enableBiometricsNavegation: 'Enable Biometrics',
     changeCoverPictureNavegation: 'Change Cover Picture',
     changeProfilePictureNavegation: 'Change Profile Picture',
@@ -268,11 +273,26 @@ export default {
 
     //Delete account
     deleteAccountTitle: 'Delete your account',
-    deleteAccountMessage: 'We’re sorry to see you go. Are you sure you want to delete your account?',
+    deleteAccountMessage: "We're sorry to see you go. Are you sure you want to delete your account?",
     deleteAccountDetails: 'Once you confirm, your data will be permanently deleted.',
     deleteAccountButton: 'Delete Account',
     confirmationTitle: 'Are you sure you want to delete your account?',
     confirmButton: 'Confirm',
-    cancelButton: 'Cancel'
-    
+    cancelButton: 'Cancel',
+
+    // Search Screen - additional
+    searchError: 'Error searching users',
+    startSearch: 'Search users by name or nickname',
+    searchNoResults: 'No users found',
+    follow: 'Follow',
+    unfollow: 'Unfollow',
+
+    // Profile
+    editProfile: 'Edit profile',
+
+    // Auth errors
+    userAlreadyExists: 'This email is already registered',
+    genericSignupError: 'Error signing up. Please try again.',
+    verifyEmailMessage: 'Please verify your email before logging in.',
+    loginErrorMessage: 'Error logging in. Please try again.',
 };

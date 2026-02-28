@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
-import { HOST, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
+// Para demo, usar localhost directamente
+const BASE_URL = 'http://localhost:8080';
 
 // Obtener el perfil del usuario autenticado
 export const getUserProfile = async () => {
@@ -57,8 +57,19 @@ export const searchUsers = async (searchQuery) => {
         'Authorization': `Bearer ${token}`
       }
     });
-    return response.data;
+    // Backend returns { users: [...] } with isFollowed flag
+    // Map isFollowed to isFollowing for frontend consistency
+    const users = response.data?.users || response.data || [];
+    return users.map(user => ({
+      ...user,
+      isFollowing: user.isFollowed || false
+    }));
   } catch (error) {
+    // Handle 404 as empty results, not an error
+    if (error.response?.status === 404) {
+      console.log('No users found for query:', searchQuery);
+      return [];
+    }
     console.error('Error al buscar usuarios:', error);
     throw error;
   }
@@ -83,7 +94,12 @@ export const followUser = async (userId) => {
 // Dejar de seguir a un usuario
 export const unfollowUser = async (userId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`);
+    const token = await getToken();
+    const response = await axios.delete(`${BASE_URL}/users/me/following/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error(`Error al dejar de seguir al usuario ${userId}:`, error);
@@ -94,8 +110,14 @@ export const unfollowUser = async (userId) => {
 // Obtener la lista de seguidores del usuario autenticado
 export const getFollowers = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/followers`);
-    return response.data;
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/followers`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    // Backend returns { followers: [...], numberOfFollowers: X }
+    return response.data?.followers || [];
   } catch (error) {
     console.error('Error al obtener la lista de seguidores:', error);
     throw error;
@@ -105,8 +127,14 @@ export const getFollowers = async () => {
 // Obtener la lista de usuarios seguidos por el usuario autenticado
 export const getFollowing = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/me/following`);
-    return response.data;
+    const token = await getToken();
+    const response = await axios.get(`${BASE_URL}/users/me/following`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    // Backend returns { following: [...], numberOfFollowings: X }
+    return response.data?.following || [];
   } catch (error) {
     console.error('Error al obtener la lista de seguidos:', error);
     throw error;

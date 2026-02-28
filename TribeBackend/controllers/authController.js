@@ -1,11 +1,41 @@
 const User = require('../models/User');
 const Totp = require('../models/Totp');
+const Post = require('../models/Post');
+const Like = require('../models/Like');
+const Comment = require('../models/Comment');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {sendRecoveryLink, sendTotpEmail, generateTotpCode, generateTotpSecret} = require('../utils/magicLink');
 const speakeasy = require('speakeasy');
 const {OAuth2Client} = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+/**
+ * Helper function to get user with metrics
+ */
+const getUserWithMetrics = async (userId) => {
+    const user = await User.findById(userId).select('-password');
+    if (!user) return null;
+
+    // Get metrics
+    const [followersCount, followingCount, postsCount, likesCount, commentsCount] = await Promise.all([
+        User.countDocuments({ following: userId }),
+        user.following ? user.following.length : 0,
+        Post.countDocuments({ userId }),
+        Like.countDocuments({ postId: { $in: await Post.find({ userId }).select('_id') } }),
+        Comment.countDocuments({ postId: { $in: await Post.find({ userId }).select('_id') } }),
+    ]);
+
+    const userObj = user.toObject();
+    return {
+        ...userObj,
+        numberOfFollowers: followersCount,
+        numberOfFollowing: followingCount,
+        numberOfPosts: postsCount,
+        numberOfLikes: likesCount,
+        numberOfComments: commentsCount,
+    };
+};
 
 /**
  * Envía un código TOTP al correo electrónico del usuario.
@@ -144,6 +174,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(`[authController] Login attempt received for email: ${email}`);
 
         const user = await User.findOne({ email });
         if (!user || user.isDeleted) {
@@ -159,9 +190,10 @@ exports.login = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers -gamificationLevel');
-        res.status(200).json({ token, user: userWithoutSensitiveInfo });
+        const userWithMetrics = await getUserWithMetrics(user._id);
+        res.status(200).json({ token, user: userWithMetrics });
     } catch (error) {
+        console.error('[authController] Error during login:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
@@ -212,11 +244,11 @@ exports.googleLogin = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        const userWithoutSensitiveInfo = await User.findById(user._id).select('-password -following -followers -gamificationLevel');
+        const userWithMetrics = await getUserWithMetrics(user._id);
         res.status(200).json({
             token,
             message: 'Iniciaste sesión exitosamente con Google!',
-            user: userWithoutSensitiveInfo,
+            user: userWithMetrics,
         });
     } catch (error) {
         console.error('Error en Google Sign-In:', error);
@@ -303,15 +335,14 @@ exports.validateToken = async (req, res) => {
   
     try {
         // Verify the token with the access token secret
-        // Verify the token with the access token secret
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id).select('-password -following -followers -gamificationLevel -following -followers -gamificationLevel');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userWithMetrics = await getUserWithMetrics(decoded.id);
   
-        if (!user) {
+        if (!userWithMetrics) {
             return res.status(404).json({ valid: false, message: 'Usuario no encontrado.' });
         }
   
-        res.status(200).json({ valid: true, user });
+        res.status(200).json({ valid: true, user: userWithMetrics });
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
             res.status(403).json({ valid: false, message: 'El token ha expirado.' });

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
-import { HOST, NODE_ENV } from 'react-native-dotenv';
 
-const BASE_URL = NODE_ENV === 'Production' ? HOST : 'http://localhost:8080';
+// Para demo, usar localhost directamente
+const BASE_URL = 'http://localhost:8080';
 
 // Registro de usuario
 export const registerUser = async (registrationData) => {
@@ -106,6 +106,25 @@ export const checkToken = async () => {
       }
   } catch (error) {
       return false;
+  }
+};
+
+// Validar token y obtener usuario
+export const validateTokenAndGetUser = async () => {
+  try {
+      const token = await getToken();
+      if (token) {
+          const response = await axios.post(`${BASE_URL}/auths/validate-token`, { token });
+          if (response.data.valid && response.data.user) {
+              return { valid: true, user: response.data.user };
+          }
+          return { valid: false, user: null };
+      } else {
+          return { valid: false, user: null };
+      }
+  } catch (error) {
+      console.error('Error validating token:', error);
+      return { valid: false, user: null };
   }
 };
 

@@ -1,5 +1,5 @@
   import React, { useState, useEffect, useCallback } from 'react';
-  import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
+  import { View, FlatList, RefreshControl, StyleSheet, ActivityIndicator, Animated } from 'react-native';
   import PostMainContent from 'ui/components/postComponents/PostMainContent';
   import AdComponent from 'ui/components/postComponents/AdComponent';
   import { useTheme } from 'context/ThemeContext';
@@ -32,16 +32,20 @@
       setIsConnected(netInfo.isConnected);
     };
   
-    const fetchData = async (nextPage = 1, refreshing = false) => {
+  const fetchData = async (nextPage = 1, refreshing = false) => {
       if (!hasMorePosts && !refreshing) return;
-  
+
       const offset = (nextPage - 1) * pageSize;
-  
+
       try {
-        const newPosts = await getTimelinePosts(offset, pageSize);
+        const response = await getTimelinePosts(offset, pageSize);
+        // La API puede devolver { posts: [...], hasMore: bool } o directamente un array
+        const newPosts = Array.isArray(response) ? response : (response.posts || []);
+        const hasMore = response.hasMore !== undefined ? response.hasMore : newPosts.length === pageSize;
+        
         setData(prevData => (refreshing ? newPosts : [...prevData, ...newPosts]));
         setPage(nextPage);
-        setHasMorePosts(newPosts.length === pageSize);
+        setHasMorePosts(hasMore);
       } catch (error) {
         console.error('Error fetching timeline posts:', error);
       } finally {
@@ -49,9 +53,7 @@
         setRefreshing(false);
         setIsLoading(false);
       }
-    };
-  
-    const fetchAdsData = async () => {
+    };    const fetchAdsData = async () => {
       try {
         const adsData = await getAds();
         setAds(adsData);
@@ -151,6 +153,7 @@
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           onEndReached={fetchNextPage}
           onEndReachedThreshold={0.8}
+          ListHeaderComponent={<View style={styles.listHeaderSpacing} />}
           ListFooterComponent={
             <>
               {isLoadingNextPage && (
@@ -174,9 +177,12 @@
   
   const createStyles = (theme) => StyleSheet.create({
     container: {
-      paddingHorizontal: 20,
+      paddingHorizontal: 8,
       flex: 1,
       backgroundColor: theme.colors.background,
+    },
+    listHeaderSpacing: {
+      height: 12,
     },
     loader: {
       flex: 1,
@@ -187,5 +193,17 @@
     },
     bottomSpacing: {
       height: 25,
+    },
+    noMorePostsContainer: {
+      alignItems: 'center',
+      paddingVertical: 20,
+    },
+    noMorePostsText: {
+      textAlign: 'center',
+      color: theme.colors.detailText,
+      fontSize: 14,
+    },
+    listContentContainer: {
+      paddingBottom: 20,
     },
   });

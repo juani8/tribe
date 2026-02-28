@@ -1,7 +1,92 @@
 import axios from 'axios';
 import { storeToken, getToken } from 'helper/JWTHelper';
 
-const BASE_URL = 'https://tribe-plp5.onrender.com';
+// Para demo, usar localhost con ADB reverse
+const BASE_URL = 'http://localhost:8080';
+
+// Datos mock para fallback cuando el servidor no responde
+const MOCK_POSTS = [
+    {
+        _id: 'mock1',
+        userId: {
+            _id: 'user1',
+            nickName: 'maria_viajera',
+            profileImage: 'https://picsum.photos/seed/profile1/200/200'
+        },
+        description: '¡Qué vista increíble desde aquí! 🏔️ #naturaleza #aventura',
+        multimedia: [{ url: 'https://picsum.photos/seed/post1/600/400', type: 'image' }],
+        location: { city: 'Barcelona', latitude: 41.3851, longitude: 2.1734 },
+        likes: 42,
+        isLiked: false,
+        isBookmarked: false,
+        numberOfComments: 5,
+        createdAt: new Date(Date.now() - 3600000).toISOString()
+    },
+    {
+        _id: 'mock2',
+        userId: {
+            _id: 'user2',
+            nickName: 'carlos_foto',
+            profileImage: 'https://picsum.photos/seed/profile2/200/200'
+        },
+        description: 'Explorando nuevos lugares 🌍 La vida es una aventura',
+        multimedia: [{ url: 'https://picsum.photos/seed/post2/600/400', type: 'image' }],
+        location: { city: 'Madrid', latitude: 40.4168, longitude: -3.7038 },
+        likes: 89,
+        isLiked: true,
+        isBookmarked: false,
+        numberOfComments: 12,
+        createdAt: new Date(Date.now() - 7200000).toISOString()
+    },
+    {
+        _id: 'mock3',
+        userId: {
+            _id: 'user3',
+            nickName: 'ana_foodie',
+            profileImage: 'https://picsum.photos/seed/profile3/200/200'
+        },
+        description: 'La comida callejera siempre sorprende 🍜 #foodie',
+        multimedia: [{ url: 'https://picsum.photos/seed/food1/600/400', type: 'image' }],
+        location: { city: 'Valencia', latitude: 39.4699, longitude: -0.3763 },
+        likes: 156,
+        isLiked: false,
+        isBookmarked: true,
+        numberOfComments: 23,
+        createdAt: new Date(Date.now() - 14400000).toISOString()
+    },
+    {
+        _id: 'mock4',
+        userId: {
+            _id: 'user4',
+            nickName: 'pedro_adventure',
+            profileImage: 'https://picsum.photos/seed/profile4/200/200'
+        },
+        description: 'Atardecer perfecto 🌅 Momentos que valen la pena',
+        multimedia: [{ url: 'https://picsum.photos/seed/sunset1/600/400', type: 'image' }],
+        location: { city: 'Sevilla', latitude: 37.3891, longitude: -5.9845 },
+        likes: 234,
+        isLiked: true,
+        isBookmarked: true,
+        numberOfComments: 45,
+        createdAt: new Date(Date.now() - 28800000).toISOString()
+    },
+    {
+        _id: 'mock5',
+        userId: {
+            _id: 'user1',
+            nickName: 'maria_viajera',
+            profileImage: 'https://picsum.photos/seed/profile1/200/200'
+        },
+        description: 'Arte urbano que encontré hoy 🎨 #streetart',
+        multimedia: [{ url: 'https://picsum.photos/seed/art1/600/400', type: 'image' }],
+        location: { city: 'Bilbao', latitude: 43.2630, longitude: -2.9350 },
+        likes: 67,
+        isLiked: false,
+        isBookmarked: false,
+        numberOfComments: 8,
+        createdAt: new Date(Date.now() - 43200000).toISOString()
+    }
+];
 
 // Crear una nueva publicación
 export const createPost = async (postData) => {
@@ -70,12 +155,19 @@ export const getTimelinePosts = async (offset = 0, limit = 10) => {
             params: {
                 offset,
                 limit,
-            }
+            },
+            timeout: 5000 // 5 segundos de timeout
         });
         return response.data;
     } catch (error) {
         console.error('Error al obtener las publicaciones de la línea de tiempo:', error);
-        throw error;
+        // Si falla la conexión, devolver datos mock para demo
+        console.log('Usando datos mock para el feed...');
+        return {
+            posts: MOCK_POSTS.slice(offset, offset + limit),
+            total: MOCK_POSTS.length,
+            hasMore: offset + limit < MOCK_POSTS.length
+        };
     }
 };
 

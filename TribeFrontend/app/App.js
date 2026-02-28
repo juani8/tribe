@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Image, Pressable } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 
 import CoreHeader from 'ui/components/generalPurposeComponents/CoreHeader';
 import ComplementaryHeader from 'ui/components/generalPurposeComponents/ComplementaryHeader';
@@ -42,10 +43,10 @@ import TextKey from 'assets/localization/TextKey';
 import { ThemeProvider, useTheme } from 'context/ThemeContext';
 import { PostProvider } from 'context/PostContext';
 import { UserProvider, useUserContext } from 'context/UserContext';
+import { LanguageProvider } from 'context/LanguageContext';
 import CustomTextNunito from 'ui/components/generalPurposeComponents/CustomTextNunito';
 import { checkToken } from 'networking/api/authsApi';
-import { AddSquareSelected, HomeSelected, SearchAltSelected, AddSquare, Home, SearchAlt } from 'assets/images';
-import { AddSquareSelectedNight, HomeSelectedNight, SearchAltSelectedNight, AddSquareNight, HomeNight, SearchAltNight } from 'assets/images';
+import { HomeFill, AddBox, SearchAltFill } from 'assets/images';
 import useMagicLinkListener from 'hooks/useMagicLinkListener';
 import { navigateToHome } from 'helper/navigationHandlers/CoreNavigationHandlers';
 
@@ -73,22 +74,28 @@ function TabBar({ navigation }) {
                             label = I18n.t(TextKey.searchNavegation);
                             break;
                     }
-                    return <CustomTextNunito weight='Bold' style={{color: (isDarkMode ? focused ? theme.colors.secondary : theme.colors.background : !focused ? theme.colors.secondary : theme.colors.background)}}>{label}</CustomTextNunito>;
+                    const textColor = focused 
+                        ? (isDarkMode ? '#FFFFFF' : theme.colors.secondary)
+                        : (isDarkMode ? '#1A1A1A' : theme.colors.secondary + '70');
+                    return <CustomTextNunito weight='Bold' style={{color: textColor, fontSize: 11}}>{label}</CustomTextNunito>;
                 },
                 tabBarIcon: ({ focused }) => {
                     let icon;
                     switch (route.name) {
                         case 'Home':
-                            icon = focused ? (isDarkMode ? HomeSelectedNight : HomeSelected) : (isDarkMode ? HomeNight : Home);
+                            icon = HomeFill;
                             break;
                         case 'Upload':
-                            icon = focused ? (isDarkMode ? AddSquareSelectedNight : AddSquareSelected) : (isDarkMode ? AddSquareNight : AddSquare); 
+                            icon = AddBox; 
                             break;
                         case 'Search':
-                            icon = focused ? (isDarkMode ? SearchAltSelectedNight : SearchAltSelected) : (isDarkMode ? SearchAltNight : SearchAlt);
+                            icon = SearchAltFill;
                             break;
                     }
-                    return <Image source={icon} style={{  width: 24, height: 24, marginTop:8 }} />;
+                    const iconColor = focused 
+                        ? (isDarkMode ? '#FFFFFF' : theme.colors.secondary)
+                        : (isDarkMode ? '#1A1A1A' : theme.colors.secondary + '70');
+                    return <Image source={icon} style={{ width: 24, height: 24, marginTop: 8, tintColor: iconColor }} />;
                 },
                 tabBarActiveTintColor: theme.colors.background,
                 tabBarInactiveTintColor: 'gray',
@@ -204,14 +211,69 @@ function AppContent() {
     );
 }
 
+// Toast configuration with Nunito font
+const toastConfig = {
+    success: (props) => (
+        <BaseToast
+            {...props}
+            style={{ borderLeftColor: '#22c55e', borderLeftWidth: 5 }}
+            contentContainerStyle={{ paddingHorizontal: 15 }}
+            text1Style={{
+                fontSize: 15,
+                fontFamily: 'Nunito-Bold',
+                fontWeight: '600',
+            }}
+            text2Style={{
+                fontSize: 13,
+                fontFamily: 'Nunito-Regular',
+            }}
+        />
+    ),
+    error: (props) => (
+        <ErrorToast
+            {...props}
+            style={{ borderLeftColor: '#ef4444', borderLeftWidth: 5 }}
+            contentContainerStyle={{ paddingHorizontal: 15 }}
+            text1Style={{
+                fontSize: 15,
+                fontFamily: 'Nunito-Bold',
+                fontWeight: '600',
+            }}
+            text2Style={{
+                fontSize: 13,
+                fontFamily: 'Nunito-Regular',
+            }}
+        />
+    ),
+    info: (props) => (
+        <BaseToast
+            {...props}
+            style={{ borderLeftColor: '#3b82f6', borderLeftWidth: 5 }}
+            contentContainerStyle={{ paddingHorizontal: 15 }}
+            text1Style={{
+                fontSize: 15,
+                fontFamily: 'Nunito-Bold',
+                fontWeight: '600',
+            }}
+            text2Style={{
+                fontSize: 13,
+                fontFamily: 'Nunito-Regular',
+            }}
+        />
+    ),
+};
+
 export default function App() {
     return (
         <ThemeProvider>
-            <UserProvider>
-                <PostProvider>
-                    <AppContent />
-                </PostProvider>
-            </UserProvider>
+            <LanguageProvider>
+                <UserProvider>
+                    <PostProvider>
+                        <AppContent />
+                        <Toast config={toastConfig} />
+                    </PostProvider>
+                </UserProvider>
+            </LanguageProvider>
         </ThemeProvider>
     );
 }

@@ -5,7 +5,6 @@ import { NavigateBack } from 'helper/navigationHandlers/ExtraNavigationHandlers'
 import CustomTextNunito from './CustomTextNunito';
 import { useTheme } from 'context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
-import Separator from 'ui/components/generalPurposeComponents/Separator';
 
 import I18n from 'assets/localization/i18n';
 import TextKey from 'assets/localization/TextKey';
@@ -18,16 +17,13 @@ const ComplementaryHeader = ({title}) => {
     const styles = createStyles(theme);
 
     return (
-        <View>
-            <View style={[styles.headerContainer]}>
-                <View style={styles.itemsLeft}>
-                    <TouchableOpacity onPress={() => NavigateBack(navigation)}>
-                        <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
-                    </TouchableOpacity>
-                    <CustomTextNunito weight='Bold' style={{fontSize: 18, color: theme.colors.primary, marginLeft: 12}}>{title}</CustomTextNunito>
-                </View>
+        <View style={styles.headerContainer}>
+            <View style={styles.itemsLeft}>
+                <TouchableOpacity onPress={() => NavigateBack(navigation)}>
+                    <Image source={isDarkMode ? BackNight : Back} style={{ width: 40, height: 40 }} />
+                </TouchableOpacity>
+                <CustomTextNunito weight='Bold' style={{fontSize: 18, color: theme.colors.primary, marginLeft: 12}}>{title}</CustomTextNunito>
             </View>
-            <Separator />
         </View>
     );
 };
@@ -41,6 +37,7 @@ const createStyles = (theme) => StyleSheet.create({
         paddingVertical: 10,
         height: 90,
         backgroundColor: theme.colors.background,
+        borderBottomWidth: 0,
     },
     backButton: {
         fontSize: 18,

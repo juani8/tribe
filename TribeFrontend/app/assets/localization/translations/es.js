@@ -21,9 +21,14 @@ export default {
     themeSelectionNavegation: 'Selección de Tema',
     metricsNavegation: 'Métricas',
     accountSettingsNavegation: 'Configuración de Cuenta',
+    accountSettings: 'Configuración de Cuenta',
     changePasswordNavegation: 'Cambiar Contraseña',
+    changePassword: 'Cambiar Contraseña',
     deleteAccountNavegation: 'Eliminar Cuenta',
+    deleteAccount: 'Eliminar Cuenta',
     editPersonalDataNavegation: 'Editar Datos Personales',
+    editPersonalData: 'Editar Datos Personales',
+    dangerZone: 'Zona de Peligro',
     enableBiometricsNavegation: 'Habilitar Biométricos',
     changeCoverPictureNavegation: 'Cambiar Foto de Portada',
     changeProfilePictureNavegation: 'Cambiar Foto de Perfil',
@@ -131,7 +136,7 @@ export default {
 
     // Upload Screen
     uploadTitle: 'Pantalla de Subida',
-    uploadMessage: 'Por favor, seleccione un archivo (*)',
+    uploadMessage: 'Seleccione lo que desea subir.',
     uploadSelectedContent: 'Contenido seleccionado',
     uploadMoreMessage: 'Añadir mas contenido',
     uploadSelectFromGallery: 'Seleccionar de la galería',
@@ -273,4 +278,20 @@ export default {
     confirmationTitle: '¿Estás seguro de que quieres eliminar tu cuenta?',
     confirmButton: 'Confirmar',
     cancelButton: 'Cancelar',
+
+    // Search Screen - adicionales
+    searchError: 'Error al buscar usuarios',
+    startSearch: 'Busca usuarios por nombre o nickname',
+    searchNoResults: 'No se encontraron usuarios',
+    follow: 'Seguir',
+    unfollow: 'Dejar de seguir',
+
+    // Profile
+    editProfile: 'Editar perfil',
+
+    // Auth errors
+    userAlreadyExists: 'Este email ya está registrado',
+    genericSignupError: 'Error al registrar. Intenta de nuevo.',
+    verifyEmailMessage: 'Por favor, verifica tu email antes de iniciar sesión.',
+    loginErrorMessage: 'Error al iniciar sesión. Intenta de nuevo.',
 };
