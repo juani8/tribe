@@ -1,0 +1,56 @@
+# Dependabot – Automated dependency updates
+# https://docs.github.com/en/code-security/dependabot
+version: 2
+updates:
+  # ── npm: Backend ───────────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/TribeBackend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+    reviewers:
+      - "juani8"
+    commit-message:
+      prefix: "deps(backend):"
+    # Group minor/patch updates to reduce PR noise
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ── npm: Frontend ──────────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/TribeFrontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+    reviewers:
+      - "juani8"
+    commit-message:
+      prefix: "deps(frontend):"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ── GitHub Actions ─────────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "ci(deps):"

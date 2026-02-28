@@ -1,0 +1,13 @@
+# Hadolint configuration – Dockerfile linting rules
+# https://github.com/hadolint/hadolint#rules
+ignored:
+  # Allow specific package versions to not be pinned in apk add (we use alpine base)
+  - DL3018
+
+trustedRegistries:
+  - docker.io
+  - ghcr.io
+
+override:
+  warning:
+    - DL3008   # Pin versions in apt-get (informational for alpine)

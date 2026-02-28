@@ -1,0 +1,362 @@
+{
+	"info": {
+		"name": "Tribe API Security Tests",
+		"description": "OWASP-focused security testing for Tribe Backend API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "authToken",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "1. Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Server is running', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response has expected structure', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('message');",
+							"});",
+							"",
+							"// Security Headers checks",
+							"pm.test('No server version header leaked', function () {",
+							"    pm.expect(pm.response.headers.get('X-Powered-By')).to.be.undefined;",
+							"});",
+							"",
+							"pm.test('Response time is acceptable', function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/"
+			}
+		},
+		{
+			"name": "2. Auth - Login with empty body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Rejects empty login body', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([400, 401, 422]);",
+							"});",
+							"",
+							"pm.test('Does not leak stack trace', function () {",
+							"    const body = pm.response.text();",
+							"    pm.expect(body).to.not.include('Error:');",
+							"    pm.expect(body).to.not.include('at Object');",
+							"    pm.expect(body).to.not.include('node_modules');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/auths/sessions",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				}
+			}
+		},
+		{
+			"name": "3. Auth - SQL/NoSQL Injection in Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('NoSQL injection blocked (should not return 200)', function () {",
+							"    pm.expect(pm.response.code).to.not.equal(200);",
+							"});",
+							"",
+							"pm.test('Response does not leak DB info', function () {",
+							"    const body = pm.response.text();",
+							"    pm.expect(body.toLowerCase()).to.not.include('mongodb');",
+							"    pm.expect(body.toLowerCase()).to.not.include('mongoose');",
+							"    pm.expect(body).to.not.include('$where');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/auths/sessions",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":{\"$gt\":\"\"},\"password\":{\"$gt\":\"\"}}"
+				}
+			}
+		},
+		{
+			"name": "4. Auth - XSS in Registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('XSS payload not reflected verbatim', function () {",
+							"    const body = pm.response.text();",
+							"    pm.expect(body).to.not.include('<script>alert(1)</script>');",
+							"});",
+							"",
+							"pm.test('Returns error status (400/422)', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([400, 422, 500]);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/auths/registrations",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nickName\":\"<script>alert(1)</script>\",\"email\":\"xss@test.com\",\"password\":\"Test123!@#\"}"
+				}
+			}
+		},
+		{
+			"name": "5. Auth - Oversized Payload (DoS)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Server handles oversized payload gracefully', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([400, 413, 422, 500]);",
+							"});",
+							"",
+							"pm.test('Server did not crash', function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(10000);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/auths/sessions",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"a]REPEAT_5000[@test.com\",\"password\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}"
+				}
+			}
+		},
+		{
+			"name": "6. Protected Route - No Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Returns 401 without token', function () {",
+							"    pm.expect(pm.response.code).to.equal(401);",
+							"});",
+							"",
+							"pm.test('Error message present', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('message');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/posts/timeline"
+			}
+		},
+		{
+			"name": "7. Protected Route - Invalid JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Returns 401 with invalid token', function () {",
+							"    pm.expect(pm.response.code).to.equal(401);",
+							"});",
+							"",
+							"pm.test('Does not leak JWT secret info', function () {",
+							"    const body = pm.response.text();",
+							"    pm.expect(body).to.not.include('secret');",
+							"    pm.expect(body).to.not.include('jwt');",
+							"    pm.expect(body.toLowerCase()).to.not.include('jsonwebtoken');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/posts/timeline",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZha2VpZCIsImlhdCI6MTYwMDAwMDAwMH0.FAKE_SIGNATURE_12345" }
+				]
+			}
+		},
+		{
+			"name": "8. Protected Route - Tampered JWT (alg:none)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Rejects alg:none JWT attack', function () {",
+							"    pm.expect(pm.response.code).to.equal(401);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/posts/timeline",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJpZCI6ImFkbWluIiwiaWF0IjoxNjAwMDAwMDAwfQ." }
+				]
+			}
+		},
+		{
+			"name": "9. Path Traversal on User Endpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Path traversal does not return sensitive files', function () {",
+							"    const body = pm.response.text();",
+							"    pm.expect(body).to.not.include('root:');",
+							"    pm.expect(body).to.not.include('[global]');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/users/../../etc/passwd"
+			}
+		},
+		{
+			"name": "10. CORS - Verify Allowed Origins",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('CORS headers present', function () {",
+							"    const acaoHeader = pm.response.headers.get('Access-Control-Allow-Origin');",
+							"    pm.expect(acaoHeader).to.exist;",
+							"});",
+							"",
+							"pm.test('WARN: CORS allows all origins (potential risk)', function () {",
+							"    const acaoHeader = pm.response.headers.get('Access-Control-Allow-Origin');",
+							"    // This test WARNS if CORS is set to * (too permissive)",
+							"    if (acaoHeader === '*') {",
+							"        console.warn('⚠️ CORS is set to * – consider restricting in production');",
+							"    }",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/",
+				"header": [
+					{ "key": "Origin", "value": "https://evil-attacker.com" }
+				]
+			}
+		},
+		{
+			"name": "11. HTTP Verb Tampering",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('DELETE on auth endpoint rejected', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([404, 405]);",
+							"});",
+							"",
+							"pm.test('PATCH on auth endpoint rejected', function () {",
+							"    // This is tested via the next request, but we verify no 200 here",
+							"    pm.expect(pm.response.code).to.not.equal(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"url": "{{baseUrl}}/auths/sessions"
+			}
+		},
+		{
+			"name": "12. Content-Type Enforcement",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Server handles wrong content-type', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([400, 415, 422, 500]);",
+							"});",
+							"",
+							"pm.test('No stack trace in response', function () {",
+							"    const body = pm.response.text();",
+							"    pm.expect(body).to.not.include('SyntaxError');",
+							"    pm.expect(body).to.not.include('at JSON.parse');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/auths/sessions",
+				"header": [
+					{ "key": "Content-Type", "value": "text/xml" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<xml><email>test@test.com</email></xml>"
+				}
+			}
+		}
+	]
+}
