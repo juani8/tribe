@@ -19,7 +19,7 @@ jobs:
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Node.js version
         uses: actions/setup-node@v6
@@ -82,7 +82,7 @@ jobs:
       APP_NAME: mpresedo-uade.edu.ar/Tribe
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Trigger App Center Build
         run: |
