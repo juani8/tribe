@@ -24,15 +24,15 @@
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.1.0",
-    "mongoose": "^9.2.3",
-    "nodemailer": "^8.0.1",
+    "mongoose": "^9.3.0",
+    "nodemailer": "^8.0.2",
     "otplib": "^13.3.0",
     "speakeasy": "^2.0.0",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "jest": "^30.2.0",
+    "jest": "^30.3.0",
     "nodemon": "^3.1.14"
   }
 }
